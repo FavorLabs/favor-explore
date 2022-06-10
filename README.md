@@ -1,0 +1,1 @@
+# favorX-mobile
