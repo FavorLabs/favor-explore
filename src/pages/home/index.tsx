@@ -7,11 +7,6 @@ import { history, useSelector, useDispatch } from 'umi';
 import { sessionStorageApi } from '@/config/url';
 import { checkSession } from '@/utils/util';
 
-// type shortcutType = {
-//   icon: String;
-//   domain: String;
-// };
-
 type shortcutType = {
   name: string;
   url: string;
@@ -35,72 +30,6 @@ const Home: React.FC = () => {
 
   const fileHashRegExp: RegExp = /^[A-Za-z0-9]{64}$/;
   const shortcutSize: number = 6;
-  // const shortcut: shortcutType[] = [
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos-2',
-  //   },
-  //   {
-  //     icon: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.jj20.com%2Fup%2Fallimg%2F911%2F101916141158%2F161019141158-3-1200.jpg&refer=http%3A%2F%2Fimg.jj20.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657680196&t=add3caa6475495a0858f36690b778003',
-  //     domain: 'sample-videos-3',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos-2',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos-2',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos',
-  //   },
-  //   {
-  //     icon: 'no-data',
-  //     domain: 'sample-videos-2',
-  //   },
-  // ];
-
-  // const shortcutGroup = (size: number): Array<shortcutType[]> => {
-  //   let curPage: shortcutType[] = [];
-  //   let res: shortcutType[][] = [];
-  //   shortcut.forEach((item, index) => {
-  //     curPage.push(item);
-  //     if ((index + 1) % size === 0 || index === shortcut.length - 1) {
-  //       if (index === shortcut.length - 1) {
-  //         curPage.push({
-  //           icon: 'newItemBtn',
-  //           domain: '',
-  //         });
-  //       }
-  //       res.push(JSON.parse(JSON.stringify(curPage)));
-  //       curPage = [];
-  //     }
-  //   });
-  //   if (size < shortcut.length) {
-  //     return res;
-  //   } else {
-  //     const t = [...shortcut];
-  //     t.push({
-  //       icon: 'newItemBtn',
-  //       domain: '',
-  //     });
-  //     return [t];
-  //   }
-  // };
 
   // @ts-ignore
   const shortcut: shortcutType[] = localStorage.getItem('shortcutList')
@@ -167,10 +96,6 @@ const Home: React.FC = () => {
   const addShortcutHandle = () => {
     console.log('addShortcutHandle');
     setShortcutModalAdd(true);
-    // shortcut.push({
-    //   icon: 'no-data',
-    //   domain: 'baidu.com',
-    // });
   };
 
   const saveShortcut = () => {

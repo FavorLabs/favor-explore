@@ -16,7 +16,7 @@ import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
 import Loading from '@/components/loading';
 import SettingApi from '@/components/settingApi';
-import AuroraConfigEdit from '@/components/auroraConfigEdit';
+import FavorConfigEdit from '@/components/favorConfigEdit';
 import './index.less';
 import { Models } from '@/declare/modelType';
 import { version, isElectron } from '@/config/version';
@@ -253,52 +253,6 @@ const Layouts: React.FC = (props) => {
           },
         });
       });
-      ws?.send(
-        {
-          id: subResult.chunkInfo.id,
-          jsonrpc: '2.0',
-          method: 'chunkInfo_subscribe',
-          params: ['metrics'],
-        },
-        (err: Error, res: any) => {
-          if (err || res?.error) {
-            message.error(err || res?.error);
-          }
-          subResult.chunkInfo.result = res?.result;
-          ws?.on(res?.result, (res: any) => {
-            dispatch({
-              type: 'global/updateChunkOrRetrieval',
-              payload: {
-                chunkInfoUpload: res.aurora_chunkinfo_total_transferred,
-                chunkInfoDownload: res.aurora_chunkinfo_total_retrieved,
-              },
-            });
-          });
-        },
-      );
-      ws?.send(
-        {
-          id: subResult.retrieval.id,
-          jsonrpc: '2.0',
-          method: 'retrieval_subscribe',
-          params: ['metrics'],
-        },
-        (err: Error, res: any) => {
-          if (err || res?.error) {
-            message.error(err || res?.error);
-          }
-          subResult.retrieval.result = res?.result;
-          ws?.on(res?.result, (res: any) => {
-            dispatch({
-              type: 'global/updateChunkOrRetrieval',
-              payload: {
-                retrievalUpload: res.aurora_retrieval_total_transferred,
-                retrievalDownload: res.aurora_retrieval_total_retrieved,
-              },
-            });
-          });
-        },
-      );
       dispatch({
         type: 'global/setWs',
         payload: {
@@ -398,7 +352,7 @@ const Layouts: React.FC = (props) => {
             >
               {electron ? (
                 <>
-                  <AuroraConfigEdit />
+                  <FavorConfigEdit />
                 </>
               ) : (
                 <SettingApi

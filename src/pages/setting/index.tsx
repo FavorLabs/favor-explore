@@ -6,7 +6,7 @@ import { Button } from 'antd';
 import { sessionStorageApi } from '@/config/url';
 import { checkSession } from '@/utils/util';
 import { Models } from '@/declare/modelType';
-import AuroraConfigEdit from '@/components/auroraConfigEdit';
+import FavorConfigEdit from '@/components/favorConfigEdit';
 
 const Setting: React.FC = (props) => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Setting: React.FC = (props) => {
   return (
     <>
       {electron ? (
-        <>{<AuroraConfigEdit />}</>
+        <>{<FavorConfigEdit />}</>
       ) : (
         <>
           <div className={styles.api}>

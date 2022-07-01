@@ -1,14 +1,13 @@
 import ModelsType, { Models } from '@/declare/modelType';
 import { defaultApi, sessionStorageApi } from '@/config/url';
 import { checkSession, initChartData } from '@/utils/util';
-import { isStatus } from '@/api/common';
 import { message } from 'antd';
 import { Topology, ApiPort } from '@/declare/api';
 import Api from '@/api/api';
 import DebugApi from '@/api/debugApi';
 import { getConfirmation } from '@/utils/request';
 import semver from 'semver';
-import { auroraVersion } from '@/config/version';
+import { favorVersion } from '@/config/version';
 import { speedTime } from '@/config/url';
 import moment from 'moment';
 import { splitUrl } from '@/utils/util';
@@ -173,7 +172,6 @@ export default {
   effects: {
     *getStatus({ payload }, { call, put }) {
       const { api } = payload;
-      // console.log('eventEmitter true');
       eventEmitter.emit('changeSettingModal', true);
       try {
         console.log('api', api);
@@ -190,23 +188,15 @@ export default {
         yield put({ type: 'setApi', payload: { api, debugApi, wsApi } });
 
         const health = yield call(DebugApi.getHealth, debugApi);
-        const aurora = semver.satisfies(
+        const favor = semver.satisfies(
           semver.coerce(health.data.version)?.version as string,
-          `>=${auroraVersion}`,
+          `>=${favorVersion}`,
         );
-        // @ts-ignore
-        console.log(
-          'aurora',
-          aurora,
-          semver.coerce(health.data.version)?.version,
-          auroraVersion,
-        );
-        const status = health.data.status === 'ok' && aurora;
+        const status = health.data.status === 'ok' && favor;
         yield put({ type: 'setStatus', payload: { status } });
-        console.log('status----', status);
+        // console.log('status----', status);
         if (status) {
           message.success('Connection succeeded');
-          // console.log('eventEmitter false');
           eventEmitter.emit('changeSettingModal', false);
           yield put({
             type: 'setHealth',
@@ -214,9 +204,9 @@ export default {
               health: health.data,
             },
           });
-        } else if (!aurora) {
+        } else if (!favor) {
           throw new Error(
-            'Node version is too low, please upgrade to ' + auroraVersion,
+            'Node version is too low, please upgrade to ' + favorVersion,
           );
         }
         return 1;

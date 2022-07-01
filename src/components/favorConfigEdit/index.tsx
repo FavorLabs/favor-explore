@@ -12,15 +12,15 @@ if (isElectron) {
   ipcRenderer = window.require('electron').ipcRenderer;
 }
 
-const AuroraConfigEdit: React.FC = () => {
+const FavorConfigEdit: React.FC = () => {
   const history = useHistory();
-  const [auroraConfig, setAuroraConfig] = useState('');
+  const [favorConfig, setFavorConfig] = useState('');
   useEffect(() => {
     ipcRenderer.on('config', (event: Event, data: any) => {
       if (data.err) {
         message.info(data.err);
       } else {
-        setAuroraConfig(data.data);
+        setFavorConfig(data.data);
       }
     });
     ipcRenderer.send('config');
@@ -35,7 +35,7 @@ const AuroraConfigEdit: React.FC = () => {
       if (data.err) {
         message.info('Reset failed');
       } else {
-        setAuroraConfig(data.data);
+        setFavorConfig(data.data);
         message.success('Reset successfully');
       }
     });
@@ -46,10 +46,10 @@ const AuroraConfigEdit: React.FC = () => {
     };
   }, []);
   const saveHandle = (): void => {
-    if (!auroraConfig) {
+    if (!favorConfig) {
       message.info('Configuration is empty');
     } else {
-      ipcRenderer.send('save', auroraConfig);
+      ipcRenderer.send('save', favorConfig);
     }
   };
   const resetHandle = () => {
@@ -62,11 +62,11 @@ const AuroraConfigEdit: React.FC = () => {
   return (
     <div className={styles.content}>
       <div className={styles.header}>
-        <h1 className={styles.title}>Aurora Config</h1>
+        <h1 className={styles.title}>Favor Config</h1>
         <div className={styles.func}>
           <span>
-            The config file is read once when the Aurora is started. Save your
-            changes, then restart the Aurora to apply them.
+            The config file is read once when the Favor is started. Save your
+            changes, then restart the Favor to apply them.
           </span>
           <div>
             <Button
@@ -78,7 +78,7 @@ const AuroraConfigEdit: React.FC = () => {
             <Button
               className={styles.btn}
               onClick={useThrottle(saveHandle, 1000)}
-              id={'saveAuroraConfig'}
+              id={'saveFavorConfig'}
             >
               Save
             </Button>
@@ -95,12 +95,12 @@ const AuroraConfigEdit: React.FC = () => {
         autoSize={true}
         bordered={false}
         className={styles.text}
-        id={'auroraConfig'}
-        value={auroraConfig}
-        onChange={(e) => setAuroraConfig(e.target.value)}
+        id={'favorConfig'}
+        value={favorConfig}
+        onChange={(e) => setFavorConfig(e.target.value)}
       />
     </div>
   );
 };
 
-export default AuroraConfigEdit;
+export default FavorConfigEdit;
