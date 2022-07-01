@@ -1,0 +1,39 @@
+.content {
+  border-radius: 0.1875rem;
+  box-shadow: 0 2px 10px 2px #ccc;
+  // overflow-x: scroll;
+  .table-style {
+    // min-width: 75rem;
+    width: 100%;
+    overflow-x: scroll;
+    .ant-table-cell {
+      color: #000;
+    }
+    .small-screen {
+      display: none;
+      .peer-id {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        word-break: keep-all;
+      }
+    }
+  }
+}
+.content::-webkit-scrollbar {
+  width: 0 !important;
+}
+
+@media screen and (max-width: 992px) {
+  .content {
+    .table-style {
+      .small-screen {
+        display: block;
+      }
+      .large-screen {
+        display: none;
+      }
+    }
+  }
+}
