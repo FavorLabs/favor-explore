@@ -1,0 +1,23 @@
+{
+  "id": "3477405",
+  "name": "dashboard-pc-mobile",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7009042",
+      "name": "search",
+      "font_class": "search",
+      "unicode": "e741",
+      "unicode_decimal": 59201
+    },
+    {
+      "icon_id": "7587933",
+      "name": "菜单",
+      "font_class": "caidan",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+.chunkTooltip {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  &::after {
+    content: '';
+    flex: 1;
+  }
+
+  .square {
+    margin: 1px;
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
+    border: 1px #000 solid;
+  }
+
+  .bgc {
+    background-color: #52c41aba;
+  }
+}
