@@ -10,7 +10,7 @@ import {
   PartitionOutlined,
   SettingOutlined,
   FieldTimeOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { getScreenWidth } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
@@ -131,7 +131,7 @@ const Layouts: React.FC = (props) => {
   };
 
   const getMetrics = async (url: string, init: boolean = false) => {
-    await dispatch({
+    dispatch({
       type: 'global/getMetrics',
       payload: { url, init },
     });
@@ -284,7 +284,7 @@ const Layouts: React.FC = (props) => {
           }}
         >
           <div className="logo">
-            <img src={logo} alt="" />
+            <img src={logo} alt="" width={30} />
             <span>Explore</span>
           </div>
           <Menu

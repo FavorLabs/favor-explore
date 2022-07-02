@@ -43,12 +43,12 @@ const Main: React.FC = () => {
   return (
     <div>
       <div className={styles.logo}>
-        <img src={favor} width={170} alt={'logo'} />
+        <img src={favor} width={150} alt={'logo'} />
       </div>
       <div
         style={{
           maxWidth: 561,
-          width: '70%',
+          width: '80%',
           margin: 'auto',
           marginBottom: 16,
         }}

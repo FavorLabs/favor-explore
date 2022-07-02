@@ -3,7 +3,7 @@ import routes from './src/config/routes';
 
 export default defineConfig({
   title: 'Favor Explore',
-  links: [{ rel: 'icon', href: './logo.png' }],
+  links: [{ rel: 'icon', href: './logo.ico' }],
   nodeModulesTransform: {
     type: 'none',
   },
@@ -34,5 +34,5 @@ export default defineConfig({
   define: {
     BUILD_ENV: process.env.BUILD_ENV,
   },
-  mfsu:{}
+  mfsu: {},
 });
