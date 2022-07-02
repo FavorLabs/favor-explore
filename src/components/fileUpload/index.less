@@ -1,0 +1,57 @@
+@main_color: #4147c4;
+
+.fileUpload {
+  //width: 1100px;
+  display: flex;
+  height: 200px;
+  color: #000;
+}
+
+.uploadArea {
+  width: 300px;
+}
+
+.upload {
+  width: 100px;
+}
+
+.uploadAttrArea {
+  flex: 1;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 20px;
+  margin-top: 1rem;
+  font-size: 14px;
+
+  .radioGrid {
+    display: grid;
+    grid-template-columns: 100px auto;
+    justify-items: start;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.uploadIcon {
+  font-size: 50px;
+  color: @main_color;
+}
+
+@media screen and (max-width: 768px) {
+  .fileUpload {
+    //width: 1100px;
+    display: block;
+    height: auto;
+    // color: #000;
+  }
+  .ant-upload-text-pc {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .ant-upload-text-moblie {
+    display: none;
+  }
+}

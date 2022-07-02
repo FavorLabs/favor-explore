@@ -1,0 +1,46 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  max-height: 700px;
+  width: 800px;
+}
+
+.sourcesList {
+  max-height: 125px;
+  overflow-y: auto;
+}
+
+.sources {
+  padding: 10px 0;
+  border-bottom: 1px #ccc solid;
+}
+
+.sourcesGrid {
+  height: 25px;
+  display: grid;
+  grid-template-columns: 15px 600px auto;
+  gap: 0 10px;
+  justify-items: start;
+  align-items: center;
+}
+
+.chunk {
+  flex: 1;
+  margin: 20px 0;
+  //height: 500px;
+  overflow-y: auto;
+}
+
+.none {
+  display: none;
+}
+
+.block {
+  display: block;
+}
+
+.showMore {
+  color: @main_color;
+  text-decoration: underline;
+  cursor: pointer;
+}
