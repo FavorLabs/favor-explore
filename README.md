@@ -1,1 +1,1 @@
-# favorX-mobile
+# favorX-explore
