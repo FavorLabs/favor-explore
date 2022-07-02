@@ -1,0 +1,47 @@
+.content {
+  .card-style {
+    color: #000;
+    margin: 0.8rem 0;
+    border-radius: 0.1875rem;
+    box-shadow: 0 2px 10px 2px #ccc;
+    .card-line {
+      margin-bottom: 0.5rem;
+      p {
+        color: #888;
+        font-size: 1.5rem;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .card-minheight {
+    min-height: 7rem;
+  }
+  .peers-tabBar {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    .tabBar-left {
+      display: flex;
+      justify-content: flex-start;
+      h4 {
+        color: #000;
+        margin-right: 0.5rem;
+      }
+      .selected {
+        color: @main_color;
+        border-bottom: 2px solid @main_color;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .addConnection-small {
+    display: none;
+  }
+}
+@media screen and (max-width: 576px) {
+  .addConnection-large {
+    display: none;
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "name": "favor_explore",
+  "version": "1.0.0",
+  "author": {
+    "name": "favor",
+    "email": "**"
+  },
+  "description": "FavorExplore",
+  "license": "MIT",
+  "private": true,
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "umi dev",
+    "start:app": "cross-env BUILD_ENV=app umi dev",
+    "build": "umi build",
+    "build:app": "cross-env BUILD_ENV=app umi build",
+    "postinstall": "umi generate tmp",
+    "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
+    "test": "umi-test",
+    "test:coverage": "umi-test --coverage",
+    "electron": "cross-env electron .",
+    "electron:dev": "cross-env TERGET_ENV=development electron .",
+    "electron:win32": "electron-builder --win  --ia32",
+    "electron:win64": "electron-builder --win  --x64",
+    "electron:mac": "electron-builder --mac",
+    "electron:linux": "electron-builder --linux"
+  },
+  "build": {
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
+    },
+    "extraFiles": [
+      "public/logo.png",
+      "favorX"
+    ],
+    "productName": "favor",
+    "appId": "com.favor.app",
+    "directories": {
+      "output": "build"
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "public/logo.icns"
+    },
+    "win": {
+      "icon": "public/logo.png",
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "public/logo.png"
+    }
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@ant-design/pro-components": "^1.1.6",
+    "@ant-design/pro-layout": "^6.5.0",
+    "@antv/g2": "^4.1.34",
+    "axios": "^0.21.1",
+    "classnames": "^2.3.1",
+    "cross-env": "^7.0.3",
+    "ethers": "^5.5.2",
+    "eventemitter3": "^4.0.7",
+    "hls": "^0.0.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "nprogress": "^0.2.0",
+    "qrcode.react": "^1.0.1",
+    "react": "17.x",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-dom": "17.x",
+    "react-tiny-slider": "^1.0.6",
+    "semver": "^7.3.5",
+    "umi": "^3.5.26",
+    "web3": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/antd": "^1.0.0",
+    "@types/axios": "^0.14.0",
+    "@types/hls.js": "^1.0.0",
+    "@types/lodash": "^4.14.177",
+    "@types/nprogress": "^0.2.0",
+    "@types/qrcode.react": "^1.0.2",
+    "@types/react": "^17.0.0",
+    "@types/react-copy-to-clipboard": "^5.0.1",
+    "@types/react-dom": "^17.0.0",
+    "@types/semver": "^7.3.9",
+    "@umijs/preset-react": "1.x",
+    "@umijs/test": "^3.5.26",
+    "electron": "^16.0.2",
+    "electron-builder": "^22.14.5",
+    "lint-staged": "^10.0.7",
+    "prettier": "^2.2.0",
+    "typescript": "^4.1.2",
+    "yorkie": "^2.0.0"
+  }
+}
