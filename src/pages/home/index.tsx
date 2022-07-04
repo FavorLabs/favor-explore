@@ -23,7 +23,13 @@ const Main: React.FC = () => {
 
   const [fileHash, setFileHash] = useState('');
 
-  let data: shortcutType[] = [];
+  let data: shortcutType[] = [
+    {
+      img: favorTubeSvg,
+      name: 'FavorTube',
+      hash: 'c48b0985cf29eaf4fc0b08fa0c8b0b98ea2438a6576b087e3ee21c7bc2ce729a',
+    },
+  ];
 
   const searchHandle = () => {
     window.open(api + '/file/' + fileHash);
@@ -51,9 +57,7 @@ const Main: React.FC = () => {
           onChange={(e) => setFileHash(e.currentTarget.value)}
         ></Input>
       </div>
-      <div
-        className={styles.input_box}
-      >
+      <div className={styles.input_box}>
         {data.map((item) => (
           <a
             href={api + '/file/' + item.hash}
@@ -106,4 +110,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
