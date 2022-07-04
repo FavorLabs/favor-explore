@@ -85,7 +85,7 @@ export declare type FileInfo = {
   mime?: string;
   size?: number;
   ext?: string;
-  dext?: string;
+  default?: string;
 };
 
 export declare type AllFileInfo = FileType & {

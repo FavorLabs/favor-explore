@@ -85,11 +85,6 @@ request.interceptors.response.use(
     }
     if (error.message === 'Network Error') {
       eventEmitter.emit('404');
-      let timer = setTimeout(() => {
-        console.log('404');
-        eventEmitter.emit('changeSettingModal', true);
-        clearTimeout(timer);
-      }, 500);
       return Promise.reject(new Error('Connection Failed'));
     }
     return Promise.reject(

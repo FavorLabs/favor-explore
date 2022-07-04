@@ -172,7 +172,6 @@ export default {
   effects: {
     *getStatus({ payload }, { call, put }) {
       const { api } = payload;
-      eventEmitter.emit('changeSettingModal', true);
       try {
         console.log('api', api);
         const apiPort = yield call(Api.getPort, api);
