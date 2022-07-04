@@ -22,7 +22,7 @@ import {
 import CopyText from '@/components/copyText';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
-import { getSize, stringToBinary, getProgress } from '@/utils/util';
+import { getSize, stringToBinary, getProgress, getSuffix } from '@/utils/util';
 
 import pinSvg from '@/assets/icon/pin.svg';
 import unPinSvg from '@/assets/icon/unPin.svg';
@@ -254,7 +254,7 @@ const FilesList: React.FC = () => {
       key: 'size',
       render: (text, record) => (
         <span style={{ fontSize: 16 }}>
-          {record.manifest.type !== ('directory' && 'file') &&
+          {record.manifest.type !== ('directory') &&
           record.manifest.size !== undefined
             ? getSize(record.manifest.size)
             : '*'}
@@ -329,9 +329,10 @@ const FilesList: React.FC = () => {
               record.manifest.type === 'directory'
             ) {
               // directory
+              window.open(`${api}/file/${record.rootCid}`);
             } else {
               // file
-              if (record.manifest.mime === 'video/mp2t') {
+              if (getSuffix(record.manifest.default ?? '') === 'm3u8') {
                 window.open(`#/video/${record.rootCid}`);
               } else {
                 window.open(`${api}/file/${record.rootCid}`);

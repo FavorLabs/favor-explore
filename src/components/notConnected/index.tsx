@@ -9,15 +9,14 @@ const NotConnected: React.FC = () => {
         <p>Looks like your node is not connected</p>
         <p>
           please check your API / DebugAPI{' '}
-          <a
-            href={'javascript:void(0)'}
+          <span
             className={'mainColor'}
             onClick={() => {
               eventEmitter.emit('changeSettingModal', true, 'notConnected');
             }}
           >
             settings
-          </a>
+          </span>
         </p>
       </div>
     </>

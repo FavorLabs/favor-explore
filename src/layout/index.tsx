@@ -40,7 +40,6 @@ const Layouts: React.FC = (props) => {
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(true);
   const [settingVisible, setSettingVisible] = useState(false);
-  const [userSetting, setUserSetting] = useState(false);
   const {
     status,
     metrics,
@@ -159,9 +158,6 @@ const Layouts: React.FC = (props) => {
 
   const closeSettingModal = () => {
     setSettingVisible(false);
-    if (userSetting) {
-      setUserSetting(false);
-    }
   };
 
   useEffect(() => {
@@ -220,14 +216,12 @@ const Layouts: React.FC = (props) => {
     });
     eventEmitter.on('changeSettingModal', (val, str) => {
       setSettingVisible(val);
-      if (str === 'notConnected') {
-        setUserSetting(true);
-      }
     });
   }, []);
 
   useEffect(() => {
     if (timer.current) clearInterval(timer.current);
+    console.log('status', status);
     if (status) {
       getMetrics(debugApi, true);
       // timer.current = setInterval(() => {
@@ -253,8 +247,6 @@ const Layouts: React.FC = (props) => {
             status: false,
           },
         });
-        setUserSetting(false);
-        setSettingVisible(true);
       });
       ws?.send(
         {
@@ -309,6 +301,9 @@ const Layouts: React.FC = (props) => {
         },
       });
     }
+    //  else {
+    //  setSettingVisible(true);
+    //  }
   }, [status, api]);
 
   return (
@@ -369,7 +364,6 @@ const Layouts: React.FC = (props) => {
               <SettingOutlined
                 style={{ fontSize: '1.5rem' }}
                 onClick={() => {
-                  setUserSetting(true);
                   setSettingVisible(true);
                 }}
               />
@@ -388,9 +382,9 @@ const Layouts: React.FC = (props) => {
               style={{ color: '#000' }}
               title={electron ? 'Config' : 'Setting'}
               maskClosable={false}
-              visible={settingVisible}
+              visible={ refresh || (!status || settingVisible)}
               centered
-              closable={userSetting}
+              closable={status}
               destroyOnClose={true}
               onCancel={closeSettingModal}
               footer={[
@@ -422,7 +416,7 @@ const Layouts: React.FC = (props) => {
           }}
         ></div>
       </Layout>
-      {/* {refresh && <Loading text={'loading...'} status={refresh} />} */}
+      {refresh && <Loading text={'loading...'} status={refresh} />}
     </>
   );
 };
