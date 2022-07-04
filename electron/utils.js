@@ -37,7 +37,7 @@ function run({ win, logs }) {
     let notStart = true;
 
     let writeLog = (log) => {
-      let fileName = 'aurora__' + moment().format('YYYY_MM_DD') + '.log';
+      let fileName = 'favorX__' + moment().format('YYYY_MM_DD') + '.log';
       fs.appendFile(path.join(cmdPath, fileName), log, (err) => {
         if (err) console.log(err);
       });

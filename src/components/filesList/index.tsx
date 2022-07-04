@@ -325,7 +325,7 @@ const FilesList: React.FC = () => {
         <div
           onClick={() => {
             if (
-              record.manifest.type === 'file' ||
+              // record.manifest.type === 'file' ||
               record.manifest.type === 'directory'
             ) {
               // directory
@@ -415,7 +415,6 @@ const FilesList: React.FC = () => {
       };
     });
   }, [filesList]);
-  console.log('data', data, 'filesList', filesList);
 
   return (
     <div ref={ref}>

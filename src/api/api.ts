@@ -29,17 +29,17 @@ export const uploadFile = (
   let fileName: string = fileAttr.name;
   let headers: AxiosRequestConfig['headers'] = {};
   if (fileName) {
-    headers['Aurora-Collection-Name'] = encodeUnicode(fileName);
+    headers['Collection-Name'] = encodeUnicode(fileName);
   }
-  headers['Aurora-Pin'] = fileAttr.pin;
+  headers['Pin'] = fileAttr.pin;
   if (fileAttr.isTar) {
-    headers['Aurora-Collection'] = true;
+    headers['Collection'] = true;
     headers['Content-Type'] = 'application/x-tar';
     if (fileAttr.dOpen) {
-      headers['Aurora-Index-Document'] = encodeUnicode(fileAttr.dOpen);
+      headers['Index-Document'] = encodeUnicode(fileAttr.dOpen);
     }
     if (fileAttr.eOPen) {
-      headers['Aurora-Error-Document'] = encodeUnicode(fileAttr.eOPen);
+      headers['Error-Document'] = encodeUnicode(fileAttr.eOPen);
     }
   } else {
     headers['Content-Type'] = file.type || 'application/x-www-form-urlencoded';

@@ -39,27 +39,33 @@
         width: 6rem;
       }
       .input-hash {
+        position: relative;
         display: flex;
         justify-content: flex-start;
         margin: 4rem auto 0;
         width: 80%;
         max-width: 56.25rem;
         border: 1px solid #ccc;
-        border-radius: 0.1875rem;
+        border-radius: 20px;
         input {
-          padding-left: 0.3125rem;
+          padding-left: 1.5rem;
+          padding-right: 1.5rem;
           box-sizing: border-box;
           border: none;
           outline: none !important;
+          border-color: transparent !important;
+          border-radius: 20px;
         }
         textarea::placeholder {
           color: #888;
         }
         .search-btn {
-          position: relative;
-          color: #1677ff;
+          position: absolute;
+          top: 50%;
+          right: .1875rem;
+          color: @main_color;
           padding: 0 0.6rem;
-          vertical-align: middle;
+          transform: translateY(-50%);
         }
         .search-btn::before {
           position: absolute;

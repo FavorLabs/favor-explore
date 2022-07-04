@@ -31,10 +31,7 @@ const Home: React.FC = () => {
   const fileHashRegExp: RegExp = /^[A-Za-z0-9]{64}$/;
   const shortcutSize: number = 6;
 
-  // @ts-ignore
-  const shortcut: shortcutType[] = localStorage.getItem('shortcutList')
-    ? JSON.parse(localStorage.getItem('shortcutList'))
-    : [];
+  const shortcut: shortcutType[] = JSON.parse(localStorage.getItem('shortcutList') || '0') ? JSON.parse(localStorage.getItem('shortcutList') || '0') : [];
 
   const shortcutGroup = (size: number): Array<shortcutType[]> => {
     let curPage: shortcutType[] = [];
@@ -168,11 +165,12 @@ const Home: React.FC = () => {
           <img src={logo} className={styles.logo} alt="" />
           <div className={styles['input-hash']}>
             <Input
-              placeholder="file hash"
+              placeholder="hash"
               onChange={(val) => {
                 setFileHash(val.currentTarget.value);
               }}
               disabled={!status}
+              size="large"
               onPressEnter={searchHandle}
             />
             <span
@@ -181,7 +179,7 @@ const Home: React.FC = () => {
             ></span>
           </div>
 
-          <Carousel
+          {/* <Carousel
             dotPosition="bottom"
             dots={{ className: 'dots' }}
             className="home-carousel"
@@ -242,7 +240,7 @@ const Home: React.FC = () => {
                 })}
               </ul>
             ))}
-          </Carousel>
+          </Carousel> */}
 
           {/* <Modal
             style={{color: '#000'}}

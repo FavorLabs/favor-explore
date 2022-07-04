@@ -248,19 +248,19 @@ export default {
         // const { metrics } = yield select((state: Models) => state.global);
         const retrievalDownload =
           Number(
-            data.match(/\naurora_retrieval_total_retrieved\s(\S*)/)?.[1],
+            data.match(/\nretrieval_total_retrieved\s(\S*)/)?.[1],
           ) || 0;
         const retrievalUpload =
           Number(
-            data.match(/\naurora_retrieval_total_transferred\s(\S*)/)?.[1],
+            data.match(/\nretrieval_total_transferred\s(\S*)/)?.[1],
           ) || 0;
         const chunkInfoDownload =
           Number(
-            data.match(/\naurora_chunkinfo_total_retrieved\s(\S*)/)?.[1],
+            data.match(/\nchunkinfo_total_retrieved\s(\S*)/)?.[1],
           ) || 0;
         const chunkInfoUpload =
           Number(
-            data.match(/\naurora_chunkinfo_total_transferred\s(\S*)/)?.[1],
+            data.match(/\nchunkinfo_total_transferred\s(\S*)/)?.[1],
           ) || 0;
 
         const retrievedTotal = retrievalDownload + chunkInfoDownload;
