@@ -10,7 +10,7 @@ import {
   PartitionOutlined,
   SettingOutlined,
   FieldTimeOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { getScreenWidth } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
@@ -361,12 +361,12 @@ const Layouts: React.FC = (props) => {
             /> */}
             <div className="account-address">
               {/* <AccountAddress /> */}
-              <SettingOutlined
-                style={{ fontSize: '1.5rem' }}
-                onClick={() => {
-                  setSettingVisible(true);
-                }}
-              />
+              {/*<SettingOutlined*/}
+              {/*  style={{ fontSize: '1.5rem' }}*/}
+              {/*  onClick={() => {*/}
+              {/*    setSettingVisible(true);*/}
+              {/*  }}*/}
+              {/*/>*/}
             </div>
           </Header>
           <Content
@@ -382,7 +382,7 @@ const Layouts: React.FC = (props) => {
               style={{ color: '#000' }}
               title={electron ? 'Config' : 'Setting'}
               maskClosable={false}
-              visible={ refresh || (!status || settingVisible)}
+              visible={refresh || !status || settingVisible}
               centered
               closable={status}
               destroyOnClose={true}
