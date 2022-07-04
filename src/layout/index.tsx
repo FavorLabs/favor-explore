@@ -253,6 +253,7 @@ const Layouts: React.FC = (props) => {
             status: false,
           },
         });
+        setSettingVisible(true);
       });
       dispatch({
         type: 'global/setWs',
