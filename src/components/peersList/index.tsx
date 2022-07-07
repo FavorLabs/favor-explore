@@ -103,6 +103,7 @@ const PeersList: React.FC<Props> = (props) => {
           return (
             <div>
               <Button
+                disabled
                 onClick={() => {
                   setPeerInfo(record);
                   setVisible(true);

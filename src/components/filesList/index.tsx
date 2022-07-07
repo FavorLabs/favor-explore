@@ -254,7 +254,7 @@ const FilesList: React.FC = () => {
       key: 'size',
       render: (text, record) => (
         <span style={{ fontSize: 16 }}>
-          {record.manifest.type !== ('directory') &&
+          {record.manifest.type !== 'directory' &&
           record.manifest.size !== undefined
             ? getSize(record.manifest.size)
             : '*'}
@@ -352,31 +352,32 @@ const FilesList: React.FC = () => {
       render: (text, record) => (
         <>
           <DeleteOutlined
-            className={'mainColor iconSize'}
-            onClick={() => {
-              confirm({
-                title: (
-                  <div className={'info_content'}>
-                    <div style={{ marginBottom: 10 }}>
-                      Are you sure to delete the file?
-                    </div>
-                    <div className={styles.name}>
-                      FileName:&nbsp;&nbsp;<span>{record.manifest.name}</span>
-                    </div>
-                    RCID:&nbsp;&nbsp;<span>{record?.rootCid}</span>
-                  </div>
-                ),
-                okText: 'Yes',
-                okType: 'danger',
-                icon: <></>,
-                maskClosable: true,
-                centered: true,
-                cancelText: 'No',
-                onOk() {
-                  confirmDelete(record.rootCid);
-                },
-              });
-            }}
+            style={{ color: '#666' }}
+            className={'iconSize'}
+            // onClick={() => {
+            //   confirm({
+            //     title: (
+            //       <div className={'info_content'}>
+            //         <div style={{ marginBottom: 10 }}>
+            //           Are you sure to delete the file?
+            //         </div>
+            //         <div className={styles.name}>
+            //           FileName:&nbsp;&nbsp;<span>{record.manifest.name}</span>
+            //         </div>
+            //         RCID:&nbsp;&nbsp;<span>{record?.rootCid}</span>
+            //       </div>
+            //     ),
+            //     okText: 'Yes',
+            //     okType: 'danger',
+            //     icon: <></>,
+            //     maskClosable: true,
+            //     centered: true,
+            //     cancelText: 'No',
+            //     onOk() {
+            //       confirmDelete(record.rootCid);
+            //     },
+            //   });
+            // }}
           />
         </>
       ),
@@ -476,7 +477,12 @@ const FilesList: React.FC = () => {
               <div className={styles.name}>
                 FileName:&nbsp;&nbsp;<span>{hashInfo?.manifest.name}</span>
               </div>
-              RCID:&nbsp;&nbsp;<span>{hashInfo?.rootCid}</span>
+              <div>
+                RCID:&nbsp;&nbsp;<span>{hashInfo?.rootCid}</span>
+              </div>
+              <div>
+                Reference:&nbsp;&nbsp;<span>{}</span>
+              </div>
             </div>
           </>
         }
