@@ -32,7 +32,7 @@ const Main: React.FC = () => {
   return (
     <div>
       <div className={styles.logo}>
-        <img src={favor} width={150} alt={'logo'} />
+        <img src={'./logo.png'} width={150} alt={'logo'} />
       </div>
       <div
         style={{
@@ -51,9 +51,7 @@ const Main: React.FC = () => {
           onChange={(e) => setFileHash(e.currentTarget.value)}
         ></Input>
       </div>
-      <div
-        className={styles.input_box}
-      >
+      <div className={styles.input_box}>
         {data.map((item) => (
           <a
             href={api + '/file/' + item.hash}
@@ -106,4 +104,3 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
