@@ -208,12 +208,12 @@ const Layouts: React.FC = (props) => {
         refresh: true,
       },
     });
-    eventEmitter.on('404', () => {
-      dispatch({
-        type: 'global/setStatus',
-        payload: { status: false },
-      });
-    });
+    // eventEmitter.on('404', () => {
+    //   dispatch({
+    //     type: 'global/setStatus',
+    //     payload: { status: false },
+    //   });
+    // });
     eventEmitter.on('changeSettingModal', (val, str) => {
       setSettingVisible(val);
     });

@@ -5,13 +5,19 @@ import { query } from '@/utils/util';
 export type IPFS_LS = {
   Objects: {
     hash: string;
-    Links: [];
+    Links: {
+      Name: string;
+    }[];
   }[];
 };
 
-export const getInfo = (hash: string): Promise<AxiosResponse<IPFS_LS>> => {
+export const getInfo = (
+  link: string,
+  hash: string,
+): Promise<AxiosResponse<IPFS_LS>> => {
+  let { origin } = new URL(link);
   return request({
-    url: 'https://ipfs.io/api/v0/ls/' + hash,
+    url: origin + '/api/v0/ls/' + hash,
     timeout: 0,
   });
 };

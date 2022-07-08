@@ -48,6 +48,7 @@ const FileUpload: React.FC = () => {
   const [ipfsModel, setIpfsModel] = useState(false);
   const [loading, setLoading] = useState(false);
   const beforeUpload = (file: UploadFile): boolean => {
+    console.log(file);
     setFile(file);
     return false;
   };
@@ -111,15 +112,19 @@ const FileUpload: React.FC = () => {
     }
     let hash = link.substring(link.lastIndexOf('/') + 1);
     try {
-      const { data } = await getInfo(hash);
+      const { data } = await getInfo(link, hash);
       ipfsInfo.current = {
         link,
         hash,
-        type: data.Objects[0].Links.length ? 'tar' : 'file',
+        type: data.Objects[0].Links.length
+          ? data.Objects[0].Links[0].Name
+            ? 'tar'
+            : 'file'
+          : 'file',
       };
       setFileAttr({
         ...fileAttr,
-        isTar: !!data.Objects[0].Links.length,
+        isTar: ipfsInfo.current.type === 'tar',
         name: hash,
       });
       setIpfsModel(false);
@@ -212,18 +217,18 @@ const FileUpload: React.FC = () => {
                   {ipfsInfo.current.link}
                 </div>
               )}
-              {file?.type === 'application/x-tar' ||
-                (ipfsInfo.current.type === 'tar' && (
-                  <div className={styles.radioGrid}>
-                    <label>Directory</label>
-                    <Checkbox
-                      checked={fileAttr.isTar}
-                      onChange={(e) => {
-                        setFileAttr({ ...fileAttr, isTar: e.target.checked });
-                      }}
-                    />
-                  </div>
-                ))}
+              {(file?.type === 'application/x-tar' ||
+                ipfsInfo.current.type === 'tar') && (
+                <div className={styles.radioGrid}>
+                  <label>Directory</label>
+                  <Checkbox
+                    checked={fileAttr.isTar}
+                    onChange={(e) => {
+                      setFileAttr({ ...fileAttr, isTar: e.target.checked });
+                    }}
+                  />
+                </div>
+              )}
               <div className={styles.radioGrid}>
                 <label>PinStatus</label>
                 <Checkbox
