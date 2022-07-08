@@ -10,7 +10,7 @@ import {
   PartitionOutlined,
   SettingOutlined,
   FieldTimeOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { getScreenWidth } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
@@ -26,7 +26,7 @@ import { speedTime } from '@/config/url';
 import { sessionStorageApi } from '@/config/url';
 import { checkSession } from '@/utils/util';
 import Web3 from 'web3';
-import logo from '../../public/logo.png';
+import logo from '@/assets/img/explore.png';
 
 let ipcRenderer: any = null;
 if (isElectron) {
@@ -327,8 +327,7 @@ const Layouts: React.FC = (props) => {
           }}
         >
           <div className="logo">
-            <img src={logo} alt="" />
-            <span>Explore</span>
+            <img src={logo} alt="logo" />
           </div>
           <Menu
             theme="light"
@@ -382,7 +381,7 @@ const Layouts: React.FC = (props) => {
               style={{ color: '#000' }}
               title={electron ? 'Config' : 'Setting'}
               maskClosable={false}
-              visible={ refresh || (!status || settingVisible)}
+              visible={refresh || !status || settingVisible}
               centered
               closable={status}
               destroyOnClose={true}
