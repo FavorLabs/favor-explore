@@ -254,7 +254,7 @@ const FilesList: React.FC = () => {
       key: 'size',
       render: (text, record) => (
         <span style={{ fontSize: 16 }}>
-          {record.manifest.type !== ('directory') &&
+          {record.manifest.type !== 'directory' &&
           record.manifest.size !== undefined
             ? getSize(record.manifest.size)
             : '*'}
@@ -463,7 +463,7 @@ const FilesList: React.FC = () => {
         }}
         onChange={tableChange}
         locale={{ emptyText: 'No Data' }}
-        scroll={data.length > scrollY / 80 ? { y: scrollY } : {}}
+        // scroll={data.length > scrollY / 80 ? {y: scrollY} : {}}
       />
       <Popup
         visible={!!hashInfo}
@@ -476,7 +476,13 @@ const FilesList: React.FC = () => {
               <div className={styles.name}>
                 FileName:&nbsp;&nbsp;<span>{hashInfo?.manifest.name}</span>
               </div>
-              RCID:&nbsp;&nbsp;<span>{hashInfo?.rootCid}</span>
+              <div>
+                RCID:&nbsp;&nbsp;<span>{hashInfo?.rootCid}</span>
+              </div>
+              <div>
+                Reference:&nbsp;&nbsp;
+                <span>{hashInfo?.manifest.referenceLink?.substring(7)}</span>
+              </div>
             </div>
           </>
         }

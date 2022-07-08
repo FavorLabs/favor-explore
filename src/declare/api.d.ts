@@ -86,6 +86,7 @@ export declare type FileInfo = {
   size?: number;
   ext?: string;
   default?: string;
+  referenceLink?: string;
 };
 
 export declare type AllFileInfo = FileType & {
