@@ -464,7 +464,7 @@ const FilesList: React.FC = () => {
         }}
         onChange={tableChange}
         locale={{ emptyText: 'No Data' }}
-        scroll={data.length > scrollY / 80 ? { y: scrollY } : {}}
+        // scroll={data.length > scrollY / 80 ? {y: scrollY} : {}}
       />
       <Popup
         visible={!!hashInfo}
@@ -482,6 +482,8 @@ const FilesList: React.FC = () => {
               </div>
               <div>
                 Reference:&nbsp;&nbsp;<span>{}</span>
+                Reference:&nbsp;&nbsp;
+                <span>{hashInfo?.manifest.referenceLink?.substring(7)}</span>
               </div>
             </div>
           </>

@@ -26,7 +26,7 @@ import { speedTime } from '@/config/url';
 import { sessionStorageApi } from '@/config/url';
 import { checkSession } from '@/utils/util';
 import Web3 from 'web3';
-import logo from '../../public/logo.png';
+import logo from '@/assets/img/explore.png';
 
 let ipcRenderer: any = null;
 if (isElectron) {
@@ -208,12 +208,12 @@ const Layouts: React.FC = (props) => {
         refresh: true,
       },
     });
-    eventEmitter.on('404', () => {
-      dispatch({
-        type: 'global/setStatus',
-        payload: { status: false },
-      });
-    });
+    // eventEmitter.on('404', () => {
+    //   dispatch({
+    //     type: 'global/setStatus',
+    //     payload: { status: false },
+    //   });
+    // });
     eventEmitter.on('changeSettingModal', (val, str) => {
       setSettingVisible(val);
     });
@@ -327,8 +327,7 @@ const Layouts: React.FC = (props) => {
           }}
         >
           <div className="logo">
-            <img src={logo} alt="" />
-            <span>Explore</span>
+            <img src={logo} alt="logo" />
           </div>
           <Menu
             theme="light"

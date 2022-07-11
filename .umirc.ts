@@ -25,11 +25,11 @@ export default defineConfig({
   webpack5: {},
   publicPath: './',
   theme: {
-    'primary-color': '#399067',
-    'text-color': '#399067',
-    'heading-color': '#399067',
-    'link-color': '#399067',
-    '@main_color': '#399067',
+    'primary-color': '#1fd5ae',
+    'text-color': '#1fd5ae',
+    'heading-color': '#1fd5ae',
+    'link-color': '#1fd5ae',
+    '@main_color': '#1fd5ae',
   },
   define: {
     BUILD_ENV: process.env.BUILD_ENV,

@@ -38,7 +38,7 @@ const Main: React.FC = () => {
   return (
     <div>
       <div className={styles.logo}>
-        <img src={favor} width={150} alt={'logo'} />
+        <img src={'./logo.png'} width={150} alt={'logo'} />
       </div>
       <div
         style={{
