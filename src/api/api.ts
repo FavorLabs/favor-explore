@@ -23,13 +23,17 @@ export const getPort = (url: string): Promise<AxiosResponse<ApiPort>> => {
 
 export const uploadFile = (
   url: string,
-  file: File,
+  file: File | Blob,
   fileAttr: FileAttr,
+  ipfsHash: string = '',
 ): Promise<AxiosResponse<{ reference: string }>> => {
   let fileName: string = fileAttr.name;
   let headers: AxiosRequestConfig['headers'] = {};
   if (fileName) {
     headers['Collection-Name'] = encodeUnicode(fileName);
+  }
+  if (ipfsHash) {
+    headers['Reference-Link'] = 'ipfs://' + ipfsHash;
   }
   headers['Pin'] = fileAttr.pin;
   if (fileAttr.isTar) {

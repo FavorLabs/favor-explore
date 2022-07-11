@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
 import { Row, Col, Card, message } from 'antd';
 import NotConnected from '@/components/notConnected';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
 import { getSize } from '@/utils/util';
+import Keystore from '@/components/keystore';
+import { ethers } from 'ethers';
+import CopyText from '@/components/copyText';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,6 +15,21 @@ const Main: React.FC = () => {
     (state: Models) => state.global,
   );
   const { addresses } = useSelector((state: Models) => state.info);
+
+  const { api } = useSelector((state: Models) => state.global);
+
+  const [balance, setBalance] = useState('');
+  const [account, setAccount] = useState('');
+
+  const getBalance = async () => {
+    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
+    const accounts = await provider.listAccounts();
+    const account = accounts[0];
+    const balance = await provider.getBalance(account);
+    const bnb = ethers.utils.formatEther(balance);
+    setBalance(bnb);
+    setAccount(account);
+  };
 
   const subResult = useRef({
     kad: {
@@ -86,6 +104,7 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     // console.log('width', getScreenWidth());
+    getBalance();
     dispatch({
       type: 'info/getAddresses',
       payload: {
@@ -185,6 +204,66 @@ const Main: React.FC = () => {
                   );
                 })}
               </ul>
+            </div>
+          </Card>
+        </Col>
+        <Col xs={{ span: 24 }} md={{ span: 22, offset: 1 }}>
+          <Card className={styles['card-style']}>
+            <div>
+              <span
+                style={{
+                  fontSize: 16,
+                }}
+              >
+                Account:&nbsp;&nbsp;
+              </span>
+              {account ? (
+                <span>
+                  <span
+                    style={{
+                      fontSize: 14,
+                      color: '#888',
+                    }}
+                  >
+                    {account}
+                  </span>
+                  <CopyText text={account} />
+                </span>
+              ) : (
+                <span className={'loading'}></span>
+              )}
+              <span style={{ marginLeft: 20 }}>
+                <Keystore />
+              </span>
+            </div>
+            <div>
+              <span
+                style={{
+                  fontSize: 16,
+                }}
+              >
+                Balance:&nbsp;&nbsp;
+              </span>
+              {balance ? (
+                <span
+                  style={{
+                    fontSize: 14,
+                    color: '#888',
+                  }}
+                >
+                  {balance}
+                </span>
+              ) : (
+                <span className={'loading'}></span>
+              )}
+              <a
+                className={styles.bnbTest}
+                target={'_blank'}
+                href={'https://faucet.polygon.technology/'}
+                style={{ marginLeft: 20 }}
+              >
+                Faucet
+              </a>
             </div>
           </Card>
         </Col>

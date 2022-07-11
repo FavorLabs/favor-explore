@@ -87,9 +87,7 @@ request.interceptors.response.use(
       eventEmitter.emit('404');
       return Promise.reject(new Error('Connection Failed'));
     }
-    return Promise.reject(
-      error.response?.data ? Error(JSON.stringify(error.response.data)) : error,
-    );
+    return Promise.reject(error.response?.data ? error.response.data : error);
   },
 );
 
