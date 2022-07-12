@@ -85,7 +85,7 @@ request.interceptors.response.use(
     }
     if (error.message === 'Network Error') {
       eventEmitter.emit('404');
-      return Promise.reject(new Error('Connection Failed'));
+      return Promise.reject(new Error('Failed'));
     }
     return Promise.reject(error.response?.data ? error.response.data : error);
   },
