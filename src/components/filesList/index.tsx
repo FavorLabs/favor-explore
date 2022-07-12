@@ -481,7 +481,7 @@ const FilesList: React.FC = () => {
               </div>
               <div>
                 Reference:&nbsp;&nbsp;
-                <span>{hashInfo?.manifest.referenceLink?.substring(7)}</span>
+                <span>{hashInfo?.manifest.referenceLink}</span>
               </div>
             </div>
           </>
