@@ -472,7 +472,7 @@ const FilesList: React.FC = () => {
         }}
         title={
           <>
-            <div className={'info_content'}>
+            <div className={styles.info_content}>
               <div className={styles.name}>
                 FileName:&nbsp;&nbsp;<span>{hashInfo?.manifest.name}</span>
               </div>
