@@ -18,7 +18,7 @@ export const getInfo = (
   let { origin } = new URL(link);
   return request({
     url: origin + '/api/v0/ls/' + hash,
-    timeout: 0,
+    timeout: 20000,
   });
 };
 
