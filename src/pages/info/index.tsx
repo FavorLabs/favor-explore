@@ -8,6 +8,7 @@ import { getSize } from '@/utils/util';
 import Keystore from '@/components/keystore';
 import { ethers } from 'ethers';
 import CopyText from '@/components/copyText';
+import { getFaucet } from '@/config/url';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
@@ -259,7 +260,7 @@ const Main: React.FC = () => {
               <a
                 className={styles.bnbTest}
                 target={'_blank'}
-                href={'https://faucet.polygon.technology/'}
+                href={getFaucet(addresses?.network_id as number)}
                 style={{ marginLeft: 20 }}
               >
                 Faucet
