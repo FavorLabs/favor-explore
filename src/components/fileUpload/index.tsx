@@ -110,7 +110,9 @@ const FileUpload: React.FC = () => {
     if (!/http(s)?/.test(value)) {
       link = 'https://ipfs.io/ipfs/' + link;
     }
-    let hash = link.substring(link.lastIndexOf('/') + 1);
+    let urlInfo = new URL(link);
+    let hash = urlInfo.pathname.split('/').pop() as string;
+    let filename = urlInfo.searchParams.get('filename');
     try {
       const { data } = await getInfo(link, hash);
       ipfsInfo.current = {
@@ -125,11 +127,11 @@ const FileUpload: React.FC = () => {
       setFileAttr({
         ...fileAttr,
         isTar: ipfsInfo.current.type === 'tar',
-        name: hash,
+        name: filename || hash,
       });
       setIpfsModel(false);
     } catch (e) {
-      message.error(link + ' error');
+      message.error('Link Error');
     }
     setLoading(false);
   };
@@ -214,7 +216,7 @@ const FileUpload: React.FC = () => {
               {ipfsInfo.current.link && (
                 <div className={styles.radioGrid}>
                   <label>IPFS Source</label>
-                  {ipfsInfo.current.link}
+                  <span className={styles.link}>{ipfsInfo.current.link}</span>
                 </div>
               )}
               {(file?.type === 'application/x-tar' ||
