@@ -27,7 +27,7 @@ const Main: React.FC = () => {
     {
       img: favorTubeSvg,
       name: 'FavorTube',
-      hash: '8a265cc5cc85d4714a77adc5757a6cbb6807598f2aed40e22eecadd594bf4592',
+      hash: '14f6698cbe064e000b173800ab1f9f88754270eadf5f0af5b8ac5cd93336e14d',
     },
   ];
 
