@@ -5,10 +5,10 @@ export const speedTime = 5000;
 
 export const faucet: Record<number, string> = {
   19: 'https://faucet.polygon.technology/',
-  20: 'https://faucet.metissafe.tech/',
+  20: '',
   21: 'https://www.okx.com/cn/okc/faucet',
 };
 
 export const getFaucet = (network_id: number): string => {
-  return faucet[network_id] || faucet[19];
+  return faucet[network_id] ?? faucet[19];
 };
