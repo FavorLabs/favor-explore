@@ -17,6 +17,8 @@ const Main: React.FC = () => {
   );
   const { addresses } = useSelector((state: Models) => state.info);
 
+  const faucet = getFaucet(addresses?.network_id as number);
+
   const { api } = useSelector((state: Models) => state.global);
 
   const [balance, setBalance] = useState('');
@@ -257,14 +259,16 @@ const Main: React.FC = () => {
               ) : (
                 <span className={'loading'}></span>
               )}
-              <a
-                className={styles.bnbTest}
-                target={'_blank'}
-                href={getFaucet(addresses?.network_id as number)}
-                style={{ marginLeft: 20 }}
-              >
-                Faucet
-              </a>
+              {faucet && (
+                <a
+                  className={styles.bnbTest}
+                  target={'_blank'}
+                  href={faucet}
+                  style={{ marginLeft: 20 }}
+                >
+                  Faucet
+                </a>
+              )}
             </div>
           </Card>
         </Col>
