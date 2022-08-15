@@ -3,6 +3,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { message, Tooltip } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import styles from './index.less';
+import copySvg from '@/assets/icon/explore/copy.svg';
 
 export type Props = {
   text: string;
@@ -18,7 +19,8 @@ const CopyText: React.FC<Props> = (props) => {
           {props.children ? (
             props.children
           ) : (
-            <CopyOutlined className={styles.iconColor} />
+            // <CopyOutlined className={styles.iconColor} />
+            <img src={copySvg} alt="" className={styles.iconColor} />
           )}
         </Tooltip>
       </CopyToClipboard>

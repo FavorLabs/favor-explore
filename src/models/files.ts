@@ -18,7 +18,7 @@ const queryData = {
   filter: [],
 };
 
-interface queryType {
+export interface queryType {
   page: {
     pageNum: number;
     pageSize: number;
@@ -30,7 +30,7 @@ interface queryType {
   filter: filterType[];
 }
 
-interface filterType {
+export interface filterType {
   key: string;
   value: string;
   term: string;
@@ -42,6 +42,14 @@ export interface State {
   downloadList: string[];
   filesTotal: number;
   queryData: queryType;
+  copySourceInfo: {
+    ref: string;
+    source: string;
+    details: {
+      name: string;
+      isDirectory: boolean;
+    };
+  };
 }
 
 export default {
@@ -51,6 +59,14 @@ export default {
     downloadList: [],
     filesTotal: 0,
     queryData,
+    copySourceInfo: {
+      ref: '',
+      source: '',
+      details: {
+        name: '',
+        isDirectory: false,
+      },
+    },
   },
   reducers: {
     deleteDLHash(state, { payload }) {
@@ -114,6 +130,13 @@ export default {
       return {
         ...state,
         queryData,
+      };
+    },
+    setCopySourceInfo(state, { payload }) {
+      const { copySourceInfo } = payload;
+      return {
+        ...state,
+        copySourceInfo,
       };
     },
   },

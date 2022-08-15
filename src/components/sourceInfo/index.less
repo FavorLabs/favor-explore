@@ -2,26 +2,42 @@
   display: flex;
   flex-direction: column;
   max-height: 700px;
-  width: 800px;
+  // width: 800px;
 }
 
 .sourcesList {
   max-height: 125px;
   overflow-y: auto;
+  padding-right: 3px;
 }
 
 .sources {
   padding: 10px 0;
-  border-bottom: 1px #ccc solid;
+  border-bottom: 1px solid var(--text-color-60);
+  .chunk-title {
+    color: var(--text-color);
+  }
 }
 
 .sourcesGrid {
   height: 25px;
-  display: grid;
-  grid-template-columns: 15px 600px auto;
-  gap: 0 10px;
-  justify-items: start;
+  // display: grid;
+  // grid-template-columns: 15px 600px auto;
+  // gap: 0 10px;
+  // justify-items: start;
+  // align-items: center;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+  .label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .overlay {
+      margin-left: 0.7143rem;
+      color: var(--text-color-60);
+    }
+  }
 }
 
 .chunk {
@@ -29,6 +45,7 @@
   margin: 20px 0;
   //height: 500px;
   overflow-y: auto;
+  padding-right: 3px;
 }
 
 .none {

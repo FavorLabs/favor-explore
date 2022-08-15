@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>pin</title>
+    <g id="background-management-system-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Files" transform="translate(-684.000000, -412.000000)" fill="#1FD5AE" fill-rule="nonzero">
+            <path d="M696,412 L704,420 L698.920063,425.081816 C699.352756,427.085696 699.100275,429.260869 698.16262,431.607336 L698,432 L691.75,425.75 L689,428.5 L692.5,432 L690,432 L687.75,429.75 L685.5,432 L684,432 L684,430.5 L686.25,428.25 L684,426 L684,423.5 L687.5,427 L690.25,424.25 L684,418 C686.497708,416.929554 688.804441,416.623011 690.920197,417.080372 L696,412 Z" id="pin"></path>
+        </g>
+    </g>
+</svg>

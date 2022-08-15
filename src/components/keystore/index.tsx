@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Button, Input, message, Modal } from 'antd';
+import { Button, Input, message, Modal, Tooltip } from 'antd';
 import DebugApi from '@/api/debugApi';
 import { useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
 import CopyText from '@/components/copyText';
+import SvgIcon from '../svgIcon';
 import QRCode from 'qrcode.react';
+import styles from './index.less';
+import exportSvg from '@/assets/icon/explore/export_outlined.svg';
+import closureSvg from '@/assets/icon/explore/closure.svg';
 
 const Keystore = () => {
   const { debugApi } = useSelector((state: Models) => state.global);
@@ -43,48 +47,73 @@ const Keystore = () => {
   };
   return (
     <>
-      <Button
-        onClick={() => {
-          setKeyModel(true);
-        }}
-      >
-        Export
-      </Button>
+      <Tooltip title="export" key={'export'}>
+        <img
+          src={exportSvg}
+          alt="export"
+          className={styles['export-btn']}
+          onClick={() => {
+            setKeyModel(true);
+          }}
+        />
+      </Tooltip>
       <Modal
-        title="Export"
         visible={keyModel}
         footer={null}
         centered
         width={250}
-        onCancel={() => {
-          setKeyModel(false);
-        }}
+        closable={false}
+        maskClosable={false}
       >
-        <Button onClick={clickKeystore}>keystore</Button>
-        <Button onClick={clickPrivate} style={{ marginLeft: 20 }}>
-          private
-        </Button>
+        <p className={`${styles.title} bold-font`}>Export</p>
+        <div className={`${styles['export-select-btns']} bold-font`}>
+          <Button className="mainBackground" onClick={clickKeystore}>
+            keystore
+          </Button>
+          <Button className="mainBackground" onClick={clickPrivate}>
+            private
+          </Button>
+        </div>
+        <div className={styles.closeSetting}>
+          <SvgIcon
+            svg={closureSvg}
+            clickFn={() => {
+              setKeyModel(false);
+            }}
+          ></SvgIcon>
+        </div>
       </Modal>
       <Modal
-        title="Password"
         visible={pwdModel}
         centered
         width={250}
-        okText={'Confirm'}
-        cancelText={'Cancel'}
         confirmLoading={loading}
-        onOk={get}
-        onCancel={() => {
-          setLoading(false);
-          setPwdModel(false);
-        }}
+        closable={false}
+        maskClosable={false}
+        footer={null}
       >
+        <p className={`${styles.title} bold-font`}>Password</p>
         <Input
+          className={styles['password-input']}
           placeholder={'Please enter your password'}
           value={password}
           type={'password'}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <div className={`${styles['keystore-select-btns']} bold-font`}>
+          <Button
+            className="mainBackground"
+            onClick={() => {
+              setLoading(false);
+              setPwdModel(false);
+            }}
+          >
+            Cancel
+          </Button>
+          <Button className="mainBackground" onClick={get}>
+            Confirm
+          </Button>
+        </div>
       </Modal>
       {data && (
         <Modal
@@ -95,6 +124,8 @@ const Keystore = () => {
             setDataModel(false);
             setData(null);
           }}
+          closable={false}
+          maskClosable={false}
         >
           {type === 'keystore' ? (
             <>
@@ -115,6 +146,15 @@ const Keystore = () => {
               </div>
             </div>
           )}
+          <div className={styles.closeSetting}>
+            <SvgIcon
+              svg={closureSvg}
+              clickFn={() => {
+                setDataModel(false);
+                setData(null);
+              }}
+            ></SvgIcon>
+          </div>
         </Modal>
       )}
     </>

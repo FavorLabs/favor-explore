@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>menu</title>
+    <g id="controls" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="h5-nav" transform="translate(-339.000000, -20.000000)" fill="#FFFFFF">
+            <path d="M339,20 L359,20 L359,24 L339,24 L339,20 Z M348,28 L359,28 L359,32 L348,32 L348,28 Z M339,36 L359,36 L359,40 L339,40 L339,36 Z M339,26 L339,34 L345,30 L339,26 Z" id="menu"></path>
+        </g>
+    </g>
+</svg>

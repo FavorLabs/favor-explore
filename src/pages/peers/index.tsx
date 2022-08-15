@@ -6,6 +6,8 @@ import NotConnected from '@/components/notConnected';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
 import { connect } from '@/api/debugApi';
+import closureSvg from '@/assets/icon/explore/closure.svg';
+import SvgIcon from '@/components/svgIcon';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
@@ -97,13 +99,11 @@ const Main: React.FC = () => {
       type: 'peers/getBlockList',
       payload: {
         url: debugApi,
-        // url: 'http://183.221.217.71:1701'
       },
     });
   };
 
   useEffect(() => {
-    // console.log('styles', styles);
     dispatch({
       type: 'info/getAddresses',
       payload: {
@@ -138,20 +138,18 @@ const Main: React.FC = () => {
   };
 
   return (
-    <div className={styles.content}>
-      <Row>
-        <Col
-          xs={{ span: 20, offset: 2 }}
-          md={{ span: 5, offset: 1 }}
-          xxl={{ span: 5, offset: 0 }}
-        >
+    <div className={`${styles.content} bold-font`}>
+      <Row className={styles['top-cards']}>
+        <Col xs={{ span: 11, offset: 0 }} md={{ span: 5, offset: 0 }}>
           <Card
-            className={`${styles['card-style']} ${styles['card-minheight']}`}
+            className={`${styles['card-style']}`}
             bordered={false}
             size="small"
           >
-            <div className={styles['card-line']}>
-              Discovered Full Peers
+            <div
+              className={`${styles['card-line']} ${styles['card-minheight']}`}
+            >
+              <span>Discovered Full Peers</span>
               <p>
                 {(topology?.population || 0) +
                   (topology?.bootNodes?.population || 0)}
@@ -159,18 +157,12 @@ const Main: React.FC = () => {
             </div>
           </Card>
         </Col>
-        <Col
-          xs={{ span: 20, offset: 2 }}
-          md={{ span: 5, offset: 1 }}
-          xxl={{ span: 5, offset: 1 }}
-        >
-          <Card
-            className={`${styles['card-style']} ${styles['card-minheight']}`}
-            bordered={false}
-            size="small"
-          >
-            <div className={styles['card-line']}>
-              Connected Full Peers
+        <Col xs={{ span: 11, offset: 1 }} md={{ span: 5, offset: 1 }}>
+          <Card className={styles['card-style']} bordered={false} size="small">
+            <div
+              className={`${styles['card-line']} ${styles['card-minheight']}`}
+            >
+              <span>Connected Full Peers</span>
               <p>
                 {(topology?.connected || 0) +
                   (topology?.bootNodes?.connected || 0)}
@@ -178,41 +170,29 @@ const Main: React.FC = () => {
             </div>
           </Card>
         </Col>
-        <Col
-          xs={{ span: 20, offset: 2 }}
-          md={{ span: 5, offset: 1 }}
-          xxl={{ span: 5, offset: 1 }}
-        >
-          <Card
-            className={`${styles['card-style']} ${styles['card-minheight']}`}
-            bordered={false}
-            size="small"
-          >
-            <div className={styles['card-line']}>
-              Connected Light Peers
+        <Col xs={{ span: 11, offset: 0 }} md={{ span: 5, offset: 1 }}>
+          <Card className={styles['card-style']} bordered={false} size="small">
+            <div
+              className={`${styles['card-line']} ${styles['card-minheight']}`}
+            >
+              <span>Connected Light Peers</span>
               <p>{topology?.lightNodes?.connected || 0}</p>
             </div>
           </Card>
         </Col>
-        <Col
-          xs={{ span: 20, offset: 2 }}
-          md={{ span: 5, offset: 1 }}
-          xxl={{ span: 5, offset: 1 }}
-        >
-          <Card
-            className={`${styles['card-style']} ${styles['card-minheight']}`}
-            bordered={false}
-            size="small"
-          >
-            <div className={styles['card-line']}>
-              Depth
+        <Col xs={{ span: 11, offset: 1 }} md={{ span: 5, offset: 1 }}>
+          <Card className={styles['card-style']} bordered={false} size="small">
+            <div
+              className={`${styles['card-line']} ${styles['card-minheight']}`}
+            >
+              <span>Depth</span>
               <p>{topology?.depth || 0}</p>
             </div>
           </Card>
         </Col>
       </Row>
       <div className={styles['peers-tabBar']}>
-        <div className={styles['tabBar-left']}>
+        <div className={`${styles['tabBar-left']} bold-font`}>
           <h4
             className={peersList === 'full' ? styles.selected : ''}
             onClick={() => {
@@ -242,8 +222,7 @@ const Main: React.FC = () => {
           </h4>
         </div>
         <Button
-          className={styles['addConnection-small']}
-          type="primary"
+          className={`${styles['addConnection-small']} mainBackground bold-font`}
           size="small"
           onClick={() => {
             setVisible(true);
@@ -251,43 +230,31 @@ const Main: React.FC = () => {
         >
           Add
         </Button>
-        <Button
-          className={styles['addConnection-large']}
-          type="primary"
-          size="small"
+        <span
+          className={`${styles['addConnection-large']} mainColor bold-font`}
           onClick={() => {
             setVisible(true);
           }}
         >
           Add Connection
-        </Button>
+        </span>
         <Modal
-          title="Add Connection"
-          footer={[
-            <Button key="back" onClick={cancel}>
-              Cancel
-            </Button>,
-            <Button
-              key="submit"
-              disabled={!connectValue}
-              onClick={connectHandle}
-            >
-              Add
-            </Button>,
-          ]}
+          footer={null}
           visible={visible}
+          closable={false}
           onCancel={cancel}
           centered={true}
-          width={720}
-          style={{ color: '#000' }}
+          maskClosable={false}
+          width={'42.8571rem'}
+          className={`bold-font ${styles['add-connection-modal']}`}
           bodyStyle={{ padding: '20px 15px' }}
         >
           <div>
-            <div>
+            <p className={styles.title}>Add Connection</p>
+            <div className={styles.desc}>
               Insert the peer underlay/overlay address you want to connect to.
             </div>
-            <div>Example:</div>
-            <div className={'greyColor'}>
+            <div className={styles.example}>
               /ip4/192.100.255.18/tcp/1634/p2p/16Uiu2HAkvEorAWzPfdbThKexs1TQAhAjXMTTwtSSsQNzdbbHUovK
             </div>
             {/*<div className={'greyColor'}>{addresses?.underlay?.[0]}</div>*/}
@@ -296,12 +263,32 @@ const Main: React.FC = () => {
             <Input
               value={connectValue}
               onChange={(e) => setConnectValue(e.target.value)}
-              style={{ marginTop: 10 }}
+              className={styles.input}
             />
+            <Button
+              className={`mainBackground ${styles.ok}`}
+              key="submit"
+              disabled={!connectValue}
+              onClick={connectHandle}
+            >
+              OK
+            </Button>
+            {/* <img
+              className={styles.close}
+              src={closureSvg}
+              alt=""
+              onClick={() => setVisible(false)}
+            /> */}
+            <div className={styles.close}>
+              <SvgIcon
+                svg={closureSvg}
+                clickFn={() => setVisible(false)}
+              ></SvgIcon>
+            </div>
           </div>
         </Modal>
       </div>
-      <Row style={{ marginTop: '.5rem' }}>
+      <Row style={{ marginTop: '10px' }}>
         <Col>
           <PeersList
             peers={

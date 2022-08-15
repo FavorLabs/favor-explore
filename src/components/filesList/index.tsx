@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Table,
   Tooltip,
@@ -8,10 +14,11 @@ import {
   message,
   Input,
   Button,
+  Drawer,
 } from 'antd';
 
 const { confirm } = Modal;
-import { ColumnsType } from 'antd/es/table';
+import { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import { AllFileInfo } from '@/declare/api';
 import styles from './index.less';
 import {
@@ -22,18 +29,45 @@ import {
 import CopyText from '@/components/copyText';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
-import { getSize, stringToBinary, getProgress, getSuffix } from '@/utils/util';
+import {
+  getSize,
+  stringToBinary,
+  getProgress,
+  getSuffix,
+  isPC,
+} from '@/utils/util';
 
-import pinSvg from '@/assets/icon/pin.svg';
-import unPinSvg from '@/assets/icon/unPin.svg';
-import regSvg from '@/assets/icon/reg.svg';
-import unRegSvg from '@/assets/icon/unReg.svg';
+import pinSvg from '@/assets/icon/explore/pin.svg';
+import unpinSvg from '@/assets/icon/explore/unpin.svg';
+import regSvg from '@/assets/icon/explore/register_open.svg';
+import unRegSvg from '@/assets/icon/explore/register_closed.svg';
+import informationSvg from '@/assets/icon/explore/information.svg';
+import folderOpenSvg from '@/assets/icon/explore/folder_open.svg';
+import modifySvg from '@/assets/icon/explore/modify.svg';
+import deleteSvg from '@/assets/icon/explore/delete.svg';
+import closureSvg from '@/assets/icon/explore/closure.svg';
+import moreSvg from '@/assets/icon/explore/more.svg';
 import Popup from '@/components/popup';
 import SourceInfo from '@/components/sourceInfo';
-import { updateFileRegister, loadFileListMenu } from '@/api/api';
+import SvgIcon from '@/components/svgIcon';
+import { updateFileRegister } from '@/api/api';
 import { mapQueryM3u8 } from '@/utils/util';
 import Loading from '@/components/loading';
+import Folder from '@/components/folder';
 import { ethers } from 'ethers';
+import { filterType } from '@/models/files';
+import {
+  FilterValue,
+  SorterResult,
+  TableCurrentDataSource,
+} from 'antd/lib/table/interface';
+
+type OnChange = (
+  pagination: TablePaginationConfig,
+  filters: Record<string, FilterValue | null>,
+  sorter: SorterResult<AllFileInfo> | SorterResult<AllFileInfo>[],
+  extra: TableCurrentDataSource<AllFileInfo>,
+) => void;
 
 const FilesList: React.FC = () => {
   const dispatch = useDispatch();
@@ -49,24 +83,27 @@ const FilesList: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [top, setTop] = useState(0);
   const [fileMenuVisible, setFileMenuVisible] = useState(false);
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [operateDrawer, setOperateDrawer] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<AllFileInfo | null>(null);
 
   const pageSizeOption = [10, 20, 50, 100];
 
   let [fileNameValue, setFileNameValue] = useState('');
   let [fileHashValue, setFileHashValue] = useState('');
 
-  const tableChange = (pagination, filters, sorter, extra) => {
+  const tableChange: OnChange = (pagination, filters, sorter, extra) => {
     console.log('onchange', extra);
     if (extra.action === 'paginate') {
       paginationChange(pagination);
     } else if (extra.action === 'sort') {
-      sortChange(sorter);
+      sortChange(sorter as SorterResult<AllFileInfo>);
     } else {
       // filters
     }
   };
 
-  const paginationChange = (p) => {
+  const paginationChange = (p: TablePaginationConfig) => {
     dispatch({
       type: 'files/changeQuery',
       payload: {
@@ -81,7 +118,7 @@ const FilesList: React.FC = () => {
     });
   };
 
-  const sortChange = (s) => {
+  const sortChange = (s: SorterResult<AllFileInfo>) => {
     console.log('s', s);
     let keyStr = 'rootCid';
     if (s.order === undefined) {
@@ -90,9 +127,9 @@ const FilesList: React.FC = () => {
       if (s.columnKey === 'hash') {
         keyStr = 'rootCid';
       } else if (s.columnKey === 'size') {
-        keyStr = 'fileSize';
+        keyStr = 'size';
       } else if (s.columnKey === 'pin') {
-        keyStr = 'pinState';
+        keyStr = 'pinned';
       }
     }
     dispatch({
@@ -114,18 +151,18 @@ const FilesList: React.FC = () => {
     });
   };
 
-  const fileNameChange = (e) => {
+  const fileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileNameValue(e.target.value);
   };
 
-  const fileHashChange = (e) => {
+  const fileHashChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFileHashValue(e.target.value);
   };
 
   const searchHandel = () => {
     let temArr = [
       {
-        key: 'manifest.name',
+        key: 'name',
         value: fileNameValue,
       },
       {
@@ -133,7 +170,7 @@ const FilesList: React.FC = () => {
         value: fileHashValue,
       },
     ];
-    let filterArr = [];
+    let filterArr: filterType[] = [];
     temArr.forEach((item) => {
       if (item.value) {
         filterArr.push({
@@ -210,50 +247,54 @@ const FilesList: React.FC = () => {
       if (e instanceof Error) message.error(e.message);
     }
   };
-
-  const loadFileListMenu = async () => {
-    // const data = await loadFileListMenu(api)
-  };
-
   // table field
   const columns: ColumnsType<AllFileInfo> = [
     {
       title: <div className={styles.head}>File</div>,
       key: 'hash',
       render: (text, record) => (
-        <>
-          <div style={{ fontSize: 16 }} className={styles.fileName}>
-            {record.manifest.name}
+        <div className={styles.fileCol}>
+          <div className={styles.fileName}>{record.manifest.name}</div>
+          <div className={styles.fileDetail}>
+            <span className={`${styles.fileRcid} ${styles['small-screen']}`}>
+              <Tooltip placement="topLeft" title={record.rootCid}>
+                {record.rootCid}
+              </Tooltip>
+            </span>
+            <span className={`${styles.fileRcid} ${styles['large-screen']}`}>
+              {record.rootCid}
+            </span>
+            <div className={styles.fileOperate}>
+              <CopyText text={record.rootCid} />{' '}
+              <div className={`mainColor ${styles['file-chunkinfo']}`}>
+                <img
+                  src={informationSvg}
+                  alt=""
+                  onClick={() => {
+                    clickHandle(record);
+                  }}
+                />
+              </div>
+            </div>
           </div>
-          <span style={{ marginRight: 5, color: '#666' }}>
-            {record.rootCid}
-          </span>
-          <CopyText text={record.rootCid} />{' '}
-          <ExclamationCircleOutlined
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              clickHandle(record);
-            }}
-            className={`mainColor ${styles['file-chunkinfo']}`}
-          />
           {downloadList.indexOf(record.rootCid) !== -1 && (
-            <div style={{ width: '70%', display: 'flex' }}>
+            <div className={styles['download-precent']}>
               <Progress
                 percent={getProgress(record.bitVector.b)}
                 showInfo={false}
               />
             </div>
           )}
-        </>
+        </div>
       ),
-      width: 600,
+      width: isPC() ? 450 : 150,
       sorter: true,
     },
     {
       title: <div className={styles.head}>Size</div>,
       key: 'size',
       render: (text, record) => (
-        <span style={{ fontSize: 16 }}>
+        <span className={styles.size}>
           {record.manifest.type !== 'directory' &&
           record.manifest.size !== undefined
             ? getSize(record.manifest.size)
@@ -261,9 +302,12 @@ const FilesList: React.FC = () => {
         </span>
       ),
       align: 'center',
-      width: 150,
+      width: 100,
       sorter: true,
     },
+  ];
+
+  const operation: ColumnsType<AllFileInfo> = [
     {
       title: <div className={styles.head}>Pin/UnPin</div>,
       key: 'pin',
@@ -277,8 +321,8 @@ const FilesList: React.FC = () => {
             >
               <img
                 alt={'pinStatus'}
-                src={record.pinState ? pinSvg : unPinSvg}
-                width={25}
+                src={record.pinState ? pinSvg : unpinSvg}
+                width={20}
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   pinOrUnPin(record.rootCid, record.pinState);
@@ -289,7 +333,7 @@ const FilesList: React.FC = () => {
         </>
       ),
       align: 'center',
-      width: 150,
+      width: 65,
       sorter: true,
     },
     {
@@ -305,8 +349,12 @@ const FilesList: React.FC = () => {
               <img
                 alt={'register'}
                 src={record.register ? regSvg : unRegSvg}
-                width={30}
-                style={{ cursor: 'pointer' }}
+                width={32}
+                style={{
+                  cursor: 'pointer',
+                  background: '#555',
+                  borderRadius: '32px',
+                }}
                 onClick={() => {
                   registerHandle(record.rootCid, !record.register);
                 }}
@@ -316,48 +364,72 @@ const FilesList: React.FC = () => {
         </>
       ),
       align: 'center',
-      width: 100,
+      width: 65,
     },
     {
       title: <div className={styles.head}>Open</div>,
-      key: 'open',
+      key: 'Open',
       render: (text, record) => (
-        <div
-          onClick={() => {
-            if (
-              // record.manifest.type === 'file' ||
-              record.manifest.type === 'directory'
-            ) {
-              // directory
-              window.open(`${api}/file/${record.rootCid}`);
-            } else {
-              // file
-              if (getSuffix(record.manifest.default ?? '') === 'm3u8') {
-                window.open(`#/video/${record.rootCid}`);
-              } else {
+        <div className={styles['operation-open']}>
+          <img
+            src={folderOpenSvg}
+            alt="open"
+            onClick={() => {
+              if (
+                record.manifest.type === 'file' ||
+                record.manifest.type === 'directory'
+              ) {
+                // directory
                 window.open(`${api}/file/${record.rootCid}`);
+                // console.log('record.manifest.type', record.manifest.type);
+                // setCurrentRecord(record);
+                // setFileMenuVisible(true);
+              } else {
+                // file
+                if (getSuffix(record.manifest.default ?? '') === 'm3u8') {
+                  window.open(`#/video/${record.rootCid}`);
+                } else {
+                  window.open(`${api}/file/${record.rootCid}`);
+                }
               }
-            }
-          }}
-        >
-          <FolderOpenOutlined className={'mainColor iconSize'} />
+            }}
+          />
         </div>
       ),
       align: 'center',
-      width: 100,
+      width: 65,
+    },
+    {
+      title: <div className={styles.head}>Modify</div>,
+      key: 'Modify',
+      render: (text, record) => (
+        <div className={styles['operation-modify']}>
+          <img
+            src={modifySvg}
+            alt=""
+            onClick={() => {
+              setCurrentRecord(record);
+              setFileMenuVisible(true);
+            }}
+          />
+        </div>
+      ),
+      align: 'center',
+      width: 65,
     },
     {
       title: <div className={styles.head}>Delete</div>,
       key: 'Delete',
       render: (text, record) => (
-        <>
-          <DeleteOutlined
-            className={'mainColor iconSize'}
+        <div className={styles['operation-delete']}>
+          <img
+            src={deleteSvg}
+            alt="delete"
             onClick={() => {
               confirm({
-                title: (
-                  <div className={'info_content'}>
-                    <div style={{ marginBottom: 10 }}>
+                content: (
+                  <div className={styles['info-content-t']}>
+                    <div className={`${styles.title} bold-font`}>
                       Are you sure to delete the file?
                     </div>
                     <div className={styles.name}>
@@ -369,7 +441,7 @@ const FilesList: React.FC = () => {
                 okText: 'Yes',
                 okType: 'danger',
                 icon: <></>,
-                maskClosable: true,
+                // maskClosable: true,
                 centered: true,
                 cancelText: 'No',
                 onOk() {
@@ -378,12 +450,47 @@ const FilesList: React.FC = () => {
               });
             }}
           />
-        </>
+        </div>
       ),
-      width: 100,
+      width: 65,
       align: 'center',
     },
   ];
+
+  if (isPC()) {
+    operation.forEach((item) => {
+      columns.push(item);
+    });
+  } else {
+    columns.push({
+      title: 'Operate',
+      key: 'operate',
+      render: (text, record) => (
+        <>
+          <img
+            src={moreSvg}
+            alt="more"
+            onClick={() => {
+              setCurrentRecord(record);
+              setOperateDrawer(true);
+            }}
+          />
+        </>
+      ),
+      align: 'center',
+      width: 90,
+    });
+  }
+
+  const closeFileMenu = () => {
+    dispatch({
+      type: 'files/getFilesList',
+      payload: {
+        url: api,
+      },
+    });
+    setFileMenuVisible(false);
+  };
 
   useEffect(() => {
     setTop(
@@ -394,7 +501,7 @@ const FilesList: React.FC = () => {
   }, []);
 
   const scrollY = useMemo(() => {
-    let h = document.body.clientHeight - top - 30;
+    let h = document.body.clientHeight - top - 130;
     if (h < 200) return 200;
     return h;
   }, [document.body.clientHeight, top]);
@@ -436,15 +543,15 @@ const FilesList: React.FC = () => {
             onPressEnter={searchHandel}
           />
         </div>
-        <div className={styles['search-btn']}>
-          <Button
-            style={{ marginLeft: '20px' }}
-            type="primary"
-            onClick={searchHandel}
-          >
-            Search
-          </Button>
+        <div className={`mainBackground bold-font ${styles['search-btn']}`}>
+          <span onClick={searchHandel}>Search</span>
         </div>
+      </div>
+      <div
+        className={`${styles['searchBox-m']} mainBackground`}
+        onClick={() => setSearchModalVisible(true)}
+      >
+        Search
       </div>
       <Table<AllFileInfo>
         className={styles.filesList}
@@ -463,7 +570,7 @@ const FilesList: React.FC = () => {
         }}
         onChange={tableChange}
         locale={{ emptyText: 'No Data' }}
-        // scroll={data.length > scrollY / 80 ? {y: scrollY} : {}}
+        scroll={data.length > scrollY / 80 ? { y: scrollY } : {}}
       />
       <Popup
         visible={!!hashInfo}
@@ -472,16 +579,12 @@ const FilesList: React.FC = () => {
         }}
         title={
           <>
-            <div className={styles.info_content}>
-              <div className={styles.name}>
+            <div className={styles['info-content']}>
+              <div className={`bold-font ${styles.name}`}>
                 FileName:&nbsp;&nbsp;<span>{hashInfo?.manifest.name}</span>
               </div>
-              <div>
+              <div className={`bold-font ${styles.rcid}`}>
                 RCID:&nbsp;&nbsp;<span>{hashInfo?.rootCid}</span>
-              </div>
-              <div>
-                Reference:&nbsp;&nbsp;
-                <span>{hashInfo?.manifest.referenceLink}</span>
               </div>
             </div>
           </>
@@ -490,29 +593,214 @@ const FilesList: React.FC = () => {
         {hashInfo && <SourceInfo hashInfo={hashInfo} />}
       </Popup>
       <Modal
-        style={{ color: '#000' }}
-        title={'File List'}
-        maskClosable={true}
+        className={styles['file-menu']}
+        maskClosable={false}
         visible={fileMenuVisible}
         centered
-        closable={true}
+        closable={false}
         destroyOnClose={true}
-        onCancel={() => {
-          setFileMenuVisible(false);
-        }}
-        footer={[
-          <Button
-            key={'close'}
+        // onCancel={() => {
+        //   setFileMenuVisible(false);
+        // }}
+        footer={null}
+      >
+        <Folder
+          rootCid={currentRecord?.rootCid as string}
+          changeRootCidFn={(cid) => {
+            const temp = JSON.parse(JSON.stringify(currentRecord));
+            temp.rootCid = cid;
+            // console.log('temp', temp);
+            setCurrentRecord(temp);
+          }}
+          closeMenuFn={closeFileMenu}
+        ></Folder>
+      </Modal>
+      <Modal
+        maskClosable={true}
+        visible={searchModalVisible}
+        centered
+        closable={false}
+        destroyOnClose={true}
+        footer={null}
+        className={styles['search-modal']}
+      >
+        <p className={`${styles.title} bold-font`}>Search</p>
+        <div className={styles.inputs}>
+          <Input
+            placeholder="input search filename"
+            allowClear
+            onChange={fileNameChange}
+            onPressEnter={searchHandel}
+          />
+          <Input
+            placeholder="input search filehash"
+            allowClear
+            onChange={fileHashChange}
+            onPressEnter={searchHandel}
+          />
+        </div>
+        <div
+          className={`mainBackground bold-font ${styles['search-modal-btn']}`}
+        >
+          <span onClick={searchHandel}>Search</span>
+        </div>
+        <div className={styles.closeSetting}>
+          <SvgIcon
+            svg={closureSvg}
+            clickFn={() => setSearchModalVisible(false)}
+          ></SvgIcon>
+        </div>
+      </Modal>
+      <Drawer
+        placement="bottom"
+        closable={false}
+        onClose={() => setOperateDrawer(false)}
+        visible={operateDrawer}
+        key="operateDrawer"
+        className={styles['operate-drawer']}
+        width="100%"
+        height="auto"
+      >
+        <div className={styles['operation-item']}>
+          <p>Pin/Unpin</p>
+          <>
+            {/0/.test(currentRecord?.bitVector.b as string) || (
+              <Tooltip
+                placement="top"
+                title={
+                  currentRecord?.pinState ? 'unpin the file' : 'pin the file'
+                }
+                arrowPointAtCenter
+              >
+                <img
+                  alt={'pinStatus'}
+                  src={currentRecord?.pinState ? pinSvg : unpinSvg}
+                  width={20}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    pinOrUnPin(
+                      currentRecord?.rootCid as string,
+                      currentRecord?.pinState as boolean,
+                    );
+                    setOperateDrawer(false);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </>
+        </div>
+        <div className={styles['operation-item']}>
+          <p>Register</p>
+          <>
+            {/0/.test(currentRecord?.bitVector.b as string) || (
+              <Tooltip
+                placement="top"
+                title={currentRecord?.register ? 'Unregister' : 'Register'}
+                arrowPointAtCenter
+              >
+                <img
+                  alt={'register'}
+                  src={currentRecord?.register ? regSvg : unRegSvg}
+                  width={32}
+                  style={{
+                    cursor: 'pointer',
+                    background: '#555',
+                    borderRadius: '32px',
+                  }}
+                  onClick={() => {
+                    registerHandle(
+                      currentRecord?.rootCid as string,
+                      !currentRecord?.register,
+                    );
+                    setOperateDrawer(false);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </>
+        </div>
+        <div className={styles['operation-item']}>
+          <p>Open</p>
+          <div
             onClick={() => {
-              setFileMenuVisible(false);
+              if (
+                // record.manifest.type === 'file' ||
+                currentRecord?.manifest.type === 'directory'
+              ) {
+                // directory
+                window.open(`${api}/file/${currentRecord?.rootCid}`);
+              } else {
+                // file
+                if (
+                  getSuffix(currentRecord?.manifest.default ?? '') === 'm3u8'
+                ) {
+                  window.open(`#/video/${currentRecord?.rootCid}`);
+                } else {
+                  window.open(`${api}/file/${currentRecord?.rootCid}`);
+                }
+              }
+              setOperateDrawer(false);
             }}
           >
-            close
-          </Button>,
-        ]}
-      >
-        <div className="fileList">//</div>
-      </Modal>
+            <img src={folderOpenSvg} alt="" />
+          </div>
+        </div>
+        <div className={styles['operation-item']}>
+          <p>Modify</p>
+          <>
+            <img
+              className={styles['operation-modify']}
+              src={modifySvg}
+              alt=""
+              onClick={() => {
+                setFileMenuVisible(true);
+                setOperateDrawer(false);
+              }}
+            />
+          </>
+        </div>
+        <div className={styles['operation-item']}>
+          <p>Delete</p>
+          <>
+            <img
+              src={deleteSvg}
+              alt="delete"
+              onClick={() => {
+                confirm({
+                  content: (
+                    <div className={styles['info-content-t']}>
+                      <div className={`${styles.title} bold-font`}>
+                        Are you sure to delete the file?
+                      </div>
+                      <div className={styles.name}>
+                        FileName:&nbsp;&nbsp;
+                        <span>{currentRecord?.manifest.name}</span>
+                      </div>
+                      RCID:&nbsp;&nbsp;<span>{currentRecord?.rootCid}</span>
+                    </div>
+                  ),
+                  okText: 'Yes',
+                  okType: 'danger',
+                  icon: <></>,
+                  // maskClosable: true,
+                  centered: true,
+                  cancelText: 'No',
+                  onOk() {
+                    confirmDelete(currentRecord?.rootCid as string);
+                    setOperateDrawer(false);
+                  },
+                });
+              }}
+            />
+          </>
+        </div>
+        <div
+          className={`${styles.cancel} bold-font`}
+          onClick={() => setOperateDrawer(false)}
+        >
+          Cancel
+        </div>
+      </Drawer>
       {loading && <Loading text={'Loading'} status={loading} />}
     </div>
   );

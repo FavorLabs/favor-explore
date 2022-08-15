@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="6px" height="10px" viewBox="0 0 6 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>down</title>
+    <g id="controls" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bottom-bar" transform="translate(-335.000000, -19.000000)" fill="#1FD557">
+            <path d="M338,19 L341,22 L341,24.5 L339,22.5 L339,29 L337,29 L337,22.5 L335,24.5 L335,22 L338,19 Z" id="down" transform="translate(338.000000, 24.000000) scale(1, -1) translate(-338.000000, -24.000000) "></path>
+        </g>
+    </g>
+</svg>

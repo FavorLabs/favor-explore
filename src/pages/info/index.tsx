@@ -2,37 +2,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.less';
 import { Row, Col, Card, message } from 'antd';
 import NotConnected from '@/components/notConnected';
+import Speed from '@/components/speed';
+import CopyText from '@/components/copyText';
+import Keystore from '@/components/keystore';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
 import { getSize } from '@/utils/util';
-import Keystore from '@/components/keystore';
 import { ethers } from 'ethers';
-import CopyText from '@/components/copyText';
-import { getFaucet } from '@/config/url';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
-  const { debugApi, health, topology, ws, metrics } = useSelector(
+  const { api, debugApi, health, topology, ws, metrics } = useSelector(
     (state: Models) => state.global,
   );
   const { addresses } = useSelector((state: Models) => state.info);
-
-  const faucet = getFaucet(addresses?.network_id as number);
-
-  const { api } = useSelector((state: Models) => state.global);
+  const { account } = useSelector((state: Models) => state.accounting);
 
   const [balance, setBalance] = useState('');
-  const [account, setAccount] = useState('');
-
-  const getBalance = async () => {
-    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
-    const accounts = await provider.listAccounts();
-    const account = accounts[0];
-    const balance = await provider.getBalance(account);
-    const bnb = ethers.utils.formatEther(balance);
-    setBalance(bnb);
-    setAccount(account);
-  };
 
   const subResult = useRef({
     kad: {
@@ -105,9 +91,23 @@ const Main: React.FC = () => {
     });
   };
 
+  const getBalance = async () => {
+    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
+    const accounts = await provider.listAccounts();
+    const account = accounts[0];
+    dispatch({
+      type: 'accounting/setAccount',
+      payload: {
+        account,
+      },
+    });
+    const balance = await provider.getBalance(account);
+    const bnb = ethers.utils.formatEther(balance);
+    setBalance(bnb);
+  };
+
   useEffect(() => {
     // console.log('width', getScreenWidth());
-    getBalance();
     dispatch({
       type: 'info/getAddresses',
       payload: {
@@ -115,6 +115,7 @@ const Main: React.FC = () => {
       },
     });
     getTopology();
+    getBalance();
     subKad();
     return () => {
       unSub();
@@ -122,59 +123,122 @@ const Main: React.FC = () => {
   }, []);
 
   return (
-    <div className={styles.content}>
+    <div className={`bold-font ${styles.content}`}>
       <Row>
-        <Col xs={{ span: 24 }} md={{ span: 6, offset: 1 }}>
+        <Col className={styles['info-col']} xs={{ span: 24 }} md={{ span: 24 }}>
           <Card
             className={`${styles['card-style']} ${styles['card-minheight']}`}
             bordered={false}
             size="small"
           >
-            <div className={styles['card-line']}>
-              NODE MODE:{' '}
-              <span>
-                {health?.bootNodeMode
-                  ? 'Boot Node'
-                  : health?.fullNode
-                  ? 'Full Node'
-                  : 'Light Node'}
-              </span>
-            </div>
-            <div className={styles['card-line']}>
-              AGENT VERSION: <span>{health?.version}</span>
-            </div>
-            <div className={styles['card-line']}>
-              NETWORK ID: <span>{addresses?.network_id}</span>
+            <div className={styles['card-inner']}>
+              <div className={styles['card-line']}>
+                <p>NODE MODE</p>
+                <span>
+                  {health?.bootNodeMode
+                    ? 'Boot Node'
+                    : health?.fullNode
+                    ? 'Full Node'
+                    : 'Light Node'}
+                </span>
+              </div>
+              <div className={styles['card-line']}>
+                <p>AGENT VERSION</p>
+                <span>{health?.version}</span>
+              </div>
+              <div className={styles['card-line']}>
+                <p>NETWORK ID</p>
+                <span>{addresses?.network_id}</span>
+              </div>
             </div>
           </Card>
         </Col>
-        <Col xs={{ span: 24 }} md={{ span: 6, offset: 2 }}>
+        <Col className={styles['info-col']} xs={{ span: 24 }} md={{ span: 24 }}>
           <Card
             className={`${styles['card-style']} ${styles['card-minheight']}`}
             bordered={false}
             size="small"
           >
-            <div className={styles['card-line']}>
-              IPv4: <span>{addresses?.public_ip?.ipv4}</span>
-            </div>
-            <div className={styles['card-line']}>
-              IPv6: <span>{addresses?.public_ip?.ipv6}</span>
-            </div>
-            <div className={styles['card-line']}>
-              NAT ROUTE:{' '}
-              <span>
-                {addresses?.nat_route?.map((item, index) => {
-                  return (
-                    <span key={index} style={{ marginRight: 20 }}>
-                      {item}
+            <div className={`${styles['card-inner']} ${styles['card-center']}`}>
+              <div className={styles['card-line']}>
+                <p>IPv4</p>
+                <span>{addresses?.public_ip?.ipv4}</span>
+              </div>
+              <div className={styles['card-line']}>
+                <p>IPv6</p>
+                <span>{addresses?.public_ip?.ipv6}</span>
+              </div>
+              <div className={styles['card-line']}>
+                <p>NAT ROUTE</p>
+                <span>
+                  {addresses?.nat_route?.map((item, index) => {
+                    return (
+                      <span key={index} style={{ marginRight: 20 }}>
+                        {item}
+                      </span>
+                    );
+                  })}
+                </span>
+              </div>
+              <div className={styles['card-line-out']}>
+                <div className={styles['card-line']}>
+                  <p>PUBLIC KEY</p>
+                  <span>{addresses?.public_key}</span>
+                </div>
+                <div
+                  className={`${styles['card-line']} ${styles['remove-bot-mar']}`}
+                >
+                  <p>OVERLAY ADDRESS</p>
+                  <span>{addresses?.overlay}</span>
+                </div>
+              </div>
+              <div className={styles['card-line']}>
+                <p>UNDERLAY ADDRESS</p>
+                <ul style={{ padding: 0 }} className={styles.ul}>
+                  {addresses?.underlay?.map((item, index) => {
+                    return (
+                      <li key={index}>
+                        <span>{item}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+              {/* <div
+                className={`${styles['card-line']} ${styles['remove-bot-mar']}`}
+              >
+                <div className={styles['account-info']}>
+                  <p>Account:&nbsp;</p>
+                  <div className={styles.details}>
+                    <span className={styles['account-balance']}>
+                      {account ? account : <span className="loading"></span>}
                     </span>
-                  );
-                })}
-              </span>
+                    &nbsp;
+                    <CopyText text={account} />
+                    &nbsp;
+                    <Keystore />
+                  </div>
+                </div>
+                <div className={styles['balance-info']}>
+                  <p>Balance:&nbsp;</p>
+                  <div className={styles.details}>
+                    <span className={styles['account-balance']}>
+                      {balance ? balance : <span className="loading"></span>}
+                    </span>
+                    <a
+                      target="_blank"
+                      href="https://faucet.polygon.technology/"
+                      style={{ marginLeft: 20 }}
+                    >
+                      Faucet
+                    </a>
+                  </div>
+                </div>
+              </div> */}
             </div>
           </Card>
         </Col>
-        <Col xs={{ span: 24 }} md={{ span: 6, offset: 2 }}>
+        {/* <Col xs={{ span: 24 }} md={{ span: 6, offset: 2 }}>
           <Card
             className={`${styles['card-style']} ${styles['card-minheight']}`}
             bordered={false}
@@ -187,92 +251,11 @@ const Main: React.FC = () => {
               Retrieved: <span>{getSize(metrics.downloadTotal * 256, 1)}</span>
             </div>
           </Card>
-        </Col>
-        <Col xs={{ span: 24 }} md={{ span: 22, offset: 1 }}>
-          <Card className={styles['card-style']} bordered={false} size="small">
-            <div className={styles['card-line']}>
-              PUBLIC KEY: <span>{addresses?.public_key}</span>
-            </div>
-            <div className={styles['card-line']}>
-              OVERLAY ADDRESS: <span>{addresses?.overlay}</span>
-            </div>
-            <div className={styles['card-line']}>
-              UNDERLAY ADDRESS:
-              <ul>
-                {addresses?.underlay?.map((item, index) => {
-                  return (
-                    <li key={index}>
-                      <span>{item}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={{ span: 24 }} md={{ span: 22, offset: 1 }}>
-          <Card className={styles['card-style']}>
-            <div>
-              <span
-                style={{
-                  fontSize: 16,
-                }}
-              >
-                Account:&nbsp;&nbsp;
-              </span>
-              {account ? (
-                <span>
-                  <span
-                    style={{
-                      fontSize: 14,
-                      color: '#888',
-                    }}
-                  >
-                    {account}
-                  </span>
-                  <CopyText text={account} />
-                </span>
-              ) : (
-                <span className={'loading'}></span>
-              )}
-              <span style={{ marginLeft: 20 }}>
-                <Keystore />
-              </span>
-            </div>
-            <div>
-              <span
-                style={{
-                  fontSize: 16,
-                }}
-              >
-                Balance:&nbsp;&nbsp;
-              </span>
-              {balance ? (
-                <span
-                  style={{
-                    fontSize: 14,
-                    color: '#888',
-                  }}
-                >
-                  {balance}
-                </span>
-              ) : (
-                <span className={'loading'}></span>
-              )}
-              {faucet && (
-                <a
-                  className={styles.bnbTest}
-                  target={'_blank'}
-                  href={faucet}
-                  style={{ marginLeft: 20 }}
-                >
-                  Faucet
-                </a>
-              )}
-            </div>
-          </Card>
-        </Col>
+        </Col> */}
       </Row>
+      <div className={styles['speed-chart']}>
+        {addresses?.overlay && <Speed />}
+      </div>
     </div>
   );
 };

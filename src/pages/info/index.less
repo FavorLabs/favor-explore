@@ -1,21 +1,193 @@
 .content {
+  width: inherit;
+  white-space: normal;
+  word-break: break-all;
+  word-wrap: break-word;
+  margin-top: 26px;
   .card-style {
-    color: #000;
-    margin: 0.8rem 0;
+    font-size: 1rem;
     border-radius: 0.1875rem;
-    box-shadow: 0 2px 10px 2px #ccc;
+    background-color: var(--card-bg);
+    transition: background-color var(--transition-val);
     .card-line {
+      width: 33.3333%;
+      color: var(--text-color);
+      transition: color var(--transition-val);
       margin-bottom: 0.5rem;
-      span {
-        color: #888;
+      p {
+        margin-bottom: 0.7143rem;
+      }
+      span:not(.account-balance) {
+        // color: #888;
+        height: 1.5714rem;
+        -webkit-line-clamp: 1;
+      }
+      ul {
+        flex: 1;
       }
       ul li {
-        color: #888;
         margin-left: 1rem;
       }
     }
+    .card-line-out {
+      width: 33.3333%;
+      .card-line {
+        width: 100%;
+        p {
+          width: 70%;
+        }
+        span {
+          // display: block;
+          width: 70%;
+          height: 3.1429rem;
+          -webkit-line-clamp: 2;
+        }
+      }
+    }
+    .remove-bot-mar {
+      margin-bottom: 0;
+    }
   }
   .card-minheight {
-    min-height: 10rem;
+    // min-height: 10rem;
+  }
+  .card-inner {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    p {
+      opacity: 0.6;
+    }
+    span:not(.account-balance) {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+  .card-center {
+    align-items: flex-start;
+    .card-line {
+      margin-bottom: 21px;
+    }
+    > div {
+      // max-width: 33.3333%;
+    }
+    > div:nth-child(5),
+    > div:last-child {
+      max-width: 65%;
+      width: auto;
+    }
+    > div:last-child {
+      position: absolute;
+      left: 33.6333%;
+      bottom: 12px;
+      .account-info,
+      .balance-info {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        > p {
+          margin-bottom: 0;
+        }
+        .details {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+        }
+      }
+      .account-balance {
+        color: var(--text-color);
+      }
+    }
+  }
+  .info-col {
+    margin-top: 10px;
+    padding: 0.3571rem;
+    box-sizing: border-box;
+  }
+  .info-col:first-child {
+    margin-top: 0;
+  }
+  .speed-chart {
+    margin-top: 0.7143rem;
+    padding: 0.3571rem;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .content {
+    .card-style {
+      .card-line-out {
+        .card-line {
+          span {
+            width: 100%;
+          }
+        }
+      }
+    }
+    .card-inner {
+      flex-direction: column;
+    }
+    .card-line {
+      display: flex;
+      justify-content: space-between;
+      width: 100% !important;
+    }
+    .card-center {
+      > * {
+        max-width: none;
+      }
+      .card-line {
+        margin-bottom: 1rem;
+      }
+      > div:nth-child(5) {
+        max-width: 100%;
+        flex-direction: column;
+        .ul li span {
+          height: auto;
+          -webkit-line-clamp: inherit;
+        }
+      }
+      .card-line-out {
+        width: 100%;
+        .card-line {
+          flex-direction: column;
+        }
+      }
+      > div:last-child {
+        position: unset;
+        max-width: unset;
+        flex-direction: column;
+        .account-info,
+        .balance-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          > p {
+            margin-bottom: 0;
+          }
+          .account-balance {
+            color: var(--text-color);
+          }
+          .details {
+            display: block;
+          }
+        }
+        .account-info {
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          margin-bottom: 1rem;
+          .details {
+            margin-top: 0.2857rem;
+            img {
+              width: 1.1429rem;
+              height: 1.1429rem;
+            }
+          }
+        }
+      }
+    }
   }
 }

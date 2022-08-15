@@ -1,11 +1,11 @@
 import React from 'react';
-import styles from './index.less';
-import { eventEmitter } from '@/utils/util';
+// import styles from './index.less';
+// import { eventEmitter } from '@/utils/util';
 
 const NotConnected: React.FC = () => {
   return (
     <>
-      <div className={styles.notConnected}>
+      {/* <div className={styles.notConnected}>
         <p>Looks like your node is not connected</p>
         <p>
           please check your API / DebugAPI{' '}
@@ -18,7 +18,7 @@ const NotConnected: React.FC = () => {
             settings
           </span>
         </p>
-      </div>
+      </div> */}
     </>
   );
 };
