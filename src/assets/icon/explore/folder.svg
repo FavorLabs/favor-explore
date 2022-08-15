@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>folder</title>
+    <g id="background-management-system-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Files" transform="translate(-346.000000, -114.000000)" fill="#1FD5AE" fill-rule="nonzero">
+            <g id="group-5" transform="translate(221.000000, 114.000000)">
+                <path d="M159,0 L165,16 L165,40 L125,40 L125,16 L131,0 L159,0 Z M129,36 L161,36 L161,19 L152.747,19 L152.703596,19.1650102 C151.780901,22.4549202 148.807415,24.8873285 145.249179,24.9961932 L145,25 C141.331996,25 138.240557,22.5314298 137.296404,19.1650102 L137.252,19 L129,19 L129,36 Z M156.227,4 L133.772,4 L129.646,15 L141,15 L141,17 C141,19.209139 142.790861,21 145,21 C147.142195,21 148.891079,19.3160315 148.995105,17.1996403 L149,17 L149,15 L160.352,15 L156.227,4 Z" id="folder"></path>
+            </g>
+        </g>
+    </g>
+</svg>

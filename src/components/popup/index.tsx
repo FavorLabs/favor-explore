@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import classNames from 'classnames';
+import SvgIcon from '../svgIcon';
 
 import narrowSvg from '@/assets/icon/narrow.svg';
 import deleteSvg from '@/assets/icon/delete.svg';
 import enlargeSvg from '@/assets/icon/enlarge.svg';
+import closureSvg from '@/assets/icon/explore/closure.svg';
 
 type Props = {
   title?: string | React.ReactNode;
@@ -27,23 +29,15 @@ const Popup: React.FC<Props> = (props) => {
             })}
           >
             <div className={styles.header}>
-              <span>{props.title}</span>
-              <div>
-                {/*<img*/}
-                {/*  src={full ? narrowSvg : enlargeSvg}*/}
-                {/*  alt={''}*/}
-                {/*  onClick={clickHandle}*/}
-                {/*  style={{ cursor: 'pointer' }}*/}
-                {/*/>*/}
-                <img
-                  src={deleteSvg}
-                  onClick={() => {
+              <div className={styles.title}>{props.title}</div>
+              <div className={styles.close}>
+                <SvgIcon
+                  svg={closureSvg}
+                  clickFn={() => {
                     setFull(false);
                     props.onCancel();
                   }}
-                  alt={'cancel'}
-                  style={{ cursor: 'pointer' }}
-                />
+                ></SvgIcon>
               </div>
             </div>
             <div className={styles.content}>{props.children}</div>

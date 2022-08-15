@@ -86,7 +86,6 @@ export declare type FileInfo = {
   size?: number;
   ext?: string;
   default?: string;
-  referenceLink?: string;
 };
 
 export declare type AllFileInfo = FileType & {
@@ -137,4 +136,17 @@ export declare type ChunkSource = {
 export declare type ApiPort = {
   debugApiPort: string;
   rpcWsPort: string;
+};
+
+export declare type FolderResource = {
+  target?: string;
+  source?: string;
+  ref?: string;
+  op: number;
+};
+
+export declare type FileListMenu = {
+  type: string;
+  name?: string;
+  sub?: object;
 };

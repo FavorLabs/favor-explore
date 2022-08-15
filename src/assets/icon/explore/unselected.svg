@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>unselected</title>
+    <g id="background-management-system-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.400000006">
+        <g id="Files上传RAR选中dir" transform="translate(-611.000000, -246.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M628,246 C629.656854,246 631,247.343146 631,249 L631,263 C631,264.656854 629.656854,266 628,266 L614,266 C612.343146,266 611,264.656854 611,263 L611,249 C611,247.343146 612.343146,246 614,246 L628,246 Z M628,248 L614,248 C613.487164,248 613.064493,248.38604 613.006728,248.883379 L613,249 L613,263 C613,263.512836 613.38604,263.935507 613.883379,263.993272 L614,264 L628,264 C628.512836,264 628.935507,263.61396 628.993272,263.116621 L629,263 L629,249 C629,248.487164 628.61396,248.064493 628.116621,248.006728 L628,248 Z" id="unselected"></path>
+        </g>
+    </g>
+</svg>

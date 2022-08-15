@@ -1,0 +1,316 @@
+#nprogress .bar {
+  background-color: @main_color !important;
+  background: #29d;
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+}
+
+#nprogress .spinner {
+  display: block;
+  position: fixed;
+  z-index: 10svg-icon;
+  height: 18px;
+  box-sizing: border-box;
+  border: solid 2px transparent;
+  border-top-color: #29d;
+  border-left-color: #29d;
+  border-radius: 50%;
+  animation: nprogress-spinner 400ms linear infinite;
+}
+
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.ant-progress-bg {
+  transition: all 0.5s !important;
+}
+
+.ant-input {
+  &:hover {
+    border-color: @main_color !important;
+    outline: @main_color !important;
+  }
+
+  &:focus {
+    border-color: @main_color !important;
+    outline: @main_color !important;
+  }
+}
+
+.ant-btn,
+.ant-upload-drbag {
+  background-color: @main_color !important;
+  color: #fafafa !important;
+  &:hover {
+    color: #fafafa !important;
+    //color: @main_color !important;
+    border-color: @main_color !important;
+    outline: @main_color !important;
+  }
+
+  &:focus {
+    color: #fafafa !important;
+    //color: @main_color !important;
+    border-color: @main_color !important;
+    outline: @main_color !important;
+  }
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner,
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+  border: 1px solid @main_color !important;
+}
+
+.ant-checkbox-svg-icon .info_content {
+  ul,
+  li {
+    padding: 0;
+    margin: 0;
+  }
+
+  div {
+    height: 30px;
+    line-height: 30px;
+  }
+
+  span {
+    color: #666;
+  }
+}
+
+@keyframes king {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: king 1s linear infinite;
+}
+
+.ant-btn-primary {
+  border: none !important;
+}
+
+.ant-modal {
+  border-radius: 0.2143rem;
+}
+
+.ant-modal-body {
+  background: var(--modal-bg);
+  border-radius: 0.2143rem;
+}
+
+.ant-drawer-content {
+  background-color: transparent !important;
+}
+
+.ant-drawer-body {
+  padding: 1.1429rem !important;
+  font-size: unset !important;
+  background: var(--modal-bg);
+}
+
+.ant-modal-footer {
+  background: var(--modal-bg) !important;
+}
+
+.ant-modal-content {
+  background-color: transparent !important;
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-content {
+  color: var(--text-color) !important;
+}
+
+.ant-modal-confirm-btns button {
+  background: @main-background!important;
+}
+
+.ant-message-notice-content {
+  color: var(--text-color);
+  background-color: var(--main-bg);
+  transition: color var(--transition-val),
+    background-color var(--transition-val);
+  box-shadow: 0 0 4px 2px #888;
+  .ant-message-custom-content {
+    span {
+      vertical-align: middle;
+    }
+  }
+}
+
+.ant-layout-sider {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 20;
+  background: rgba(30, 30, 30, 0.95) !important;
+  // backdrop-filter: blur(10px);
+}
+.ant-layout-header,
+.ant-layout-footer {
+  color: var(--text-color) !important;
+}
+
+.ant-menu {
+  background: rgba(30, 30, 30, 0.95) !important;
+}
+
+.ant-menu-title-content {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.ant-btn {
+  border: none !important;
+}
+
+.ant-table {
+  background: transparent !important;
+}
+
+.ant-table-thead > tr > th {
+  color: var(--text-color-60) !important;
+  transition: color var(--transition-val);
+  border-color: var(--text-color-08) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.ant-table-cell-row-hover {
+  background: var(--table-hover-bg) !important;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--text-color-08) !important;
+}
+
+.ant-table-tbody > tr.ant-table-placeholder:hover > td {
+  background: var(--table-hover-bg) !important;
+}
+
+.ant-progress-inner {
+  height: 3px !important;
+  background-color: var(--text-color-60) !important;
+}
+
+.ant-progress-bg {
+  height: 3px !important;
+  background-color: @main_color!important;
+}
+
+.ant-table-cell-scrollbar:not([rowspan]) {
+  box-shadow: none !important;
+}
+.ant-table-column-sort {
+  background: transparent !important;
+}
+
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: var(--table-hover-bg) !important;
+}
+
+.ant-table-pagination {
+  padding: 0 1.4286rem !important;
+  align-items: center;
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    min-width: 1.1429rem !important;
+    height: 1.1429rem !important;
+    button {
+      color: var(--text-color-60) !important;
+      background: transparent !important;
+      line-height: 100%;
+    }
+  }
+  .ant-pagination-item {
+    border: none;
+    background: transparent !important;
+    a {
+      color: var(--text-color);
+    }
+  }
+  .ant-pagination-item-active a {
+    color: @main_color;
+  }
+  .ant-pagination-options {
+    .ant-select-selector {
+      border: none !important;
+      background: transparent !important;
+      .ant-select-selection-item {
+        color: var(--text-color) !important;
+      }
+    }
+    .ant-select-dropdown {
+      background: var(--main-bg-50) !important;
+      .ant-select-item-option-selected {
+        background: var(--main-bg);
+      }
+      .ant-select-item-option {
+        color: var(--text-color) !important;
+      }
+    }
+  }
+  .ant-select-arrow {
+    color: var(--text-color);
+  }
+}
+
+.ant-upload.ant-upload-drag .ant-upload {
+  padding: 0 !important;
+}
+
+.ant-upload.ant-upload-drag {
+  border: none !important;
+  border-radius: 0.7143rem;
+  background: transparent !important;
+}
+
+.ant-popover-content {
+  .ant-popover-arrow {
+    span {
+      background: var(--main-bg);
+    }
+  }
+  .ant-popover-inner {
+    background: var(--main-bg);
+    border-radius: 0.2143rem;
+    box-shadow: 0 0 10px 5px var(--text-color-08);
+    .ant-popover-inner-content {
+      color: var(--text-color);
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .ant-input-affix-wrapper {
+    padding: 0.2857rem 0.7857rem;
+  }
+
+  .ant-modal {
+    max-width: calc(100vw - 3rem) !important;
+  }
+}

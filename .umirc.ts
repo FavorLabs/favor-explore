@@ -25,14 +25,22 @@ export default defineConfig({
   webpack5: {},
   publicPath: './',
   theme: {
-    'primary-color': '#1fd5ae',
-    'text-color': '#1fd5ae',
-    'heading-color': '#1fd5ae',
-    'link-color': '#1fd5ae',
-    '@main_color': '#1fd5ae',
+    // 'primary-color': 'linear-gradient(180deg, #1FD5AE 0%, #0E8E73 100%)',
+    'primary-color': '#1FD5AE',
+    'text-color': '#fff',
+    // 'heading-color': '#399067',
+    // 'link-color': '#399067',
+    '@main_color': '#1FD5AE',
   },
   define: {
     BUILD_ENV: process.env.BUILD_ENV,
   },
-  mfsu: {},
+  // mfsu:{}
+  chainWebpack: (config) => {
+    config.module
+      .rule('fonts')
+      .test(/\.(eot|woff|woff2|ttf)(\?.*)?$/)
+      .use('file-loader')
+      .loader(require.resolve('@umijs/deps/compiled/file-loader'));
+  },
 });

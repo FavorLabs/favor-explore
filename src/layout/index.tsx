@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useHistory, useSelector, useDispatch } from 'umi';
-import { Layout, Menu, Button, message, Modal } from 'antd';
+import { useHistory, useSelector, useDispatch, useLocation } from 'umi';
+import { Layout, Menu, Button, message, Modal, Input } from 'antd';
 import '../assets/font/iconfont.css';
 import {
   MenuFoldOutlined,
@@ -12,34 +12,67 @@ import {
   FieldTimeOutlined,
   InfoCircleOutlined,
 } from '@ant-design/icons';
-import { getScreenWidth } from '@/utils/util';
+import {
+  getScreenWidth,
+  checkSession,
+  eventEmitter,
+  formatStr,
+  getSize,
+  isPC,
+  flexible,
+  checkTheme,
+  isRunUrl,
+} from '@/utils/util';
 import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
 import Loading from '@/components/loading';
 import SettingApi from '@/components/settingApi';
 import FavorConfigEdit from '@/components/favorConfigEdit';
-import './index.less';
+import SvgIcon from '@/components/svgIcon';
+import styles from './index.less';
 import { Models } from '@/declare/modelType';
 import { version, isElectron } from '@/config/version';
-import { eventEmitter } from '@/utils/util';
 import { speedTime } from '@/config/url';
 import { sessionStorageApi } from '@/config/url';
-import { checkSession } from '@/utils/util';
 import Web3 from 'web3';
-import logo from '@/assets/img/explore.png';
+import logo_d from '../assets/img/logo_d.png';
+import logo_l from '../assets/img/logo_l.png';
+import balanceSvg from '@/assets/icon/explore/balance.svg';
+import settingSvg from '@/assets/icon/explore/setting.svg';
+import infoSvg from '@/assets/icon/explore/info.svg';
+import upSvg from '@/assets/icon/explore/up.svg';
+import downSvg from '@/assets/icon/explore/down.svg';
+import peersSvg from '@/assets/icon/explore/peers.svg';
+import sunSvg from '@/assets/icon/explore/sun.svg';
+import moonSvg from '@/assets/icon/explore/moon.svg';
+import serachSvg from '@/assets/icon/explore/search.svg';
+import expandSvg from '@/assets/icon/explore/expand.svg';
+import '@/utils/theme.ts';
+import { setTheme } from '@/utils/theme';
+import { themeType } from '@/models/global';
+import { defaultTheme } from '@/config/themeConfig';
+
+type shortcutType = {
+  name: string;
+  img: string;
+  hash: string;
+};
 
 let ipcRenderer: any = null;
 if (isElectron) {
   ipcRenderer = window.require('electron').ipcRenderer;
 }
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 const Layouts: React.FC = (props) => {
   const history = useHistory();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(true);
   const [settingVisible, setSettingVisible] = useState(false);
+  const [fileHash, setFileHash] = useState('');
+  const [headerSearch, setHeaderSearch] = useState(false);
   const {
     status,
     metrics,
@@ -50,6 +83,8 @@ const Layouts: React.FC = (props) => {
     electron,
     wsApi,
     ws,
+    topology,
+    logoTheme,
   } = useSelector((state: Models) => state.global);
 
   const [apiValue, setApiValue] = useState<string>(
@@ -70,16 +105,8 @@ const Layouts: React.FC = (props) => {
 
   const MenuItem = [
     {
-      key: '/',
-      icon: <HomeOutlined />,
-      label: 'Home',
-      onClick: () => {
-        switchPage('/');
-      },
-    },
-    {
       key: '/info',
-      icon: <InfoCircleOutlined />,
+      icon: <img className={styles['menu-icon']} src={infoSvg} alt="" />,
       label: 'Info',
       onClick: () => {
         switchPage('/info');
@@ -101,15 +128,60 @@ const Layouts: React.FC = (props) => {
         switchPage('/files');
       },
     },
-    // {
-    //   key: '/setting',
-    //   icon: <SettingOutlined />,
-    //   label: 'Settings',
-    //   onClick: () => {
-    //     switchPage('/setting');
-    //   },
-    // },
+    {
+      key: '/setting',
+      icon: <SettingOutlined />,
+      label: 'Settings',
+      onClick: () => {
+        switchPage('/setting');
+      },
+    },
   ];
+
+  const data: shortcutType[] = [
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+    {
+      name: '',
+      img: '',
+      hash: '',
+    },
+  ];
+
+  const switchThemeSvg = logoTheme === 'dark' ? sunSvg : moonSvg;
 
   if (electron) {
     MenuItem.push({
@@ -160,7 +232,41 @@ const Layouts: React.FC = (props) => {
     setSettingVisible(false);
   };
 
+  const setThemeStatus = (theme: themeType) => {
+    setTheme(theme);
+    dispatch({
+      type: 'global/setLogoTheme',
+      payload: {
+        logoTheme: theme,
+      },
+    });
+  };
+
+  const switchTheme = () => {
+    const theme = localStorage.getItem('theme');
+    console.log('theme', theme);
+    if (theme) {
+      if (theme === 'light') {
+        setThemeStatus('dark');
+      } else {
+        setThemeStatus('light');
+      }
+    } else {
+      setThemeStatus(defaultTheme);
+    }
+  };
+
+  const searchHandle = () => {
+    if (fileHash.trim()) {
+      isRunUrl(api, fileHash);
+      // window.open(api + '/file/' + fileHash, '_blank');
+    }
+  };
+
   useEffect(() => {
+    flexible(window, document);
+    // let theme = localStorage.getItem('theme');
+    // theme ? setTheme(theme) : setTheme('dark');
     if (electron) {
       ipcRenderer.on('start', (event: any, message: any) => {
         dispatch({
@@ -208,12 +314,12 @@ const Layouts: React.FC = (props) => {
         refresh: true,
       },
     });
-    // eventEmitter.on('404', () => {
-    //   dispatch({
-    //     type: 'global/setStatus',
-    //     payload: { status: false },
-    //   });
-    // });
+    eventEmitter.on('404', () => {
+      dispatch({
+        type: 'global/setStatus',
+        payload: { status: false },
+      });
+    });
     eventEmitter.on('changeSettingModal', (val, str) => {
       setSettingVisible(val);
     });
@@ -224,12 +330,12 @@ const Layouts: React.FC = (props) => {
     console.log('status', status);
     if (status) {
       getMetrics(debugApi, true);
-      // timer.current = setInterval(() => {
-      //   dispatch({
-      //     type: 'global/updateChart',
-      //     payload: {},
-      //   });
-      // }, speedTime);
+      timer.current = setInterval(() => {
+        dispatch({
+          type: 'global/updateChart',
+          payload: {},
+        });
+      }, speedTime);
       console.log('wsApi', wsApi);
       let ws: any = new Web3.providers.WebsocketProvider(wsApi, {
         reconnect: {
@@ -264,8 +370,8 @@ const Layouts: React.FC = (props) => {
             dispatch({
               type: 'global/updateChunkOrRetrieval',
               payload: {
-                chunkInfoUpload: res.aurora_chunkinfo_total_transferred,
-                chunkInfoDownload: res.aurora_chunkinfo_total_retrieved,
+                chunkInfoUpload: res.chunkinfo_total_transferred,
+                chunkInfoDownload: res.chunkinfo_total_retrieved,
               },
             });
           });
@@ -287,8 +393,8 @@ const Layouts: React.FC = (props) => {
             dispatch({
               type: 'global/updateChunkOrRetrieval',
               payload: {
-                retrievalUpload: res.aurora_retrieval_total_transferred,
-                retrievalDownload: res.aurora_retrieval_total_retrieved,
+                retrievalUpload: res.retrieval_total_transferred,
+                retrievalDownload: res.retrieval_total_retrieved,
               },
             });
           });
@@ -300,115 +406,281 @@ const Layouts: React.FC = (props) => {
           ws,
         },
       });
+      dispatch({
+        type: 'global/getTopology',
+        payload: {
+          url: debugApi,
+        },
+      });
     }
     //  else {
     //  setSettingVisible(true);
     //  }
   }, [status, api]);
 
+  useEffect(() => {
+    history.listen((historyLocation) => {
+      // console.log('router change', historyLocation);
+      historyLocation.pathname === '/'
+        ? setHeaderSearch(false)
+        : setHeaderSearch(true);
+      checkTheme();
+    });
+  }, [history]);
+
   return (
     <>
-      <Layout>
-        <Sider
-          defaultCollapsed={true}
-          trigger={null}
-          collapsible
-          collapsed={collapsed}
-          width="250"
-          collapsedWidth={0}
-          breakpoint={'md'}
-          className="asider"
-          onBreakpoint={(broken) => {
-            // console.log(broken);
-          }}
-          onCollapse={(collapsed, type) => {
-            // console.log(collapsed, type);
-            setCollapsed(collapsed);
-          }}
-        >
-          <div className="logo">
-            <img src={logo} alt="logo" />
-          </div>
-          <Menu
-            theme="light"
-            mode="inline"
-            defaultSelectedKeys={[`${history.location.pathname}`]}
-            items={MenuItem}
-          />
-          <span
-            className={
-              collapsed ? 'trigger_btn trigger_btn_collapsed' : 'trigger_btn'
-            }
+      <Layout className={styles.main_layout}>
+        <Layout className={styles.site_layout}>
+          <Header
+            className={`site_layout_background ${styles.layout_header}`}
+            onMouseLeave={() => {
+              const expandEl = document.querySelector(
+                '.expand-content',
+              ) as HTMLElement;
+              expandEl.className = expandEl.className.replace(
+                'expand-show',
+                'expand-hidden',
+              );
+              const timer = setTimeout(() => {
+                clearTimeout(timer);
+                expandEl.className = expandEl.className.replace(
+                  'expand-hidden',
+                  '',
+                );
+              }, 800);
+            }}
           >
-            {React.createElement(
-              collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-              {
-                className: 'trigger',
-                onClick: () => setCollapsed(!collapsed),
-              },
-            )}
-          </span>
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="site-layout-background layout-header">
-            {/* <span className='icon iconfont icon-caidan menu-home'></span> */}
-            {/* <HomeOutlined
-              className="menu-home"
-              onClick={() => {
-                history.push('/');
-              }}
-            /> */}
-            <div className="account-address">
-              {/* <AccountAddress /> */}
-              <SettingOutlined
-                style={{ fontSize: '1.5rem' }}
-                onClick={() => {
-                  setSettingVisible(true);
-                }}
-              />
+            <div className={styles.layout_header_left}>
+              <div
+                className={styles.explore_logo}
+                onClick={() => history.push('/')}
+              >
+                {logoTheme === 'dark' ? (
+                  <img src={logo_d} alt="" />
+                ) : (
+                  <img src={logo_l} alt="" />
+                )}
+              </div>
+              {headerSearch && (
+                <>
+                  <div className={`${styles['header-search']}`}>
+                    <Input
+                      className={styles.input}
+                      value={fileHash}
+                      prefix={
+                        <SvgIcon
+                          svg={serachSvg}
+                          clickFn={searchHandle}
+                        ></SvgIcon>
+                      }
+                      onChange={(e) => setFileHash(e.currentTarget.value)}
+                      onPressEnter={searchHandle}
+                    ></Input>
+                  </div>
+                  {/* <div
+                    className={styles.expand}
+                    onMouseEnter={() => {
+                      const expandEl = document.querySelector(
+                        '.expand-content',
+                      ) as HTMLElement;
+                      const list = expandEl.classList;
+                      // console.log('list', list);
+                      if (list.length === 2) {
+                        expandEl.className =
+                          expandEl.className.trim() + ' expand-show';
+                      } else {
+                        if (
+                          expandEl.className.indexOf('expand-hidden') !== -1
+                        ) {
+                          expandEl.className = expandEl.className.replace(
+                            'expand-hidden',
+                            'expand-show',
+                          );
+                        }
+                      }
+                    }}
+                  >
+                    <SvgIcon svg={expandSvg}></SvgIcon>
+                  </div> */}
+                </>
+              )}
+            </div>
+            <div className={styles.layout_header_right}>
+              {/* <div className={styles.account_info}>
+                <span><SvgIcon svg={balanceSvg}></SvgIcon></span>
+                <span>234.0000000&nbsp;USDT</span>
+                <span>{formatStr('a5f8d3fc........', 8)}</span>
+              </div> */}
+              <div className={styles.set_theme_btn}>
+                {logoTheme === 'dark' ? (
+                  <SvgIcon svg={sunSvg} clickFn={() => switchTheme()}></SvgIcon>
+                ) : (
+                  <></>
+                )}
+                {logoTheme === 'light' ? (
+                  <SvgIcon
+                    svg={moonSvg}
+                    clickFn={() => switchTheme()}
+                  ></SvgIcon>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <div className={styles.setting_btn}>
+                <SvgIcon
+                  svg={settingSvg}
+                  clickFn={() => setSettingVisible(true)}
+                ></SvgIcon>
+              </div>
+              {/* <div className={styles.menu_btn}>
+                <img
+                  src={menuSvg}
+                  onClick={() => {
+                    setCollapsed(!collapsed);
+                  }}
+                />
+              </div> */}
+            </div>
+            <div className={`${styles['expand-content']} expand-content`}>
+              <nav>
+                {data.map((item, index) => {
+                  return (
+                    <a
+                      href={api + '/file/' + item.hash}
+                      target="_blank"
+                      key={item.hash + index}
+                      className={styles['expand-item']}
+                    ></a>
+                  );
+                })}
+              </nav>
             </div>
           </Header>
           <Content
-            className="site-layout-background layout-content"
-            style={{
-              margin: '15px 6px 0 6px',
-              padding: 10,
-              minHeight: 280,
-            }}
+            className={`site_layout_background ${styles.layout_content}`}
           >
             <article>{props.children}</article>
             <Modal
-              style={{ color: '#000' }}
-              title={electron ? 'Config' : 'Setting'}
+              className={styles.setting_modal}
+              style={{ position: 'relative' }}
+              title={null}
               maskClosable={false}
               visible={refresh || !status || settingVisible}
               centered
-              closable={status}
+              closable={false}
               destroyOnClose={true}
               onCancel={closeSettingModal}
-              footer={[
-                <Button key={'connect'} onClick={saveApi}>
-                  Connect
-                </Button>,
-              ]}
+              width={'31.4286rem'}
+              footer={null}
             >
               {electron ? (
                 <>
                   <FavorConfigEdit />
                 </>
               ) : (
-                <SettingApi
-                  value={apiValue.trim()}
-                  title={'API Endpoint'}
-                  fn={setApiValue}
-                  saveApi={saveApi}
-                />
+                <>
+                  <SettingApi
+                    value={apiValue.trim()}
+                    title={'API Endpoint'}
+                    fn={setApiValue}
+                    saveApi={saveApi}
+                    closeFn={closeSettingModal}
+                  />
+                </>
               )}
             </Modal>
           </Content>
+          <Footer className={styles.layout_footer}>
+            <div className={styles['layout-footer-info']}>{'-'}</div>
+            <div
+              className={styles.layout_footer_left}
+              onClick={() => history.push('/info')}
+            >
+              <div className={styles.to_info}>
+                <img src={infoSvg} alt="" />
+                <span>info</span>
+              </div>
+              <span className={`${styles.version_info}`}>
+                <span className={`${styles.opacity_6}`}>Version:</span>&nbsp;
+                <span className="mainColor">{status && health?.version}</span>
+              </span>
+              <div className={styles.up_speed}>
+                <img src={upSvg} alt="" />
+                <span>
+                  {getSize((metrics.uploadSpeed * 256) / (speedTime / 1000), 1)}
+                  /s
+                </span>
+              </div>
+              <div className={styles.down_speed}>
+                <img src={downSvg} alt="" />
+                <span>
+                  {getSize(
+                    (metrics.downloadSpeed * 256) / (speedTime / 1000),
+                    1,
+                  )}
+                  /s
+                </span>
+              </div>
+            </div>
+            <div
+              className={styles.layout_footer_right}
+              onClick={() => history.push('/peers')}
+            >
+              <div className={styles.to_peers}>
+                <img src={peersSvg} alt="" />
+                <span>Peers</span>
+              </div>
+              <div className={`bold-font ${styles.connexted_full}`}>
+                <span
+                  className={`${styles.connected_peer_info} ${styles.opacity_6}`}
+                >
+                  Connected Full Peers:
+                </span>
+                <span className="mainColor">
+                  {(topology?.connected || 0) +
+                    (topology?.bootNodes?.connected || 0)}
+                </span>
+              </div>
+              <div className="bold-font">
+                <span
+                  className={`${styles.connected_peer_info} ${styles.opacity_6}`}
+                >
+                  Depth:
+                </span>
+                <span className="mainColor">{topology?.depth || 0}</span>
+              </div>
+            </div>
+          </Footer>
         </Layout>
+        {/* <Sider
+          defaultCollapsed={true}
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          width="250"
+          collapsedWidth={0}
+          breakpoint={'lg'}
+          className={styles['layout-sider']}
+          onBreakpoint={(broken) => {
+            // console.log(broken);
+          }}
+          onCollapse={(collapsed, type) => {
+            // console.log(collapsed, type);
+            // setCollapsed(collapsed);
+          }}
+        >
+          <Menu
+            theme="dark"
+            mode="inline"
+            defaultSelectedKeys={[]}
+            items={MenuItem}
+            className={styles.menu}
+            style={{ marginTop: '2rem' }}
+          />
+        </Sider> */}
         <div
-          className="sider-mask"
+          className={styles.sider_mask}
           style={collapsed ? { display: 'none' } : {}}
           onClick={() => {
             setCollapsed(!collapsed);

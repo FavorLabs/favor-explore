@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="20px" viewBox="0 0 18 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>setting</title>
+    <g id="background-management-system-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="home" transform="translate(-1402.000000, -20.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M1411,20 L1420,25 L1420,35 L1411,40 L1402,35 L1402,25 L1411,20 Z M1411,22.288 L1404,26.176 L1404,33.823 L1411,37.711 L1418,33.822 L1418,26.177 L1411,22.288 Z M1411,26 C1413.20914,26 1415,27.790861 1415,30 C1415,32.209139 1413.20914,34 1411,34 C1408.79086,34 1407,32.209139 1407,30 C1407,27.790861 1408.79086,26 1411,26 Z M1411,28 C1409.89543,28 1409,28.8954305 1409,30 C1409,31.1045695 1409.89543,32 1411,32 C1412.10457,32 1413,31.1045695 1413,30 C1413,28.8954305 1412.10457,28 1411,28 Z" id="setting"></path>
+        </g>
+    </g>
+</svg>

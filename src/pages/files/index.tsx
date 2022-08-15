@@ -58,7 +58,7 @@ const Main: React.FC = () => {
     );
   };
 
-  const subDownloadProgress = (rootCidList) => {
+  const subDownloadProgress = (rootCidList: string[]) => {
     return new Promise((resolve, reject) => {
       ws?.send(
         {
@@ -102,9 +102,7 @@ const Main: React.FC = () => {
     }
     if (filesList.length) {
       let newArr = filesList.filter((item) => {
-        return /0/.test(
-          stringToBinary(item.bitVector.b, item.bitVector.len, item.size),
-        );
+        return /0/.test(stringToBinary(item.bitVector.b, item.bitVector.len));
       });
       let rootCidList = newArr.map((item) => {
         return item.rootCid;
@@ -154,7 +152,7 @@ const Main: React.FC = () => {
     filesList.forEach((item, index) => {
       const i = downloadList.indexOf(item.rootCid);
       const status = !/0/.test(
-        stringToBinary(item.bitVector.b, item.bitVector.len, item.size),
+        stringToBinary(item.bitVector.b, item.bitVector.len),
       );
       if (i !== -1) {
         if (status) {
@@ -252,7 +250,7 @@ const Main: React.FC = () => {
       <div className={styles['upload-file']}>
         <FileUpload />
       </div>
-      <div style={{ marginTop: 40 }}>
+      <div>
         <FilesList />
       </div>
       {uploadStatus && (

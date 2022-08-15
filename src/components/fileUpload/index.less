@@ -1,14 +1,30 @@
-@main_color: #4147c4;
-
 .fileUpload {
   //width: 1100px;
   display: flex;
-  height: 250px;
+  justify-content: space-between;
+  // height: 7.1429rem;
   color: #000;
+  > div {
+    margin-left: 0;
+    max-width: unset;
+    flex: 0 0 48%;
+  }
 }
 
 .uploadArea {
-  width: 300px;
+  // width: 300px;
+  .ant-upload-text-pc,
+  .ant-upload-text-moblie {
+    color: @main_color;
+  }
+}
+
+.uploadArea,
+.ipfsArea {
+  padding: 0.3929rem 0;
+  border-radius: 0.7143rem;
+  background: rgba(31, 213, 174, 0.05);
+  border: 1px dashed @main_color;
 }
 
 .upload {
@@ -23,8 +39,8 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  border: 1px dashed #d9d9d9;
-  background-color: rgb(250 250 250);
+  color: @main_color;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -35,19 +51,41 @@
   justify-content: space-between;
   //margin-left: 20px;
   //margin-top: 1rem;
-  font-size: 14px;
+  font-family: var(--font-bold);
+  color: var(--text-color-60);
 
   .radioGrid {
     display: grid;
     grid-template-columns: 100px auto;
     justify-items: start;
     margin-bottom: 0.5rem;
+    input {
+      color: var(--text-color);
+      border: none;
+      background: var(--input-bg);
+      font-family: var(--font-normal);
+    }
   }
+}
+
+.uploadInner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .uploadIcon {
   font-size: 50px;
+  line-height: 50px;
   color: @main_color;
+}
+
+.upload-drawer {
+  color: var(--text-color);
+  .title {
+    font-size: 1.4286rem;
+    margin-bottom: 1.4286rem;
+  }
 }
 
 .link {
@@ -58,10 +96,58 @@
   word-break: break-all;
 }
 
+.upload-drawer {
+  .uploadAttr {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: var(--font-bold);
+    color: var(--text-color-60);
+    .radioGrid {
+      display: flex;
+      font-size: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      label {
+      }
+      .checkbox {
+        width: 16.6429rem;
+        // height: 2.2857rem;
+        flex-shrink: 0;
+      }
+      input {
+        width: 16.6429rem;
+        height: 2.2857rem;
+        color: var(--text-color);
+        border: none;
+        background: var(--input-bg);
+        font-family: var(--font-normal);
+        flex-shrink: 0;
+      }
+      input.file-name {
+        color: @main_color;
+      }
+    }
+    .upload-btns {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 21px 0 26px;
+      .upload,
+      .cancel {
+        width: 45%;
+        height: 3.1429rem;
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 768px) {
   .fileUpload {
     //width: 1100px;
-    display: block;
+    // display: block;
     height: auto;
     // color: #000;
   }

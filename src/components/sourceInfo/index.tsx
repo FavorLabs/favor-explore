@@ -34,6 +34,7 @@ export const colorArr = [
 
 const SourceInfo: React.FC<Props> = (props) => {
   const { rootCid: hash, size: len } = props.hashInfo;
+  // const { size: len } = props.hashInfo.manifest;
   const { debugApi } = useSelector((state: Models) => state.global);
   const [showLimit, setShowLimit] = useState(true);
   const [source, setSource] = useState<Data[] | null>(null);
@@ -73,7 +74,7 @@ const SourceInfo: React.FC<Props> = (props) => {
     arr.sort((a, b) => {
       return b.downloadLen - a.downloadLen;
     });
-    console.log('arr', arr);
+    // console.log('arr', arr);
     return arr;
   };
 
@@ -112,7 +113,9 @@ const SourceInfo: React.FC<Props> = (props) => {
       {source ? (
         <div className={styles.content}>
           <div className={styles.sources}>
-            <h3>chunk source info</h3>
+            <h3 className={`bold-font ${styles['chunk-title']}`}>
+              chunk source info
+            </h3>
             <div className={styles.sourcesList}>
               {source.map((item, index) => {
                 return (
@@ -122,16 +125,18 @@ const SourceInfo: React.FC<Props> = (props) => {
                       [styles.sourcesGrid]: true,
                     })}
                   >
-                    <div
-                      style={{
-                        width: 15,
-                        height: 15,
-                        backgroundColor:
-                          index < 5 ? colorArr[index + 1] : colorArr[6],
-                      }}
-                    />
-                    <div className={'greyColor'}>{item.overlay}</div>
-                    <div>
+                    <div className={styles.label}>
+                      <div
+                        style={{
+                          width: 15,
+                          height: 15,
+                          backgroundColor:
+                            index < 5 ? colorArr[index + 1] : colorArr[6],
+                        }}
+                      />
+                      <div className={styles.overlay}>{item.overlay}</div>
+                    </div>
+                    <div className={styles.percent}>
                       {(
                         (item.downloadLen / props.hashInfo.bitVector.len) *
                         100

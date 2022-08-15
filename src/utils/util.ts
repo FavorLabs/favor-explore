@@ -1,6 +1,12 @@
 import { FileSub } from '@/declare/api';
+import { queryType } from '@/models/files';
 import moment from 'moment';
 import EventEmitter from 'eventemitter3';
+import { debounce } from 'lodash';
+import { setTheme } from './theme';
+import axios from 'axios';
+import { message } from 'antd';
+import React from 'react';
 
 export const getScreenWidth = () => {
   return window.innerWidth;
@@ -34,7 +40,9 @@ export const getSize = (size: number, level: number = 0): string => {
     n++;
   }
   return (
-    parseFloat((size / Math.pow(1024, n)).toFixed(2)) + levelList[level + n]
+    parseFloat((size / Math.pow(1024, n)).toFixed(2)) +
+    ' ' +
+    levelList[level + n]
   );
 };
 
@@ -128,7 +136,7 @@ export const isFullNode = (b: string): boolean => {
   return value.includes('1');
 };
 
-export const query = (params) => {
+export const query = (params: queryType) => {
   let newParams = {
     page: JSON.stringify(params.page || {}),
     sort: JSON.stringify(params.sort || {}),
@@ -153,14 +161,156 @@ export const formatAddress = (str: string) => {
   return str.substring(0, 5) + '...' + str.substring(str.length - 6);
 };
 
-export const mouseWheel = (obj: HTMLElement, fn: Function) => {
-  // @ts-ignore
-  const eName =
-    document.onmousewheel === null ? 'mousewheel' : 'DOMMouseScroll';
-  obj.addEventListener(eName, (e) => {
-    // fn();
-    console.log(e);
+export const eventEmitter = new EventEmitter();
+
+export const formatStr = (str: string, len: number) => {
+  return str.substring(0, len) + '...';
+};
+
+export const flexible = (window: Window, document: Document) => {
+  var docEl = document.documentElement;
+  console.log('width', docEl.clientWidth, 'height', docEl.clientHeight);
+  // var dpr = window.devicePixelRatio || 1;
+  // const pcDefaultFontSize = 16;
+  // const mobileDefaultFontSize = 16;
+  // const pcDesignSize = 1920;
+  // const mobileDesignSize = 375;
+  const pcDefaultFontSize = 14;
+  const mobileDefaultFontSize = 14;
+  const pcDesignSize = 1440;
+  const mobileDesignSize = 375;
+
+  let targetWidth: number;
+
+  function getTargetWidth() {
+    if (isPC() || docEl.clientWidth > 1024) {
+      console.log('pc device');
+      targetWidth =
+        docEl.clientWidth > docEl.clientHeight
+          ? docEl.clientWidth
+          : docEl.clientHeight;
+    } else {
+      console.log('mobile device');
+      targetWidth =
+        docEl.clientWidth <= docEl.clientHeight
+          ? docEl.clientWidth
+          : docEl.clientHeight;
+    }
+  }
+
+  // adjust body font size
+  function setBodyFontSize() {
+    if (document.body) {
+      // document.body.style.fontSize = 12 * dpr + "px";
+      // document.body.setAttribute('data-dpr', dpr + '');
+    } else {
+      document.addEventListener('DOMContentLoaded', setBodyFontSize);
+    }
+  }
+  setBodyFontSize();
+
+  // set 1rem = viewWidth / 10
+  function setRemUnit() {
+    getTargetWidth();
+    console.log('setRemUnit');
+    if (docEl.clientWidth > 1024) {
+      docEl.style.fontSize = `14px`;
+      // docEl.style.fontSize = `${(pcDefaultFontSize / pcDesignSize) * targetWidth}px`;
+    } else {
+      // docEl.style.fontSize = `14px`;
+      docEl.style.fontSize = `${
+        (mobileDefaultFontSize / mobileDesignSize) * targetWidth
+      }px`;
+    }
+  }
+  setRemUnit();
+
+  // reset rem unit on page resize
+  window.addEventListener('resize', debounce(setRemUnit, 500));
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) {
+      setRemUnit();
+    }
+  });
+
+  // detect 0.5px supports
+  // if (dpr >= 2) {
+  //   var fakeBody = document.createElement("body");
+  //   var testElement = document.createElement("div");
+  //   testElement.style.borderconsole.log("pc device");
+  //   docEl.removeChild(fakeBody);
+  // }
+};
+
+export const isPC = () => {
+  let sUserAgent = navigator.userAgent.toLowerCase();
+  let mIpad = sUserAgent.match(/ipad/i);
+  let mIphoneOs = sUserAgent.match(/iphone os/i);
+  let mMidp = sUserAgent.match(/midp/i);
+  let mUc7 = sUserAgent.match(/rv:1.2.3.4/i);
+  let mUc = sUserAgent.match(/ucweb/i);
+  let mAndroid = sUserAgent.match(/android/i);
+  let mCE = sUserAgent.match(/windows ce/i);
+  let mWM = sUserAgent.match(/windows mobile/i);
+
+  let bIsIpad = mIpad ? true : false;
+  let bIsIphoneOs = mIphoneOs ? true : false;
+  let bIsMidp = mMidp ? true : false;
+  let bIsUc7 = mUc7 ? true : false;
+  let bIsUc = mUc ? true : false;
+  let bIsAndroid = mAndroid ? true : false;
+  let bIsCE = mCE ? true : false;
+  let bIsWM = mWM ? true : false;
+  if (
+    bIsIpad ||
+    bIsIphoneOs ||
+    bIsMidp ||
+    bIsUc7 ||
+    bIsUc ||
+    bIsAndroid ||
+    bIsCE ||
+    bIsWM
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+export const checkTheme = () => {
+  let theme = localStorage.getItem('theme');
+  theme ? setTheme(theme) : setTheme('dark');
+};
+
+export const isRunUrl = (api: string, fileHash: string) => {
+  console.log('isRunUrl');
+  const url = api + '/file/' + fileHash;
+  const checkinfo = new Promise<boolean | string>((resolve, reject) => {
+    axios
+      .get(url, {
+        // timeout: 1500,
+      })
+      .then((res) => {
+        console.log('res', res);
+        // resolve(true);
+      })
+      .catch((err) => {
+        const info = err?.response?.data;
+        console.log('err', info);
+        clearTimeout(timer);
+        message.error({
+          content: info.code + ', ' + info.message,
+          duration: 3,
+        });
+        // reject(JSON.stringify(info));
+      });
+    const timer = setTimeout(() => {
+      window.open(api + '/file/' + fileHash, '_blank');
+    }, 1800);
   });
 };
 
-export const eventEmitter = new EventEmitter();
+export const stopPreventDefault = (event: React.MouseEvent) => {
+  const e = event || window.event;
+  e.preventDefault();
+};

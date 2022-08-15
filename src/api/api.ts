@@ -6,6 +6,8 @@ import {
   TrafficInfo,
   Cheque,
   ApiPort,
+  FolderResource,
+  FileListMenu,
 } from '@/declare/api';
 import { encodeUnicode } from '@/utils/util';
 
@@ -141,20 +143,25 @@ export const updateFileRegister = (
   });
 };
 
-export const loadFileListMenu = (url: string) => {
+export const getFileListMenu = (
+  url: string,
+): Promise<AxiosResponse<FileListMenu>> => {
   return request({
     url,
     method: 'get',
   });
 };
 
-// export const getChain = (url: string) => {
-//   return request({
-//     url: url + '/chain',
-//     method: 'get'
-//   })
-// }
-
+export const folderResource = (
+  url: string,
+  data: FolderResource,
+): Promise<AxiosResponse<{ reference: string }>> => {
+  return request({
+    url,
+    data,
+    method: 'post',
+  });
+};
 export default {
   isConnected,
   uploadFile,
@@ -168,6 +175,7 @@ export default {
   cashOut,
   updateFileRegister,
   getPort,
-  loadFileListMenu,
+  getFileListMenu,
+  folderResource,
   // getChain,
 };

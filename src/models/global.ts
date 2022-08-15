@@ -13,8 +13,8 @@ import moment from 'moment';
 import { splitUrl } from '@/utils/util';
 import { WebsocketProvider } from 'web3-core';
 import EventEmitter from 'eventemitter3';
-
 import { eventEmitter } from '@/utils/util';
+import { defaultTheme } from '@/config/themeConfig';
 
 export type WebsocketType = WebsocketProvider & EventEmitter & { DATA: string };
 
@@ -25,6 +25,8 @@ export type ChartData = {
   category: 'retrieved' | 'transferred';
   speed: number;
 };
+
+export declare type themeType = 'dark' | 'light';
 
 export interface State {
   status: boolean;
@@ -52,6 +54,7 @@ export interface State {
   };
   chartData: ChartData[];
   electron: boolean;
+  logoTheme: themeType;
 }
 
 export default {
@@ -78,6 +81,7 @@ export default {
     chartData: [],
     electron:
       window.navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
+    logoTheme: defaultTheme,
   },
   reducers: {
     setApi(state, { payload }) {
@@ -168,12 +172,18 @@ export default {
         metrics,
       };
     },
+    setLogoTheme(state, { payload }) {
+      const { logoTheme } = payload;
+      return {
+        ...state,
+        logoTheme,
+      };
+    },
   },
   effects: {
     *getStatus({ payload }, { call, put }) {
       const { api } = payload;
       try {
-        console.log('api', api);
         const apiPort = yield call(Api.getPort, api);
         let { debugApiPort, rpcWsPort }: ApiPort = apiPort.data;
         if (!debugApiPort || !rpcWsPort)
@@ -193,7 +203,6 @@ export default {
         );
         const status = health.data.status === 'ok' && favor;
         yield put({ type: 'setStatus', payload: { status } });
-        // console.log('status----', status);
         if (status) {
           message.success('Connection succeeded');
           eventEmitter.emit('changeSettingModal', false);
@@ -246,21 +255,13 @@ export default {
         const { data } = yield call(DebugApi.getMetrics, url);
         // const { metrics } = yield select((state: Models) => state.global);
         const retrievalDownload =
-          Number(
-            data.match(/\nretrieval_total_retrieved\s(\S*)/)?.[1],
-          ) || 0;
+          Number(data.match(/\nretrieval_total_retrieved\s(\S*)/)?.[1]) || 0;
         const retrievalUpload =
-          Number(
-            data.match(/\nretrieval_total_transferred\s(\S*)/)?.[1],
-          ) || 0;
+          Number(data.match(/\nretrieval_total_transferred\s(\S*)/)?.[1]) || 0;
         const chunkInfoDownload =
-          Number(
-            data.match(/\nchunkinfo_total_retrieved\s(\S*)/)?.[1],
-          ) || 0;
+          Number(data.match(/\nchunkinfo_total_retrieved\s(\S*)/)?.[1]) || 0;
         const chunkInfoUpload =
-          Number(
-            data.match(/\nchunkinfo_total_transferred\s(\S*)/)?.[1],
-          ) || 0;
+          Number(data.match(/\nchunkinfo_total_transferred\s(\S*)/)?.[1]) || 0;
 
         const retrievedTotal = retrievalDownload + chunkInfoDownload;
         const transferredTotal = retrievalUpload + chunkInfoUpload;
@@ -314,6 +315,9 @@ export default {
       const downloadSpeed = downloadTotal - metrics.downloadTotal;
       const uploadSpeed = uploadTotal - metrics.uploadTotal;
 
+      // const random_downloadSpeed = Math.floor(Math.random() * 1000);
+      // const random_uploadSpeed = Math.floor(Math.random() * 1000);
+
       yield put({
         type: 'setMetrics',
         payload: {
@@ -323,6 +327,8 @@ export default {
             uploadTotal,
             downloadSpeed: downloadSpeed,
             uploadSpeed: uploadSpeed,
+            // downloadSpeed: random_downloadSpeed,
+            // uploadSpeed: random_uploadSpeed,
           },
         },
       });
@@ -341,6 +347,16 @@ export default {
                 category: 'transferred',
                 speed: (uploadSpeed * 256) / 1024 / (speedTime / 1000),
               },
+              // {
+              //   time: moment().utcOffset(480).format('HH.mm.ss'),
+              //   category: 'retrieved',
+              //   speed: (random_downloadSpeed * 256) / 1024 / (speedTime / 1000),
+              // },
+              // {
+              //   time: moment().utcOffset(480).format('HH.mm.ss'),
+              //   category: 'transferred',
+              //   speed: (random_uploadSpeed * 256) / 1024 / (speedTime / 1000),
+              // },
             ])
             .slice(2),
         },

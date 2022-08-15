@@ -3,8 +3,11 @@ import styles from './index.less';
 import { useDispatch } from 'umi';
 import { Space, Table, Tag, Row, Col, Tooltip, Button, Modal } from 'antd';
 import type { ColumnsType } from 'antd/lib/table';
-import { Peer } from '@/declare/api';
+import { Peer, block } from '@/declare/api';
 import moment from 'moment';
+import outboundSvg from '@/assets/icon/explore/outbound.svg';
+import inboundSvg from '@/assets/icon/explore/inbound.svg';
+import { isPC } from '@/utils/util';
 
 export interface Props {
   peers: any;
@@ -18,20 +21,23 @@ const PeersList: React.FC<Props> = (props) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
-  const columns: ColumnsType<Peer> = [
+  const columns: ColumnsType<Peer & block> = [
     {
       title: <div className={styles.head}>Index</div>,
       key: 'Index',
-      width: 80,
+      width: isPC() ? 60 : 55,
       ellipsis: {
         showTitle: false,
       },
-      render: (text, record, index) => index + 1,
+      render: (text, record, index) => (
+        <span className={styles['peer-index']}>{index + 1}</span>
+      ),
+      align: 'center',
     },
     {
-      title: <div className={styles.head}>Peer Id</div>,
+      title: <div className={styles.head}>Peer ID</div>,
       key: 'Peer ID',
-      width: 120,
+      width: isPC() ? 380 : 115,
       dataIndex: 'address',
       render: (value, record, index) => (
         <>
@@ -60,11 +66,15 @@ const PeersList: React.FC<Props> = (props) => {
       {
         title: <div className={styles.head}>Expiration Date</div>,
         key: 'Expiration time',
-        width: 180,
+        width: isPC() ? 180 : 130,
         render: (value, record, index) => {
-          return moment(record.timestamp)
-            .add(record.duration * 1000)
-            .format('MMMM Do YYYY, HH:mm:ss');
+          return (
+            <div className={styles['expiration-date']}>
+              {moment(record.timestamp)
+                .add(record.duration * 1000)
+                .format('MMMM Do YYYY, HH:mm:ss')}
+            </div>
+          );
         },
       },
       {
@@ -84,7 +94,7 @@ const PeersList: React.FC<Props> = (props) => {
           );
         },
         align: 'center',
-        width: 180,
+        width: isPC() ? 180 : 120,
       },
     );
   };
@@ -95,26 +105,55 @@ const PeersList: React.FC<Props> = (props) => {
         title: <div className={styles.head}>Direction</div>,
         key: 'Direction',
         dataIndex: 'direction',
-        width: 100,
+        width: isPC() ? 100 : 105,
+        render: (value, record, index) => {
+          return (
+            <div>
+              {record.direction === 'outbound' ? (
+                <img
+                  className={styles['direction-svg']}
+                  src={outboundSvg}
+                  alt=""
+                />
+              ) : (
+                <img
+                  className={styles['direction-svg']}
+                  src={inboundSvg}
+                  alt=""
+                />
+              )}
+              &nbsp;
+              {isPC() ? (
+                <span className={styles['peer-status']}>
+                  {record.direction}
+                </span>
+              ) : (
+                <></>
+              )}
+            </div>
+          );
+        },
+        align: 'center',
       },
       {
         title: 'Add to Block List',
         render: (value, record, index) => {
           return (
             <div>
-              <Button
+              <span
+                className={`mainColor ${styles.blockBtn}`}
                 onClick={() => {
                   setPeerInfo(record);
                   setVisible(true);
                 }}
               >
-                block
-              </Button>
+                Block
+              </span>
             </div>
           );
         },
         align: 'center',
-        width: 150,
+        width: isPC() ? 80 : 75,
       },
     );
   };
@@ -142,7 +181,6 @@ const PeersList: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    // console.log('styles', styles);
     setTop(
       document
         .getElementsByClassName('ant-table-tbody')[0]
@@ -150,7 +188,7 @@ const PeersList: React.FC<Props> = (props) => {
     );
   }, []);
   const scrollY = useMemo(() => {
-    let h = document.body.clientHeight - top - 30;
+    let h = document.body.clientHeight - top - 100;
     if (h < 200) return 200;
     return h;
   }, [document.body.clientHeight, top]);
@@ -163,21 +201,43 @@ const PeersList: React.FC<Props> = (props) => {
         dataSource={props.peers}
         rowKey={(item) => item.address}
         pagination={false}
-        locale={{ emptyText: 'No Data' }}
+        locale={{ emptyText: <span className={styles.no_data}>No Data</span> }}
         scroll={props.peers.length > scrollY / 55 ? { y: scrollY } : {}}
       />
       <Modal
-        title={props.isBlockList ? 'remove' : 'block'}
+        // title={props.isBlockList ? 'remove' : 'block'}
+        className={`bold-font ${styles['block-remove-modal']}`}
         centered
         visible={visible}
-        onOk={(e) => {
-          props.isBlockList ? deleteBlock() : addBlock();
-        }}
-        onCancel={() => {
-          setVisible(false);
-        }}
+        closable={false}
+        // onOk={(e) => {
+        //   props.isBlockList ? deleteBlock() : addBlock();
+        // }}
+        maskClosable={false}
+        width={'31.4286rem'}
+        footer={null}
+        // onCancel={() => {
+        //   setVisible(false);
+        // }}
       >
-        <div>Are you sure to {props.isBlockList ? 'remove' : 'block'}?</div>
+        <p className={styles.title}>{props.isBlockList ? 'Remove' : 'Block'}</p>
+        <div className={styles.desc}>
+          Are you sure to {props.isBlockList ? 'remove' : 'block'}?
+        </div>
+        <div className={styles.btns}>
+          <span
+            className={`${styles.cancel}`}
+            onClick={() => setVisible(false)}
+          >
+            Cancel
+          </span>
+          <span
+            className={`mainBackground ${styles.ok}`}
+            onClick={() => (props.isBlockList ? deleteBlock() : addBlock())}
+          >
+            OK
+          </span>
+        </div>
       </Modal>
     </div>
   );
