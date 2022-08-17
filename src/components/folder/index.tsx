@@ -6,8 +6,8 @@ import { FolderResource, AllFileInfo, FileListMenu } from '@/declare/api';
 import { useSelector, useDispatch } from 'umi';
 import { Models } from '@/declare/modelType';
 import _ from 'lodash';
-import { stopPreventDefault, getSize, attributeCount } from '@/utils/util';
-import { Menu, Item, useContextMenu } from 'react-contexify';
+import { stopPreventDefault, getSize } from '@/utils/util';
+import SvgIcon from '@/components/svgIcon';
 import 'react-contexify/dist/ReactContexify.css';
 import folderSvg from '@/assets/icon/explore/folderIcon.svg';
 import fileSvg from '@/assets/icon/explore/fileIcon.svg';
@@ -41,7 +41,6 @@ const Folder: React.FC<Props> = (props) => {
     name: string;
     info: { type: string };
   }>({ name: '', info: { type: '' } });
-  // const [currentFolderSourceNum, setCurrentFolderSourceNum] = useState(0);
   const [exploreImportVisiable, setExploreImportVisiable] = useState(false);
   const [newFolderVisiable, setNewFolderVisiable] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -50,11 +49,6 @@ const Folder: React.FC<Props> = (props) => {
   const [quickNavDisplay, setQuickNavDisplay] = useState('none');
   const [renameVisiable, setRenameVisiable] = useState(false);
   const [newSourceName, setNewSourceName] = useState('');
-
-  // const MENU_ID = 'rightMenu';
-  // const { show } = useContextMenu({
-  //   id: MENU_ID,
-  // });
 
   const pathPrefix = (type: string, rootCid: string) => {
     return api + type + rootCid;
@@ -310,12 +304,15 @@ const Folder: React.FC<Props> = (props) => {
               {/* <Button className="mainBackground">import</Button> */}
               <img className={styles.import} src={importSvg} alt="import" />
             </Popover>
-            <img
+            {/* <img
               className={styles.close}
               src={closureSvg}
               alt="close"
               onClick={props.closeMenuFn}
-            />
+            /> */}
+            <div className={styles.close}>
+              <SvgIcon svg={closureSvg} clickFn={props.closeMenuFn}></SvgIcon>
+            </div>
           </div>
         </div>
         <div className={styles['folder-content']}>
@@ -523,12 +520,6 @@ const Folder: React.FC<Props> = (props) => {
             <Button
               className="mainBackground"
               onClick={() => {
-                // console.log({
-                //   ref: props.rootCid,
-                //   source: currentRelativePath + (currentSourceInfo.info.type === 'directory' ? currentSourceInfo.name + '/' : currentSourceInfo.name),
-                //   target: currentRelativePath + (currentSourceInfo.info.type === 'directory' ? newSourceName + '/' : newSourceName),
-                //   op: 1,
-                // });
                 operateFolderResource({
                   ref: props.rootCid,
                   source:

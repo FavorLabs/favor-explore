@@ -6,3 +6,10 @@ export const screenBreakpoint = {
   xl: 1200,
   xxl: 1600,
 };
+
+export const networkType = {
+  '18': 'Polygon Mainnet',
+  '19': 'Polygon Testnet',
+  '20': 'Metis Mainnet',
+  '21': 'OKC Mainnet',
+};

@@ -1,5 +1,9 @@
+.export-btn-svg {
+  display: none;
+}
 .export-btn {
   // margin-left: 1.0714rem;
+  color: @main_color;
   cursor: pointer;
 }
 .title {
@@ -25,4 +29,13 @@
   position: absolute;
   top: 14px;
   right: 14px;
+}
+
+@media screen and (max-width: 1024px) {
+  .export-btn-svg {
+    display: inline-block;
+  }
+  .export-btn {
+    display: none;
+  }
 }

@@ -314,3 +314,8 @@ export const stopPreventDefault = (event: React.MouseEvent) => {
   const e = event || window.event;
   e.preventDefault();
 };
+
+export const stopDragEventPropagation = (e: React.DragEvent) => {
+  e.stopPropagation();
+  e.nativeEvent.stopImmediatePropagation();
+};

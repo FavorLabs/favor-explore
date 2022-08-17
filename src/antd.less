@@ -113,6 +113,17 @@
 .ant-btn-primary {
   border: none !important;
 }
+.ant-btn-text {
+  color: @main_color!important;
+  background-color: transparent !important;
+}
+.ant-btn-text:hover {
+  color: @main_color!important;
+}
+
+.ant-btn:focus:not(.cashout-btn) {
+  color: @main_color!important;
+}
 
 .ant-modal {
   border-radius: 0.2143rem;
@@ -190,6 +201,8 @@
 }
 
 .ant-table {
+  color: var(--text-color) !important;
+  font-size: 1rem !important;
   background: transparent !important;
 }
 
@@ -271,6 +284,9 @@
       }
       .ant-select-item-option {
         color: var(--text-color) !important;
+      }
+      .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+        background-color: var(--main-bg);
       }
     }
   }

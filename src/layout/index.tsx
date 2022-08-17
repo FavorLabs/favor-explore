@@ -30,11 +30,11 @@ import SettingApi from '@/components/settingApi';
 import FavorConfigEdit from '@/components/favorConfigEdit';
 import SvgIcon from '@/components/svgIcon';
 import styles from './index.less';
+import Api from '@/api/api';
 import { Models } from '@/declare/modelType';
 import { version, isElectron } from '@/config/version';
 import { speedTime } from '@/config/url';
 import { sessionStorageApi } from '@/config/url';
-import Web3 from 'web3';
 import logo_d from '../assets/img/logo_d.png';
 import logo_l from '../assets/img/logo_l.png';
 import balanceSvg from '@/assets/icon/explore/balance.svg';
@@ -51,6 +51,8 @@ import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
 import { defaultTheme } from '@/config/themeConfig';
+import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 type shortcutType = {
   name: string;
@@ -73,6 +75,7 @@ const Layouts: React.FC = (props) => {
   const [settingVisible, setSettingVisible] = useState(false);
   const [fileHash, setFileHash] = useState('');
   const [headerSearch, setHeaderSearch] = useState(false);
+  const [accountDisplay, setAccountDisplay] = useState(false);
   const {
     status,
     metrics,
@@ -86,6 +89,9 @@ const Layouts: React.FC = (props) => {
     topology,
     logoTheme,
   } = useSelector((state: Models) => state.global);
+  const { trafficInfo, account } = useSelector(
+    (state: Models) => state.accounting,
+  );
 
   const [apiValue, setApiValue] = useState<string>(
     checkSession(sessionStorageApi) || api || '',
@@ -263,6 +269,35 @@ const Layouts: React.FC = (props) => {
     }
   };
 
+  const getBalance = async () => {
+    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
+    const accounts = await provider.listAccounts();
+    const account = accounts[0];
+    dispatch({
+      type: 'accounting/setAccount',
+      payload: {
+        account,
+      },
+    });
+  };
+
+  const getTrafficInfo = async () => {
+    await Api.getTrafficInfo(api)
+      .then((res) => {
+        dispatch({
+          type: 'accounting/setTrafficInfo',
+          payload: {
+            trafficInfo: res.data,
+          },
+        });
+        setAccountDisplay(true);
+      })
+      .catch((err) => {
+        console.log('err', err);
+        setAccountDisplay(false);
+      });
+  };
+
   useEffect(() => {
     flexible(window, document);
     // let theme = localStorage.getItem('theme');
@@ -412,6 +447,10 @@ const Layouts: React.FC = (props) => {
           url: debugApi,
         },
       });
+      if (api) {
+        getBalance();
+        getTrafficInfo();
+      }
     }
     //  else {
     //  setSettingVisible(true);
@@ -507,11 +546,24 @@ const Layouts: React.FC = (props) => {
               )}
             </div>
             <div className={styles.layout_header_right}>
-              {/* <div className={styles.account_info}>
-                <span><SvgIcon svg={balanceSvg}></SvgIcon></span>
-                <span>234.0000000&nbsp;USDT</span>
-                <span>{formatStr('a5f8d3fc........', 8)}</span>
-              </div> */}
+              {accountDisplay ? (
+                <div
+                  className={styles.account_info}
+                  onClick={() => history.push('/account')}
+                >
+                  <span className={styles.blanceSvg}>
+                    <SvgIcon svg={balanceSvg}></SvgIcon>
+                  </span>
+                  <span className={styles['account-info-mobile']}>
+                    {trafficInfo.balance}&nbsp;FTC
+                  </span>
+                  <span className={styles['account-info-mobile']}>
+                    {formatStr(account ? account : '', 8)}
+                  </span>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className={styles.set_theme_btn}>
                 {logoTheme === 'dark' ? (
                   <SvgIcon svg={sunSvg} clickFn={() => switchTheme()}></SvgIcon>

@@ -28,6 +28,11 @@ const route = [
         name: 'files',
       },
       {
+        path: 'account',
+        component: '@/pages/accounting',
+        name: 'accounting',
+      },
+      {
         path: '/setting',
         component: '@/pages/setting',
         name: 'setting',

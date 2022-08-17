@@ -1,0 +1,122 @@
+.account-content {
+  color: var(--text-color);
+}
+
+.chequebook {
+  margin-top: 2.8571rem;
+}
+
+.head {
+  font-size: 1.4286rem;
+  line-height: 2.2857rem;
+  font-weight: 600;
+  margin-bottom: 0.7143rem;
+}
+
+.balanceInfo {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 -0.7143rem;
+  .balanceInfo-item {
+    width: 25%;
+    .balanceInfo-item-inner {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin: 0 0.7143rem;
+      padding: 1.4286rem;
+      border-radius: 0.2143rem;
+      word-wrap: break-word;
+      word-break: break-all;
+      .title {
+        opacity: 0.6;
+        margin-bottom: 0.7143rem;
+      }
+      .balance {
+        font-size: 1.1429rem;
+      }
+    }
+  }
+}
+
+.blockchain {
+  margin-top: 1.4286rem;
+  .card {
+    padding: 1.4286rem;
+    background: var(--card-bg);
+    border-radius: 0.2143rem;
+    .account {
+      margin-top: 10px;
+      > span:not(.keyStore) {
+        opacity: 0.6;
+        margin-right: 0.7143rem;
+        // word-wrap: normal;
+        word-break: break-all;
+      }
+      .keyStore {
+        margin-left: 2.8571rem;
+      }
+    }
+  }
+}
+
+.peers {
+  margin-top: 1.4286rem;
+  .head {
+    margin-bottom: -2.1429rem;
+  }
+}
+
+.bnbTest {
+  font-size: 12px;
+  font-style: italic;
+  text-decoration: underline;
+  color: @main_color;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+}
+
+.privateKey {
+  font-size: 14px;
+  margin-left: 20px;
+}
+
+.key {
+  margin-top: 20px;
+}
+
+.copyKeystore {
+  margin-top: 20px;
+  text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .chequebook {
+    margin-top: 1.4286rem;
+  }
+  .balanceInfo {
+    flex-wrap: wrap;
+    .balanceInfo-item {
+      width: 50%;
+      .balanceInfo-item-inner {
+        min-height: 10.5rem;
+      }
+    }
+    .balanceInfo-item:nth-child(1),
+    .balanceInfo-item:nth-child(2) {
+      margin-bottom: 1.4286rem;
+    }
+  }
+
+  .blockchain {
+    .card {
+      .account {
+        .keyStore {
+          margin-left: 0.3571rem;
+        }
+      }
+    }
+  }
+}
