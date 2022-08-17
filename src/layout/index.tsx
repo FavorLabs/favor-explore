@@ -51,6 +51,7 @@ import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
 import { defaultTheme } from '@/config/themeConfig';
+import { version as exploreVersion } from '../../package.json';
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 
@@ -644,7 +645,9 @@ const Layouts: React.FC = (props) => {
             </Modal>
           </Content>
           <Footer className={styles.layout_footer}>
-            <div className={styles['layout-footer-info']}>{'-'}</div>
+            <div className={`${styles['layout-footer-info']} bold-font`}>
+              {exploreVersion}
+            </div>
             <div
               className={styles.layout_footer_left}
               onClick={() => history.push('/info')}
@@ -654,7 +657,10 @@ const Layouts: React.FC = (props) => {
                 <span>info</span>
               </div>
               <span className={`${styles.version_info}`}>
-                <span className={`${styles.opacity_6}`}>Version:</span>&nbsp;
+                <span className={`${styles.opacity_6} bold-font`}>
+                  Version:
+                </span>
+                &nbsp;
                 <span className="mainColor">{status && health?.version}</span>
               </span>
               <div className={styles.up_speed}>
