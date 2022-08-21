@@ -514,9 +514,8 @@ const Layouts: React.FC = (props) => {
                   backgrounSvg,
                 )})`
               : '',
-            backgroundPosition: '0px 50%',
+            backgroundPosition: '0px 70px',
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '100% 80%',
           }}
         >
           <Header
