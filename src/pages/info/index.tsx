@@ -85,12 +85,12 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    dispatch({
-      type: 'info/getAddresses',
-      payload: {
-        url: debugApi,
-      },
-    });
+    // dispatch({
+    //   type: 'info/getAddresses',
+    //   payload: {
+    //     url: debugApi,
+    //   },
+    // });
     getTopology();
     subKad();
     return () => {

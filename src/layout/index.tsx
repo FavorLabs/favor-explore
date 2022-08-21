@@ -22,6 +22,7 @@ import {
   flexible,
   checkTheme,
   isRunUrl,
+  attributeCount,
 } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
@@ -51,9 +52,10 @@ import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
 import { defaultTheme } from '@/config/themeConfig';
-import { version as exploreVersion } from '../../package.json';
+import { default as packageInfo } from '../../package.json';
 import Web3 from 'web3';
 import { ethers } from 'ethers';
+import axios from 'axios';
 
 type shortcutType = {
   name: string;
@@ -77,6 +79,8 @@ const Layouts: React.FC = (props) => {
   const [fileHash, setFileHash] = useState('');
   const [headerSearch, setHeaderSearch] = useState(false);
   const [accountDisplay, setAccountDisplay] = useState(false);
+  const [backgrounSvg, setBackgrounSvg] = useState('');
+  const [isShowBackground, setIsShowBackground] = useState(false);
   const {
     status,
     metrics,
@@ -93,6 +97,7 @@ const Layouts: React.FC = (props) => {
   const { trafficInfo, account } = useSelector(
     (state: Models) => state.accounting,
   );
+  const { addresses } = useSelector((state: Models) => state.info);
 
   const [apiValue, setApiValue] = useState<string>(
     checkSession(sessionStorageApi) || api || '',
@@ -247,6 +252,7 @@ const Layouts: React.FC = (props) => {
         logoTheme: theme,
       },
     });
+    getHomeBackground({ networkId: addresses?.network_id, theme });
   };
 
   const switchTheme = () => {
@@ -297,6 +303,15 @@ const Layouts: React.FC = (props) => {
         console.log('err', err);
         setAccountDisplay(false);
       });
+  };
+
+  const getHomeBackground = async (params: any) => {
+    if (!isPC()) return;
+    // 'http://service.favorlabs.io/api/v1/map'
+    const { data } = await axios.get('http://192.168.100.7:1888/api/v1/map', {
+      params,
+    });
+    setBackgrounSvg(data);
   };
 
   useEffect(() => {
@@ -452,6 +467,12 @@ const Layouts: React.FC = (props) => {
         getBalance();
         getTrafficInfo();
       }
+      dispatch({
+        type: 'info/getAddresses',
+        payload: {
+          url: debugApi,
+        },
+      });
     }
     //  else {
     //  setSettingVisible(true);
@@ -461,17 +482,43 @@ const Layouts: React.FC = (props) => {
   useEffect(() => {
     history.listen((historyLocation) => {
       // console.log('router change', historyLocation);
-      historyLocation.pathname === '/'
-        ? setHeaderSearch(false)
-        : setHeaderSearch(true);
+      if (historyLocation.pathname === '/') {
+        setHeaderSearch(false);
+        setIsShowBackground(true);
+      } else {
+        setHeaderSearch(true);
+        setIsShowBackground(false);
+      }
       checkTheme();
     });
   }, [history]);
 
+  useEffect(() => {
+    if (attributeCount(addresses) !== 0) {
+      const theme = localStorage.getItem('theme');
+      getHomeBackground({
+        networkId: addresses?.network_id,
+        theme: theme ? theme : 'dark',
+      });
+    }
+  }, [addresses]);
+
   return (
     <>
       <Layout className={styles.main_layout}>
-        <Layout className={styles.site_layout}>
+        <Layout
+          className={styles.site_layout}
+          style={{
+            backgroundImage: isShowBackground
+              ? `url(data:image/svg+xml;utf8,${encodeURIComponent(
+                  backgrounSvg,
+                )})`
+              : '',
+            backgroundPosition: '0px 50%',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '100% 80%',
+          }}
+        >
           <Header
             className={`site_layout_background ${styles.layout_header}`}
             onMouseLeave={() => {
@@ -646,7 +693,7 @@ const Layouts: React.FC = (props) => {
           </Content>
           <Footer className={styles.layout_footer}>
             <div className={`${styles['layout-footer-info']} bold-font`}>
-              {exploreVersion}
+              {packageInfo.version}
             </div>
             <div
               className={styles.layout_footer_left}
