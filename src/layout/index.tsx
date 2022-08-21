@@ -307,10 +307,12 @@ const Layouts: React.FC = (props) => {
 
   const getHomeBackground = async (params: any) => {
     if (!isPC()) return;
-    // 'http://service.favorlabs.io/api/v1/map'
-    const { data } = await axios.get('http://192.168.100.7:1888/api/v1/map', {
-      params,
-    });
+    const { data } = await axios.get(
+      'https://service.favorlabs.io/api/v1/map',
+      {
+        params,
+      },
+    );
     setBackgrounSvg(data);
   };
 
