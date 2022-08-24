@@ -51,11 +51,17 @@ const Keystore = () => {
         <img
           src={exportSvg}
           alt="export"
-          className={styles['export-btn']}
+          className={styles['export-btn-svg']}
           onClick={() => {
             setKeyModel(true);
           }}
         />
+        <span
+          className={`${styles['export-btn']} bold-font`}
+          onClick={() => setKeyModel(true)}
+        >
+          ExportKeystore
+        </span>
       </Tooltip>
       <Modal
         visible={keyModel}
@@ -86,7 +92,7 @@ const Keystore = () => {
       <Modal
         visible={pwdModel}
         centered
-        width={250}
+        width={300}
         confirmLoading={loading}
         closable={false}
         maskClosable={false}

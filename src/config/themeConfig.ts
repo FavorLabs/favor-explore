@@ -1,4 +1,5 @@
-export const defaultTheme = 'dark';
+const storageTheme = localStorage.getItem('theme');
+export const defaultTheme = storageTheme ? storageTheme : 'dark';
 
 export const THEME = {
   dark: {
@@ -20,6 +21,7 @@ export const THEME = {
     '--btn-color': '#FFFFFF',
     '--btn-bg': 'linear-gradient(180deg, #1FD5AE 0%, #0E8E73 100%)',
     '--input-bg': 'rgba(255,255,255,.05)',
+    '--home-input-bg': 'rgba(0,0,0,.6)',
     '--opacity-08-100': '.08',
     '--modal-bg': '#1E1E1E',
     '--shortcut-bg': 'rgba(255,255,255,.6)',
@@ -54,6 +56,7 @@ export const THEME = {
     '--btn-color': '#FFFFFF',
     '--btn-bg': 'linear-gradient(180deg, #1FD5AE 0%, #0E8E73 100%)',
     '--input-bg': 'rgba(30,30,30,.05)',
+    '--home-input-bg': 'rgba(255,255,255,.8)',
     '--opacity-08-100': '1',
     '--modal-bg': '#FFFFFF',
     '--shortcut-bg': 'rgba(158,158,158,.6)',

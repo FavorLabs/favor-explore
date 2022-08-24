@@ -1,24 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './index.less';
 import { Row, Col, Card, message } from 'antd';
 import NotConnected from '@/components/notConnected';
 import Speed from '@/components/speed';
-import CopyText from '@/components/copyText';
-import Keystore from '@/components/keystore';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
-import { getSize } from '@/utils/util';
-import { ethers } from 'ethers';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
-  const { api, debugApi, health, topology, ws, metrics } = useSelector(
+  const { debugApi, health, topology, ws } = useSelector(
     (state: Models) => state.global,
   );
   const { addresses } = useSelector((state: Models) => state.info);
-  const { account } = useSelector((state: Models) => state.accounting);
-
-  const [balance, setBalance] = useState('');
 
   const subResult = useRef({
     kad: {
@@ -91,31 +84,14 @@ const Main: React.FC = () => {
     });
   };
 
-  const getBalance = async () => {
-    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
-    const accounts = await provider.listAccounts();
-    const account = accounts[0];
-    dispatch({
-      type: 'accounting/setAccount',
-      payload: {
-        account,
-      },
-    });
-    const balance = await provider.getBalance(account);
-    const bnb = ethers.utils.formatEther(balance);
-    setBalance(bnb);
-  };
-
   useEffect(() => {
-    // console.log('width', getScreenWidth());
-    dispatch({
-      type: 'info/getAddresses',
-      payload: {
-        url: debugApi,
-      },
-    });
+    // dispatch({
+    //   type: 'info/getAddresses',
+    //   payload: {
+    //     url: debugApi,
+    //   },
+    // });
     getTopology();
-    getBalance();
     subKad();
     return () => {
       unSub();
@@ -204,37 +180,6 @@ const Main: React.FC = () => {
                   })}
                 </ul>
               </div>
-              {/* <div
-                className={`${styles['card-line']} ${styles['remove-bot-mar']}`}
-              >
-                <div className={styles['account-info']}>
-                  <p>Account:&nbsp;</p>
-                  <div className={styles.details}>
-                    <span className={styles['account-balance']}>
-                      {account ? account : <span className="loading"></span>}
-                    </span>
-                    &nbsp;
-                    <CopyText text={account} />
-                    &nbsp;
-                    <Keystore />
-                  </div>
-                </div>
-                <div className={styles['balance-info']}>
-                  <p>Balance:&nbsp;</p>
-                  <div className={styles.details}>
-                    <span className={styles['account-balance']}>
-                      {balance ? balance : <span className="loading"></span>}
-                    </span>
-                    <a
-                      target="_blank"
-                      href="https://faucet.polygon.technology/"
-                      style={{ marginLeft: 20 }}
-                    >
-                      Faucet
-                    </a>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </Card>
         </Col>

@@ -25,11 +25,8 @@ export default defineConfig({
   webpack5: {},
   publicPath: './',
   theme: {
-    // 'primary-color': 'linear-gradient(180deg, #1FD5AE 0%, #0E8E73 100%)',
     'primary-color': '#1FD5AE',
     'text-color': '#fff',
-    // 'heading-color': '#399067',
-    // 'link-color': '#399067',
     '@main_color': '#1FD5AE',
   },
   define: {
@@ -43,4 +40,5 @@ export default defineConfig({
       .use('file-loader')
       .loader(require.resolve('@umijs/deps/compiled/file-loader'));
   },
+  manifest: {},
 });

@@ -22,6 +22,7 @@ import {
   flexible,
   checkTheme,
   isRunUrl,
+  attributeCount,
 } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
@@ -30,11 +31,11 @@ import SettingApi from '@/components/settingApi';
 import FavorConfigEdit from '@/components/favorConfigEdit';
 import SvgIcon from '@/components/svgIcon';
 import styles from './index.less';
+import Api from '@/api/api';
 import { Models } from '@/declare/modelType';
 import { version, isElectron } from '@/config/version';
 import { speedTime } from '@/config/url';
 import { sessionStorageApi } from '@/config/url';
-import Web3 from 'web3';
 import logo_d from '../assets/img/logo_d.png';
 import logo_l from '../assets/img/logo_l.png';
 import balanceSvg from '@/assets/icon/explore/balance.svg';
@@ -51,6 +52,10 @@ import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
 import { defaultTheme } from '@/config/themeConfig';
+import { default as packageInfo } from '../../package.json';
+import Web3 from 'web3';
+import { ethers } from 'ethers';
+import axios from 'axios';
 
 type shortcutType = {
   name: string;
@@ -73,6 +78,9 @@ const Layouts: React.FC = (props) => {
   const [settingVisible, setSettingVisible] = useState(false);
   const [fileHash, setFileHash] = useState('');
   const [headerSearch, setHeaderSearch] = useState(false);
+  const [accountDisplay, setAccountDisplay] = useState(false);
+  const [backgrounSvg, setBackgrounSvg] = useState('');
+  const [isShowBackground, setIsShowBackground] = useState(false);
   const {
     status,
     metrics,
@@ -86,6 +94,10 @@ const Layouts: React.FC = (props) => {
     topology,
     logoTheme,
   } = useSelector((state: Models) => state.global);
+  const { trafficInfo, account } = useSelector(
+    (state: Models) => state.accounting,
+  );
+  const { addresses } = useSelector((state: Models) => state.info);
 
   const [apiValue, setApiValue] = useState<string>(
     checkSession(sessionStorageApi) || api || '',
@@ -240,6 +252,7 @@ const Layouts: React.FC = (props) => {
         logoTheme: theme,
       },
     });
+    getHomeBackground({ networkId: addresses?.network_id, theme });
   };
 
   const switchTheme = () => {
@@ -261,6 +274,46 @@ const Layouts: React.FC = (props) => {
       isRunUrl(api, fileHash);
       // window.open(api + '/file/' + fileHash, '_blank');
     }
+  };
+
+  const getBalance = async () => {
+    const provider = new ethers.providers.JsonRpcProvider(api + '/chain');
+    const accounts = await provider.listAccounts();
+    const account = accounts[0];
+    dispatch({
+      type: 'accounting/setAccount',
+      payload: {
+        account,
+      },
+    });
+  };
+
+  const getTrafficInfo = async () => {
+    await Api.getTrafficInfo(api)
+      .then((res) => {
+        dispatch({
+          type: 'accounting/setTrafficInfo',
+          payload: {
+            trafficInfo: res.data,
+          },
+        });
+        setAccountDisplay(true);
+      })
+      .catch((err) => {
+        console.log('err', err);
+        setAccountDisplay(false);
+      });
+  };
+
+  const getHomeBackground = async (params: any) => {
+    if (!isPC()) return;
+    const { data } = await axios.get(
+      'https://service.favorlabs.io/api/v1/map',
+      {
+        params,
+      },
+    );
+    setBackgrounSvg(data);
   };
 
   useEffect(() => {
@@ -412,6 +465,16 @@ const Layouts: React.FC = (props) => {
           url: debugApi,
         },
       });
+      if (api) {
+        getBalance();
+        getTrafficInfo();
+      }
+      dispatch({
+        type: 'info/getAddresses',
+        payload: {
+          url: debugApi,
+        },
+      });
     }
     //  else {
     //  setSettingVisible(true);
@@ -421,17 +484,42 @@ const Layouts: React.FC = (props) => {
   useEffect(() => {
     history.listen((historyLocation) => {
       // console.log('router change', historyLocation);
-      historyLocation.pathname === '/'
-        ? setHeaderSearch(false)
-        : setHeaderSearch(true);
+      if (historyLocation.pathname === '/') {
+        setHeaderSearch(false);
+        setIsShowBackground(true);
+      } else {
+        setHeaderSearch(true);
+        setIsShowBackground(false);
+      }
       checkTheme();
     });
   }, [history]);
 
+  useEffect(() => {
+    if (attributeCount(addresses) !== 0) {
+      const theme = localStorage.getItem('theme');
+      getHomeBackground({
+        networkId: addresses?.network_id,
+        theme: theme ? theme : 'dark',
+      });
+    }
+  }, [addresses]);
+
   return (
     <>
       <Layout className={styles.main_layout}>
-        <Layout className={styles.site_layout}>
+        <Layout
+          className={styles.site_layout}
+          style={{
+            backgroundImage: isShowBackground
+              ? `url(data:image/svg+xml;utf8,${encodeURIComponent(
+                  backgrounSvg,
+                )})`
+              : '',
+            backgroundPosition: '0px 70px',
+            backgroundRepeat: 'no-repeat',
+          }}
+        >
           <Header
             className={`site_layout_background ${styles.layout_header}`}
             onMouseLeave={() => {
@@ -507,11 +595,24 @@ const Layouts: React.FC = (props) => {
               )}
             </div>
             <div className={styles.layout_header_right}>
-              {/* <div className={styles.account_info}>
-                <span><SvgIcon svg={balanceSvg}></SvgIcon></span>
-                <span>234.0000000&nbsp;USDT</span>
-                <span>{formatStr('a5f8d3fc........', 8)}</span>
-              </div> */}
+              {accountDisplay ? (
+                <div
+                  className={styles.account_info}
+                  onClick={() => history.push('/account')}
+                >
+                  <span className={styles.blanceSvg}>
+                    <SvgIcon svg={balanceSvg}></SvgIcon>
+                  </span>
+                  <span className={styles['account-info-mobile']}>
+                    {trafficInfo.balance}&nbsp;FTC
+                  </span>
+                  <span className={styles['account-info-mobile']}>
+                    {formatStr(account ? account : '', 8)}
+                  </span>
+                </div>
+              ) : (
+                <></>
+              )}
               <div className={styles.set_theme_btn}>
                 {logoTheme === 'dark' ? (
                   <SvgIcon svg={sunSvg} clickFn={() => switchTheme()}></SvgIcon>
@@ -592,7 +693,9 @@ const Layouts: React.FC = (props) => {
             </Modal>
           </Content>
           <Footer className={styles.layout_footer}>
-            <div className={styles['layout-footer-info']}>{'-'}</div>
+            <div className={`${styles['layout-footer-info']} bold-font`}>
+              {packageInfo.version}
+            </div>
             <div
               className={styles.layout_footer_left}
               onClick={() => history.push('/info')}
@@ -602,7 +705,10 @@ const Layouts: React.FC = (props) => {
                 <span>info</span>
               </div>
               <span className={`${styles.version_info}`}>
-                <span className={`${styles.opacity_6}`}>Version:</span>&nbsp;
+                <span className={`${styles.opacity_6} bold-font`}>
+                  Version:
+                </span>
+                &nbsp;
                 <span className="mainColor">{status && health?.version}</span>
               </span>
               <div className={styles.up_speed}>

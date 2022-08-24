@@ -1,0 +1,41 @@
+.withdraw span {
+  font-size: 1rem;
+}
+
+.list {
+  color: var(--text-color);
+  border-radius: 0.2143rem;
+  // box-shadow: 0 2px 10px 2px #ccc;
+  background: var(--card-bg);
+  min-height: 25rem;
+  overflow-x: scroll;
+}
+
+.withdraw-modal {
+  color: var(--text-color);
+  .title {
+    font-size: 1.7143rem;
+  }
+  .tips {
+    font-size: 1rem;
+  }
+  .btns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.4286rem;
+    > * {
+      width: 45%;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .peers {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    width: 14.2857rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+  }
+}
