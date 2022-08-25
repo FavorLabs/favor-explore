@@ -1,5 +1,6 @@
 import { defineConfig } from 'umi';
 import routes from './src/config/routes';
+const TerserPlugin = require('terser-webpack-plugin');
 
 export default defineConfig({
   title: 'Favor Explore',
@@ -33,12 +34,29 @@ export default defineConfig({
     BUILD_ENV: process.env.BUILD_ENV,
   },
   // mfsu:{}
-  chainWebpack: (config) => {
+  chainWebpack: (config, { webpack, env }) => {
     config.module
       .rule('fonts')
       .test(/\.(eot|woff|woff2|ttf)(\?.*)?$/)
       .use('file-loader')
       .loader(require.resolve('@umijs/deps/compiled/file-loader'));
+    if (env === 'production') {
+      config.plugin('TerserPlugin').use(TerserPlugin, [
+        {
+          parallel: true,
+          terserOptions: {
+            ecma: undefined,
+            warnings: false,
+            parse: {},
+            compress: {
+              drop_console: true,
+              drop_debugger: false,
+              pure_funcs: ['console.log'],
+            },
+          },
+        },
+      ]);
+    }
   },
   manifest: {},
 });
