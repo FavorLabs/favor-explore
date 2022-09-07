@@ -1,4 +1,4 @@
-import { FileSub } from '@/declare/api';
+import { FileSub, Application } from '@/declare/api';
 import { queryType } from '@/models/files';
 import moment from 'moment';
 import EventEmitter from 'eventemitter3';
@@ -318,4 +318,35 @@ export const stopPreventDefault = (event: React.MouseEvent) => {
 export const stopDragEventPropagation = (e: React.DragEvent) => {
   e.stopPropagation();
   e.nativeEvent.stopImmediatePropagation();
+};
+
+export const getUrlParams = (url: string) => {
+  let urlStr = url.split('?')[1];
+  const urlSearchParams = new URLSearchParams(urlStr);
+  const result = Object.fromEntries(urlSearchParams.entries());
+  return result;
+};
+
+export const getEndPoint = () => {
+  const params = getUrlParams(location.href);
+  if (params?.endpoint) {
+    const api = params?.endpoint.split('#/')[0];
+    return api;
+  } else {
+    return false;
+  }
+};
+
+export const applicationUrlParams = (item: Application) => {
+  let oracles = item.oracles.join(',');
+  let chain = item.chain;
+  if (oracles && chain) {
+    return `?oracles=${oracles}&chain=true`;
+  } else if (oracles) {
+    return `?oracles=${oracles}`;
+  } else if (chain) {
+    return `?chain=true`;
+  } else {
+    return '';
+  }
 };

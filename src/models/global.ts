@@ -1,8 +1,8 @@
 import ModelsType, { Models } from '@/declare/modelType';
 import { defaultApi, sessionStorageApi } from '@/config/url';
-import { checkSession, initChartData } from '@/utils/util';
+import { checkSession, initChartData, getEndPoint } from '@/utils/util';
 import { message } from 'antd';
-import { Topology, ApiPort } from '@/declare/api';
+import { Topology, ApiPort, Application } from '@/declare/api';
 import Api from '@/api/api';
 import DebugApi from '@/api/debugApi';
 import { getConfirmation } from '@/utils/request';
@@ -55,13 +55,14 @@ export interface State {
   chartData: ChartData[];
   electron: boolean;
   logoTheme: themeType;
+  application: Application[];
 }
 
 export default {
   state: {
     refresh: false,
     status: false,
-    api: checkSession(sessionStorageApi) || defaultApi,
+    api: checkSession(sessionStorageApi) || getEndPoint() || defaultApi,
     debugApi: '',
     wsApi: '',
     ws: null,
@@ -82,6 +83,7 @@ export default {
     electron:
       window.navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
     logoTheme: defaultTheme,
+    application: [],
   },
   reducers: {
     setApi(state, { payload }) {
@@ -177,6 +179,13 @@ export default {
       return {
         ...state,
         logoTheme,
+      };
+    },
+    setApplication(state, { payload }) {
+      const { application } = payload;
+      return {
+        ...state,
+        application,
       };
     },
   },
@@ -361,6 +370,20 @@ export default {
             .slice(2),
         },
       });
+    },
+    *getApplication({ payload }, { call, put }) {
+      const { url } = payload;
+      try {
+        const { data } = yield call(Api.getApplication, url);
+        yield put({
+          type: 'setApplication',
+          payload: {
+            application: data,
+          },
+        });
+      } catch (err) {
+        if (err instanceof Error) message.info(err.message);
+      }
     },
   },
   subscriptions: {

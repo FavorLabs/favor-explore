@@ -100,9 +100,16 @@
           padding: 0.3571rem 0;
           margin-left: 0.7143rem;
           min-width: 14.2857rem;
+          max-width: 35rem;
           cursor: pointer;
           .file-name {
             font-size: 1.1429rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            word-break: break-all;
           }
           .file-hash {
             font-size: 0.8571rem;

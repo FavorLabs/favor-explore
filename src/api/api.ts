@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { AxiosResponse, AxiosRequestConfig } from 'axios';
+import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 import {
   FileType,
   FileAttr,
@@ -162,6 +162,10 @@ export const folderResource = (
     method: 'post',
   });
 };
+
+export const getApplication = (url: string): Promise<AxiosResponse<any>> => {
+  return axios.get(url);
+};
 export default {
   isConnected,
   uploadFile,
@@ -177,5 +181,6 @@ export default {
   getPort,
   getFileListMenu,
   folderResource,
+  getApplication,
   // getChain,
 };

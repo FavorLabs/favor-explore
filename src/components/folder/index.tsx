@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './index.less';
-import { Popover, Button, Modal, Input, message } from 'antd';
+import { Popover, Button, Modal, Input, message, Tooltip } from 'antd';
 import { getFileListMenu, folderResource } from '@/api/api';
 import { FolderResource, AllFileInfo, FileListMenu } from '@/declare/api';
 import { useSelector, useDispatch } from 'umi';
@@ -351,7 +351,9 @@ const Folder: React.FC<Props> = (props) => {
                       // console.log('onTouchEnd');
                     }}
                   >
-                    <div className={styles['file-name']}>{key}</div>
+                    <Tooltip placement="topLeft" title={key}>
+                      <div className={styles['file-name']}>{key}</div>
+                    </Tooltip>
                     <div className={styles['file-hash']}>{folderInfo.hash}</div>
                   </div>
                 </div>
