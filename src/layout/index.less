@@ -159,12 +159,18 @@
       justify-content: flex-start;
       align-items: center;
       .expand-item {
-        display: inline-block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 40px;
         height: 40px;
         margin-right: 1.4286rem;
         border-radius: 50%;
         background-color: var(--shortcut-bg);
+        cursor: pointer;
+        img {
+          width: 60%;
+        }
       }
     }
   }

@@ -150,3 +150,11 @@ export declare type FileListMenu = {
   name?: string;
   sub?: object;
 };
+
+export declare type Application = {
+  name: string;
+  icon: string;
+  hash: string;
+  oracles: string[];
+  chain?: boolean;
+};

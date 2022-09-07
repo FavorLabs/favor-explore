@@ -23,6 +23,7 @@ import {
   checkTheme,
   isRunUrl,
   attributeCount,
+  applicationUrlParams,
 } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
@@ -48,6 +49,7 @@ import sunSvg from '@/assets/icon/explore/sun.svg';
 import moonSvg from '@/assets/icon/explore/moon.svg';
 import serachSvg from '@/assets/icon/explore/search.svg';
 import expandSvg from '@/assets/icon/explore/expand.svg';
+import applicationSvg from '@/assets/icon/application.svg';
 import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
@@ -56,12 +58,6 @@ import { default as packageInfo } from '../../package.json';
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import axios from 'axios';
-
-type shortcutType = {
-  name: string;
-  img: string;
-  hash: string;
-};
 
 let ipcRenderer: any = null;
 if (isElectron) {
@@ -93,6 +89,7 @@ const Layouts: React.FC = (props) => {
     ws,
     topology,
     logoTheme,
+    application,
   } = useSelector((state: Models) => state.global);
   const { trafficInfo, account } = useSelector(
     (state: Models) => state.accounting,
@@ -147,49 +144,6 @@ const Layouts: React.FC = (props) => {
       onClick: () => {
         switchPage('/setting');
       },
-    },
-  ];
-
-  const data: shortcutType[] = [
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
-    },
-    {
-      name: '',
-      img: '',
-      hash: '',
     },
   ];
 
@@ -503,6 +457,13 @@ const Layouts: React.FC = (props) => {
 
   useEffect(() => {
     if (attributeCount(addresses) !== 0) {
+      dispatch({
+        type: 'global/getApplication',
+        payload: {
+          url: `https://service.favorlabs.io/api/v1/application?networkId=${addresses?.network_id}`,
+        },
+      });
+
       const theme = localStorage.getItem('theme');
       getHomeBackground({
         networkId: addresses?.network_id,
@@ -572,7 +533,7 @@ const Layouts: React.FC = (props) => {
                       onPressEnter={searchHandle}
                     ></Input>
                   </div>
-                  {/* <div
+                  <div
                     className={styles.expand}
                     onMouseEnter={() => {
                       const expandEl = document.querySelector(
@@ -596,7 +557,7 @@ const Layouts: React.FC = (props) => {
                     }}
                   >
                     <SvgIcon svg={expandSvg}></SvgIcon>
-                  </div> */}
+                  </div>
                 </>
               )}
             </div>
@@ -651,14 +612,25 @@ const Layouts: React.FC = (props) => {
             </div>
             <div className={`${styles['expand-content']} expand-content`}>
               <nav>
-                {data.map((item, index) => {
+                {application.map((item, index) => {
                   return (
-                    <a
-                      href={api + '/file/' + item.hash}
-                      target="_blank"
-                      key={item.hash + index}
+                    <div
                       className={styles['expand-item']}
-                    ></a>
+                      key={item.hash + index}
+                    >
+                      <img
+                        src={item.icon || applicationSvg}
+                        onClick={() => {
+                          window.open(
+                            api +
+                              '/file/' +
+                              item.hash +
+                              applicationUrlParams(item),
+                            '_blank',
+                          );
+                        }}
+                      />
+                    </div>
                   );
                 })}
               </nav>

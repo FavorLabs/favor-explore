@@ -30,7 +30,7 @@
   justify-content: space-between;
   max-width: 47.4286rem;
   margin: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 2.8571rem;
   .input {
     // display: block;
     height: 44px;
@@ -54,10 +54,44 @@
 
 .shortcut_box {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
   margin: auto;
-  // max-width: 353;
-  width: 60%;
+  width: 30%;
+  .shortcut_box_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+    .shortcut_box_item_icon {
+      margin-top: 16px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--shortcut-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 60%;
+      }
+    }
+    .shortcut_box_item_name {
+      color: var(--text-color);
+      margin-top: 6px;
+      width: 100%;
+      height: 36px;
+      border-radius: 36px;
+      padding: 2px 8px;
+      text-align: center;
+      line-height: 36px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
+  }
 }
 
 .to-files {
@@ -90,6 +124,36 @@
   .search-input {
     .input {
       min-width: 20.6429rem;
+    }
+  }
+  .shortcut_box {
+    width: 100%;
+    .shortcut_box_item {
+      width: 33.3333%;
+      // .shortcut_box_item_icon {
+      //   margin-top: 16px;
+      //   width: 48px;
+      //   height: 48px;
+      //   border-radius: 50%;
+      //   background-color: #ddd;
+      //   display: flex;
+      //   justify-content: center;
+      //   align-items: center;
+      // }
+      // .shortcut_box_item_name {
+      //   color: var(--text-color);
+      //   margin-top: 6px;
+      //   width: 100%;
+      //   height: 36px;
+      //   border-radius: 36px;
+      //   padding: 2px 8px;
+      //   text-align: center;
+      //   line-height: 36px;
+      //   overflow: hidden;
+      //   white-space: nowrap;
+      //   text-overflow: ellipsis;
+      //   font-size: 14px;
+      // }
     }
   }
 }
