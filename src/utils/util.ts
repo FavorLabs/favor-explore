@@ -319,3 +319,20 @@ export const stopDragEventPropagation = (e: React.DragEvent) => {
   e.stopPropagation();
   e.nativeEvent.stopImmediatePropagation();
 };
+
+export const getUrlParams = (url: string) => {
+  let urlStr = url.split('?')[1];
+  const urlSearchParams = new URLSearchParams(urlStr);
+  const result = Object.fromEntries(urlSearchParams.entries());
+  return result;
+};
+
+export const getEndPoint = () => {
+  const params = getUrlParams(location.href);
+  if (params?.endpoint) {
+    const api = params?.endpoint.split('#/')[0];
+    return api;
+  } else {
+    return false;
+  }
+};

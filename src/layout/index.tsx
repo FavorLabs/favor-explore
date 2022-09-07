@@ -252,7 +252,12 @@ const Layouts: React.FC = (props) => {
         logoTheme: theme,
       },
     });
-    getHomeBackground({ networkId: addresses?.network_id, theme });
+    const backgroundSvg = sessionStorage.getItem(`homeBG_${theme}`);
+    if (backgroundSvg) {
+      setBackgrounSvg(backgroundSvg);
+    } else {
+      getHomeBackground({ networkId: addresses?.network_id, theme });
+    }
   };
 
   const switchTheme = () => {
@@ -313,6 +318,7 @@ const Layouts: React.FC = (props) => {
         params,
       },
     );
+    sessionStorage.setItem(`homeBG_${params.theme}`, data);
     setBackgrounSvg(data);
   };
 

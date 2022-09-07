@@ -1,6 +1,6 @@
 import ModelsType, { Models } from '@/declare/modelType';
 import { defaultApi, sessionStorageApi } from '@/config/url';
-import { checkSession, initChartData } from '@/utils/util';
+import { checkSession, initChartData, getEndPoint } from '@/utils/util';
 import { message } from 'antd';
 import { Topology, ApiPort } from '@/declare/api';
 import Api from '@/api/api';
@@ -61,7 +61,7 @@ export default {
   state: {
     refresh: false,
     status: false,
-    api: checkSession(sessionStorageApi) || defaultApi,
+    api: checkSession(sessionStorageApi) || getEndPoint() || defaultApi,
     debugApi: '',
     wsApi: '',
     ws: null,
