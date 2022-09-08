@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import styles from './index.less';
 import { Row, Col, Card, message } from 'antd';
 import NotConnected from '@/components/notConnected';
+import CopyText from '@/components/copyText';
+import Keystore from '@/components/keystore';
 import Speed from '@/components/speed';
 import { useDispatch, useSelector } from 'umi';
 import { Models } from '@/declare/modelType';
@@ -12,6 +14,7 @@ const Main: React.FC = () => {
     (state: Models) => state.global,
   );
   const { addresses } = useSelector((state: Models) => state.info);
+  const { account } = useSelector((state: Models) => state.accounting);
 
   const subResult = useRef({
     kad: {
@@ -179,6 +182,24 @@ const Main: React.FC = () => {
                     );
                   })}
                 </ul>
+                <div className={styles['account-export']}>
+                  <div className={styles.title}>Account Address</div>
+                  <div className={styles.account}>
+                    <span style={{ marginRight: 10 }}>{account}</span>
+                    <CopyText text={account} />
+                    <div style={{ marginLeft: 10 }}>
+                      <Keystore />
+                    </div>
+                  </div>
+                </div>
+                {/* <div className={styles.title}>Account Address:</div> */}
+                {/* <div className={`font12 greyColor ${styles.account}`}>
+                  <span style={{ marginRight: 10, fontSize: 18 }}>{account}</span>
+                  <CopyText text={account} />
+                  <div style={{ marginLeft: 10 }}>
+                    <Keystore />
+                  </div>
+                </div> */}
               </div>
             </div>
           </Card>

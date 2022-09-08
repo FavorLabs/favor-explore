@@ -20,10 +20,16 @@
       justify-content: space-between;
       align-items: center;
       // flex-direction: column;
-      margin-bottom: 7px;
+      // margin-bottom: 7px;
       span {
         color: var(--card-label-color);
         transition: color var(--transition-val);
+        width: 100%;
+        display: -webkit-box;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
       }
       p {
         color: var(--text-color);
@@ -121,6 +127,10 @@
         flex: 0 0 46.833333%;
       }
     }
+    .top-cards > div:nth-child(3),
+    .top-cards > div:nth-child(4) {
+      margin-top: 1.0714rem;
+    }
   }
 }
 
@@ -152,7 +162,7 @@
   .content {
     .card-style {
       .card-minheight {
-        min-height: 5rem;
+        min-height: 4rem;
       }
       .card-line {
         flex-direction: column;
@@ -167,7 +177,7 @@
   .content {
     .card-style {
       .card-minheight {
-        min-height: 6rem;
+        min-height: 4rem;
       }
     }
   }

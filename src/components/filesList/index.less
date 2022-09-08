@@ -260,6 +260,23 @@
     display: block;
   }
   .file-chunkinfo {
-    display: none;
+    // display: none;
+  }
+  .info-content {
+    .name {
+      display: -webkit-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    .name,
+    .rcid {
+      span {
+        color: var(--text-color-60);
+        font-family: explore-regular;
+        word-wrap: break-word;
+      }
+    }
   }
 }

@@ -64,7 +64,11 @@ const PeersList: React.FC<Props> = (props) => {
   const addColumnForBlock = () => {
     columns.push(
       {
-        title: <div className={styles.head}>Expiration Date</div>,
+        title: (
+          <div className={styles.head}>
+            {isPC() ? 'Expiration Date' : 'Expiration'}
+          </div>
+        ),
         key: 'Expiration time',
         width: isPC() ? 180 : 130,
         render: (value, record, index) => {
@@ -78,7 +82,7 @@ const PeersList: React.FC<Props> = (props) => {
         },
       },
       {
-        title: 'Remove From List',
+        title: isPC() ? 'Remove From List' : 'Remove',
         render: (value, record, index) => {
           return (
             <div>
@@ -136,7 +140,7 @@ const PeersList: React.FC<Props> = (props) => {
         align: 'center',
       },
       {
-        title: 'Add to Block List',
+        title: isPC() ? 'Add to Block List' : 'Block',
         render: (value, record, index) => {
           return (
             <div>

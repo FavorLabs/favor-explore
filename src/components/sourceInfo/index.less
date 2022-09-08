@@ -15,7 +15,14 @@
   padding: 10px 0;
   border-bottom: 1px solid var(--text-color-60);
   .chunk-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: var(--text-color);
+    margin-bottom: 0.5rem;
+    .total-percent {
+      color: @main_color;
+    }
   }
 }
 
@@ -60,4 +67,19 @@
   color: @main_color;
   text-decoration: underline;
   cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+  .sourcesGrid {
+    width: 100%;
+    .label {
+      width: 80%;
+      .overlay {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
 }

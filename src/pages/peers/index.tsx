@@ -13,7 +13,7 @@ const Main: React.FC = () => {
   const dispatch = useDispatch();
   const [peersList, setPeersList] = useState('full');
   const [isBlockList, setIsBlockList] = useState(false);
-  const { debugApi, topology, ws } = useSelector(
+  const { debugApi, topology, ws, health } = useSelector(
     (state: Models) => state.global,
   );
   const { peers, blockList } = useSelector((state: Models) => state.peers);
@@ -202,15 +202,19 @@ const Main: React.FC = () => {
           >
             Full Peers
           </h4>
-          <h4
-            className={peersList === 'light' ? styles.selected : ''}
-            onClick={() => {
-              setPeersList('light');
-              setIsBlockList(false);
-            }}
-          >
-            Light Peers
-          </h4>
+          {health?.bootNodeMode || health?.fullNode ? (
+            <h4
+              className={peersList === 'light' ? styles.selected : ''}
+              onClick={() => {
+                setPeersList('light');
+                setIsBlockList(false);
+              }}
+            >
+              Light Peers
+            </h4>
+          ) : (
+            <></>
+          )}
           <h4
             className={peersList === 'block' ? styles.selected : ''}
             onClick={() => {
