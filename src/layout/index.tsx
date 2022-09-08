@@ -207,7 +207,7 @@ const Layouts: React.FC = (props) => {
       },
     });
     const backgroundSvg = sessionStorage.getItem(`homeBG_${theme}`);
-    if (backgroundSvg) {
+    if (isPC() && backgroundSvg) {
       setBackgrounSvg(backgroundSvg);
     } else {
       getHomeBackground({ networkId: addresses?.network_id, theme });
@@ -595,12 +595,16 @@ const Layouts: React.FC = (props) => {
                   <></>
                 )}
               </div>
-              <div className={styles.setting_btn}>
-                <SvgIcon
-                  svg={settingSvg}
-                  clickFn={() => setSettingVisible(true)}
-                ></SvgIcon>
-              </div>
+              {isPC() ? (
+                <div className={styles.setting_btn}>
+                  <SvgIcon
+                    svg={settingSvg}
+                    clickFn={() => setSettingVisible(true)}
+                  ></SvgIcon>
+                </div>
+              ) : (
+                <></>
+              )}
               {/* <div className={styles.menu_btn}>
                 <img
                   src={menuSvg}

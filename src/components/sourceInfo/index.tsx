@@ -38,6 +38,7 @@ const SourceInfo: React.FC<Props> = (props) => {
   const { debugApi } = useSelector((state: Models) => state.global);
   const [showLimit, setShowLimit] = useState(true);
   const [source, setSource] = useState<Data[] | null>(null);
+  const [totalPercent, setTotalPercent] = useState(0);
   const changeData = (data: ChunkSource) => {
     let arr: Data[] = [];
     // let pyramidSource = false;
@@ -74,7 +75,11 @@ const SourceInfo: React.FC<Props> = (props) => {
     arr.sort((a, b) => {
       return b.downloadLen - a.downloadLen;
     });
-    // console.log('arr', arr);
+    let allDownLen = 0;
+    arr.forEach((item) => {
+      allDownLen += item.downloadLen;
+    });
+    setTotalPercent((allDownLen / props.hashInfo.bitVector.len) * 100);
     return arr;
   };
 
@@ -113,9 +118,12 @@ const SourceInfo: React.FC<Props> = (props) => {
       {source ? (
         <div className={styles.content}>
           <div className={styles.sources}>
-            <h3 className={`bold-font ${styles['chunk-title']}`}>
-              chunk source info
-            </h3>
+            <div className={`bold-font ${styles['chunk-title']}`}>
+              <span>chunk source info</span>
+              <span className={styles['total-percent']}>
+                {totalPercent.toFixed(2) + '%'}
+              </span>
+            </div>
             <div className={styles.sourcesList}>
               {source.map((item, index) => {
                 return (

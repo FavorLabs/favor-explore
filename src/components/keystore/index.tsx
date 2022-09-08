@@ -60,7 +60,7 @@ const Keystore = () => {
           className={`${styles['export-btn']} bold-font`}
           onClick={() => setKeyModel(true)}
         >
-          ExportKeystore
+          Export
         </span>
       </Tooltip>
       <Modal
