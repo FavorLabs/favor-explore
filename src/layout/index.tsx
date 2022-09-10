@@ -50,6 +50,9 @@ import moonSvg from '@/assets/icon/explore/moon.svg';
 import serachSvg from '@/assets/icon/explore/search.svg';
 import expandSvg from '@/assets/icon/explore/expand.svg';
 import applicationSvg from '@/assets/icon/application.svg';
+import filesSvg from '@/assets/icon/explore/files.svg';
+import homeSvg from '@/assets/icon/explore/home.svg';
+import menuSvg from '@/assets/icon/explore/menu.svg';
 import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
@@ -114,35 +117,52 @@ const Layouts: React.FC = (props) => {
 
   const MenuItem = [
     {
+      key: '/',
+      icon: (
+        <div style={{ marginLeft: -3 }}>
+          <SvgIcon svg={homeSvg}></SvgIcon>
+        </div>
+      ),
+      label: (
+        <div
+          className={`${styles['menu-item-title']} bold-font`}
+          style={{ marginLeft: 2 }}
+        >
+          Home
+        </div>
+      ),
+      onClick: () => {
+        switchPage('/');
+      },
+    },
+    {
       key: '/info',
-      icon: <img className={styles['menu-icon']} src={infoSvg} alt="" />,
-      label: 'Info',
+      icon: <SvgIcon svg={infoSvg}></SvgIcon>,
+      label: (
+        <div className={`${styles['menu-item-title']} bold-font`}>Info</div>
+      ),
       onClick: () => {
         switchPage('/info');
       },
     },
     {
       key: '/peers',
-      icon: <PartitionOutlined />,
-      label: 'Peers',
+      icon: <SvgIcon svg={peersSvg}></SvgIcon>,
+      label: (
+        <div className={`${styles['menu-item-title']} bold-font`}>Peers</div>
+      ),
       onClick: () => {
         switchPage('/peers');
       },
     },
     {
       key: '/files',
-      icon: <FileTextOutlined />,
-      label: 'Files',
+      icon: <SvgIcon svg={filesSvg}></SvgIcon>,
+      label: (
+        <div className={`${styles['menu-item-title']} bold-font`}>Files</div>
+      ),
       onClick: () => {
         switchPage('/files');
-      },
-    },
-    {
-      key: '/setting',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-      onClick: () => {
-        switchPage('/setting');
       },
     },
   ];
@@ -153,7 +173,9 @@ const Layouts: React.FC = (props) => {
     MenuItem.push({
       key: '/log',
       icon: <FieldTimeOutlined />,
-      label: 'Log',
+      label: (
+        <div className={`${styles['menu-item-title']} bold-font`}>Log</div>
+      ),
       onClick: () => {
         switchPage('/log');
       },
@@ -162,9 +184,10 @@ const Layouts: React.FC = (props) => {
 
   const switchPage = (path: string) => {
     history.push(path);
-    if (getScreenWidth() < screenBreakpoint.xl) {
-      setCollapsed(true);
-    }
+    // if (getScreenWidth() < screenBreakpoint.xl) {
+    //   setCollapsed(!collapsed);
+    // }
+    setCollapsed(!collapsed);
   };
 
   const getMetrics = async (url: string, init: boolean = false) => {
@@ -509,7 +532,9 @@ const Layouts: React.FC = (props) => {
             <div className={styles.layout_header_left}>
               <div
                 className={styles.explore_logo}
-                onClick={() => history.push('/')}
+                onClick={() => {
+                  setCollapsed(!collapsed);
+                }}
               >
                 {logoTheme === 'dark' ? (
                   <img src={logo_d} alt="" />
@@ -603,16 +628,11 @@ const Layouts: React.FC = (props) => {
                   ></SvgIcon>
                 </div>
               ) : (
+                // <div className={styles.menu_btn}>
+                //   <SvgIcon svg={menuSvg} clickFn={() => { setCollapsed(!collapsed); }}></SvgIcon>
+                // </div>
                 <></>
               )}
-              {/* <div className={styles.menu_btn}>
-                <img
-                  src={menuSvg}
-                  onClick={() => {
-                    setCollapsed(!collapsed);
-                  }}
-                />
-              </div> */}
             </div>
             <div className={`${styles['expand-content']} expand-content`}>
               <nav>
@@ -741,7 +761,7 @@ const Layouts: React.FC = (props) => {
             </div>
           </Footer>
         </Layout>
-        {/* <Sider
+        <Sider
           defaultCollapsed={true}
           trigger={null}
           collapsible
@@ -761,12 +781,20 @@ const Layouts: React.FC = (props) => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={[]}
+            defaultSelectedKeys={['/']}
+            selectedKeys={[history.location.pathname]}
             items={MenuItem}
             className={styles.menu}
-            style={{ marginTop: '2rem' }}
+            style={{ marginTop: '70px' }}
           />
-        </Sider> */}
+          {collapsed ? (
+            <></>
+          ) : (
+            <p className="explore-version bold-font">
+              Version: {packageInfo.version}
+            </p>
+          )}
+        </Sider>
         <div
           className={styles.sider_mask}
           style={collapsed ? { display: 'none' } : {}}

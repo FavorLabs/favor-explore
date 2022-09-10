@@ -174,13 +174,22 @@
 }
 
 .ant-layout-sider {
-  position: absolute !important;
+  position: fixed !important;
   top: 0;
-  right: 0;
+  left: 0;
   height: 100vh;
-  z-index: 20;
-  background: rgba(30, 30, 30, 0.95) !important;
+  z-index: 3;
+  background: var(--main-bg) !important;
   // backdrop-filter: blur(10px);
+  .ant-layout-sider-children {
+    color: var(--text-color);
+    .explore-version {
+      position: absolute;
+      left: 15px;
+      bottom: 1rem;
+      opacity: 0.6;
+    }
+  }
 }
 .ant-layout-header,
 .ant-layout-footer {
@@ -188,12 +197,16 @@
 }
 
 .ant-menu {
-  background: rgba(30, 30, 30, 0.95) !important;
+  background: transparent !important;
 }
 
 .ant-menu-title-content {
   color: #fff;
   font-size: 1rem;
+}
+
+.ant-menu-inline-collapsed-tooltip {
+  display: none !important;
 }
 
 .ant-btn {
@@ -319,6 +332,10 @@
       color: var(--text-color);
     }
   }
+}
+
+.ant-menu-item {
+  padding-left: 18px !important;
 }
 
 @media screen and (max-width: 1024px) {

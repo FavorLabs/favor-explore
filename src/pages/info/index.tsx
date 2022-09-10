@@ -192,14 +192,6 @@ const Main: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {/* <div className={styles.title}>Account Address:</div> */}
-                {/* <div className={`font12 greyColor ${styles.account}`}>
-                  <span style={{ marginRight: 10, fontSize: 18 }}>{account}</span>
-                  <CopyText text={account} />
-                  <div style={{ marginLeft: 10 }}>
-                    <Keystore />
-                  </div>
-                </div> */}
               </div>
             </div>
           </Card>

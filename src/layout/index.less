@@ -49,7 +49,7 @@
   box-sizing: content-box;
   background-color: var(--header-bg-pc);
   transition: background-color var(--transition-val);
-  z-index: 1;
+  z-index: 5;
   .layout_header_left {
     display: flex;
     justify-content: flex-start;
@@ -294,7 +294,6 @@
 }
 
 .sider_mask {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -309,7 +308,13 @@
 }
 
 .menu_btn {
-  display: none;
+  // display: none;
+}
+
+.menu-item-title {
+  margin-left: 15px;
+  font-size: 16px;
+  color: var(--text-color);
 }
 
 .menu_icon {
@@ -388,7 +393,7 @@
     margin-right: 0;
   }
   .sider_mask {
-    display: block;
+    // display: block;
   }
 }
 

@@ -73,7 +73,7 @@ const FilesList: React.FC = () => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement | null>(null);
 
-  const { api, ws } = useSelector((state: Models) => state.global);
+  const { api, ws, health } = useSelector((state: Models) => state.global);
   const { filesList, downloadList, filesTotal, queryData } = useSelector(
     (state: Models) => state.files,
   );
@@ -338,6 +338,7 @@ const FilesList: React.FC = () => {
     },
     {
       title: <div className={styles.head}>Register</div>,
+      key: 'Register',
       render: (text, record) => (
         <>
           {/0/.test(record.bitVector.b) || (
@@ -459,11 +460,17 @@ const FilesList: React.FC = () => {
 
   if (isPC()) {
     operation.forEach((item) => {
-      columns.push(item);
+      if (item.key === 'Register') {
+        if (health?.bootNodeMode || health?.fullNode) {
+          columns.push(item);
+        }
+      } else {
+        columns.push(item);
+      }
     });
   } else {
     columns.push({
-      title: 'Operate',
+      title: isPC() ? 'Operate' : '',
       key: 'operate',
       render: (text, record) => (
         <>
@@ -478,7 +485,7 @@ const FilesList: React.FC = () => {
         </>
       ),
       align: 'center',
-      width: 90,
+      width: isPC() ? 90 : 55,
     });
   }
 
@@ -661,136 +668,219 @@ const FilesList: React.FC = () => {
         width="100%"
         height="auto"
       >
-        <div className={styles['operation-item']}>
-          <p>Pin/Unpin</p>
+        {/0/.test(currentRecord?.bitVector.b as string) || (
           <>
-            {/0/.test(currentRecord?.bitVector.b as string) || (
-              <Tooltip
-                placement="top"
-                title={
-                  currentRecord?.pinState ? 'unpin the file' : 'pin the file'
-                }
-                arrowPointAtCenter
+            <div
+              className={styles['operation-item']}
+              onClick={() => {
+                pinOrUnPin(
+                  currentRecord?.rootCid as string,
+                  currentRecord?.pinState as boolean,
+                );
+                setOperateDrawer(false);
+              }}
+            >
+              <p>Pin/Unpin</p>
+              <>
+                {/0/.test(currentRecord?.bitVector.b as string) || (
+                  <Tooltip
+                    placement="top"
+                    title={
+                      currentRecord?.pinState
+                        ? 'unpin the file'
+                        : 'pin the file'
+                    }
+                    arrowPointAtCenter
+                  >
+                    <img
+                      alt={'pinStatus'}
+                      src={currentRecord?.pinState ? pinSvg : unpinSvg}
+                      width={20}
+                      style={{ cursor: 'pointer' }}
+                      // onClick={() => {
+                      //   pinOrUnPin(
+                      //     currentRecord?.rootCid as string,
+                      //     currentRecord?.pinState as boolean,
+                      //   );
+                      //   setOperateDrawer(false);
+                      // }}
+                    />
+                  </Tooltip>
+                )}
+              </>
+            </div>
+            {health?.bootNodeMode || health?.fullNode ? (
+              <div
+                className={styles['operation-item']}
+                onClick={() => {
+                  registerHandle(
+                    currentRecord?.rootCid as string,
+                    !currentRecord?.register,
+                  );
+                  setOperateDrawer(false);
+                }}
               >
-                <img
-                  alt={'pinStatus'}
-                  src={currentRecord?.pinState ? pinSvg : unpinSvg}
-                  width={20}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    pinOrUnPin(
-                      currentRecord?.rootCid as string,
-                      currentRecord?.pinState as boolean,
-                    );
-                    setOperateDrawer(false);
-                  }}
-                />
-              </Tooltip>
+                <p>Register</p>
+                <>
+                  {/0/.test(currentRecord?.bitVector.b as string) || (
+                    <Tooltip
+                      placement="top"
+                      title={
+                        currentRecord?.register ? 'Unregister' : 'Register'
+                      }
+                      arrowPointAtCenter
+                    >
+                      <img
+                        alt={'register'}
+                        src={currentRecord?.register ? regSvg : unRegSvg}
+                        width={32}
+                        style={{
+                          cursor: 'pointer',
+                          background: '#555',
+                          borderRadius: '32px',
+                        }}
+                        // onClick={() => {
+                        //   registerHandle(
+                        //     currentRecord?.rootCid as string,
+                        //     !currentRecord?.register,
+                        //   );
+                        //   setOperateDrawer(false);
+                        // }}
+                      />
+                    </Tooltip>
+                  )}
+                </>
+              </div>
+            ) : (
+              <></>
             )}
           </>
-        </div>
-        <div className={styles['operation-item']}>
-          <p>Register</p>
-          <>
-            {/0/.test(currentRecord?.bitVector.b as string) || (
-              <Tooltip
-                placement="top"
-                title={currentRecord?.register ? 'Unregister' : 'Register'}
-                arrowPointAtCenter
-              >
-                <img
-                  alt={'register'}
-                  src={currentRecord?.register ? regSvg : unRegSvg}
-                  width={32}
-                  style={{
-                    cursor: 'pointer',
-                    background: '#555',
-                    borderRadius: '32px',
-                  }}
-                  onClick={() => {
-                    registerHandle(
-                      currentRecord?.rootCid as string,
-                      !currentRecord?.register,
-                    );
-                    setOperateDrawer(false);
-                  }}
-                />
-              </Tooltip>
-            )}
-          </>
-        </div>
-        <div className={styles['operation-item']}>
+        )}
+        <div
+          className={styles['operation-item']}
+          onClick={() => {
+            if (
+              // record.manifest.type === 'file' ||
+              currentRecord?.manifest.type === 'directory'
+            ) {
+              // directory
+              window.open(`${api}/file/${currentRecord?.rootCid}`);
+            } else {
+              // file
+              if (getSuffix(currentRecord?.manifest.default ?? '') === 'm3u8') {
+                window.open(`#/video/${currentRecord?.rootCid}`);
+              } else {
+                window.open(`${api}/file/${currentRecord?.rootCid}`);
+              }
+            }
+            setOperateDrawer(false);
+          }}
+        >
           <p>Open</p>
           <div
-            onClick={() => {
-              if (
-                // record.manifest.type === 'file' ||
-                currentRecord?.manifest.type === 'directory'
-              ) {
-                // directory
-                window.open(`${api}/file/${currentRecord?.rootCid}`);
-              } else {
-                // file
-                if (
-                  getSuffix(currentRecord?.manifest.default ?? '') === 'm3u8'
-                ) {
-                  window.open(`#/video/${currentRecord?.rootCid}`);
-                } else {
-                  window.open(`${api}/file/${currentRecord?.rootCid}`);
-                }
-              }
-              setOperateDrawer(false);
-            }}
+          // onClick={() => {
+          //   if (
+          //     // record.manifest.type === 'file' ||
+          //     currentRecord?.manifest.type === 'directory'
+          //   ) {
+          //     // directory
+          //     window.open(`${api}/file/${currentRecord?.rootCid}`);
+          //   } else {
+          //     // file
+          //     if (
+          //       getSuffix(currentRecord?.manifest.default ?? '') === 'm3u8'
+          //     ) {
+          //       window.open(`#/video/${currentRecord?.rootCid}`);
+          //     } else {
+          //       window.open(`${api}/file/${currentRecord?.rootCid}`);
+          //     }
+          //   }
+          //   setOperateDrawer(false);
+          // }}
           >
             <img src={folderOpenSvg} alt="" />
           </div>
         </div>
-        <div className={styles['operation-item']}>
+        <div
+          className={styles['operation-item']}
+          onClick={() => {
+            setFileMenuVisible(true);
+            setOperateDrawer(false);
+          }}
+        >
           <p>Modify</p>
           <>
             <img
               className={styles['operation-modify']}
               src={modifySvg}
               alt=""
-              onClick={() => {
-                setFileMenuVisible(true);
-                setOperateDrawer(false);
-              }}
+              // onClick={() => {
+              //   setFileMenuVisible(true);
+              //   setOperateDrawer(false);
+              // }}
             />
           </>
         </div>
-        <div className={styles['operation-item']}>
+        <div
+          className={`${styles['operation-item']} ${styles['delete-operate']}`}
+          onClick={() => {
+            confirm({
+              content: (
+                <div className={styles['info-content-t']}>
+                  <div className={`${styles.title} bold-font`}>
+                    Are you sure to delete the file?
+                  </div>
+                  <div className={styles.name}>
+                    FileName:&nbsp;&nbsp;
+                    <span>{currentRecord?.manifest.name}</span>
+                  </div>
+                  RCID:&nbsp;&nbsp;<span>{currentRecord?.rootCid}</span>
+                </div>
+              ),
+              okText: 'Yes',
+              okType: 'danger',
+              icon: <></>,
+              // maskClosable: true,
+              centered: true,
+              cancelText: 'No',
+              onOk() {
+                confirmDelete(currentRecord?.rootCid as string);
+                setOperateDrawer(false);
+              },
+            });
+          }}
+        >
           <p>Delete</p>
           <>
             <img
               src={deleteSvg}
               alt="delete"
-              onClick={() => {
-                confirm({
-                  content: (
-                    <div className={styles['info-content-t']}>
-                      <div className={`${styles.title} bold-font`}>
-                        Are you sure to delete the file?
-                      </div>
-                      <div className={styles.name}>
-                        FileName:&nbsp;&nbsp;
-                        <span>{currentRecord?.manifest.name}</span>
-                      </div>
-                      RCID:&nbsp;&nbsp;<span>{currentRecord?.rootCid}</span>
-                    </div>
-                  ),
-                  okText: 'Yes',
-                  okType: 'danger',
-                  icon: <></>,
-                  // maskClosable: true,
-                  centered: true,
-                  cancelText: 'No',
-                  onOk() {
-                    confirmDelete(currentRecord?.rootCid as string);
-                    setOperateDrawer(false);
-                  },
-                });
-              }}
+              // onClick={() => {
+              //   confirm({
+              //     content: (
+              //       <div className={styles['info-content-t']}>
+              //         <div className={`${styles.title} bold-font`}>
+              //           Are you sure to delete the file?
+              //         </div>
+              //         <div className={styles.name}>
+              //           FileName:&nbsp;&nbsp;
+              //           <span>{currentRecord?.manifest.name}</span>
+              //         </div>
+              //         RCID:&nbsp;&nbsp;<span>{currentRecord?.rootCid}</span>
+              //       </div>
+              //     ),
+              //     okText: 'Yes',
+              //     okType: 'danger',
+              //     icon: <></>,
+              //     // maskClosable: true,
+              //     centered: true,
+              //     cancelText: 'No',
+              //     onOk() {
+              //       confirmDelete(currentRecord?.rootCid as string);
+              //       setOperateDrawer(false);
+              //     },
+              //   });
+              // }}
             />
           </>
         </div>
