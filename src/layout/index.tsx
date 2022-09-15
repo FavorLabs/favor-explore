@@ -238,8 +238,8 @@ const Layouts: React.FC = (props) => {
   };
 
   const switchTheme = () => {
+    setBackgrounSvg('');
     const theme = localStorage.getItem('theme');
-    console.log('theme', theme);
     if (theme) {
       if (theme === 'light') {
         setThemeStatus('dark');
@@ -247,7 +247,7 @@ const Layouts: React.FC = (props) => {
         setThemeStatus('light');
       }
     } else {
-      setThemeStatus(defaultTheme);
+      setThemeStatus(defaultTheme as themeType);
     }
   };
 

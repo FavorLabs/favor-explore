@@ -113,7 +113,7 @@ const Main: React.FC = () => {
             <div className={styles['card-inner']}>
               <div className={styles['card-line']}>
                 <p>NODE MODE</p>
-                <span>
+                <span className={styles['span-mw']}>
                   {health?.bootNodeMode
                     ? 'Boot Node'
                     : health?.fullNode
@@ -123,11 +123,13 @@ const Main: React.FC = () => {
               </div>
               <div className={styles['card-line']}>
                 <p>AGENT VERSION</p>
-                <span>{health?.version}</span>
+                <span className={styles['span-mw']}>{health?.version}</span>
               </div>
               <div className={styles['card-line']}>
                 <p>NETWORK ID</p>
-                <span>{addresses?.network_id}</span>
+                <span className={styles['span-mw']}>
+                  {addresses?.network_id}
+                </span>
               </div>
             </div>
           </Card>
@@ -141,18 +143,22 @@ const Main: React.FC = () => {
             <div className={`${styles['card-inner']} ${styles['card-center']}`}>
               <div className={styles['card-line']}>
                 <p>IPv4</p>
-                <span>{addresses?.public_ip?.ipv4}</span>
+                <span className={styles['span-mw']}>
+                  {addresses?.public_ip?.ipv4}
+                </span>
               </div>
               <div className={styles['card-line']}>
                 <p>IPv6</p>
-                <span>{addresses?.public_ip?.ipv6}</span>
+                <span className={styles['span-mw']}>
+                  {addresses?.public_ip?.ipv6}
+                </span>
               </div>
               <div className={styles['card-line']}>
                 <p>NAT ROUTE</p>
-                <span>
+                <span className={styles['span-mw']}>
                   {addresses?.nat_route?.map((item, index) => {
                     return (
-                      <span key={index} style={{ marginRight: 20 }}>
+                      <span key={index} style={{ marginRight: 10 }}>
                         {item}
                       </span>
                     );
