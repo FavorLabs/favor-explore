@@ -10,8 +10,8 @@ export const setTheme = (themeKey: any) => {
     KEY = themeKey;
   } else {
     // KEY = (localStorage.getItem('theme') as ThemeType | undefined) || 'light';
-    KEY =
-      (localStorage.getItem('theme') as ThemeType | undefined) || defaultTheme;
+    KEY = ((localStorage.getItem('theme') as ThemeType | undefined) ||
+      defaultTheme) as ThemeType;
   }
 
   localStorage.setItem('theme', KEY);

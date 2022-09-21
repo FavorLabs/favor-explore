@@ -52,6 +52,7 @@ import expandSvg from '@/assets/icon/explore/expand.svg';
 import applicationSvg from '@/assets/icon/application.svg';
 import filesSvg from '@/assets/icon/explore/files.svg';
 import homeSvg from '@/assets/icon/explore/home.svg';
+import systemLogSvg from '@/assets/icon/explore/systemLog.svg';
 import menuSvg from '@/assets/icon/explore/menu.svg';
 import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
@@ -60,7 +61,7 @@ import { defaultTheme } from '@/config/themeConfig';
 import { default as packageInfo } from '../../package.json';
 import Web3 from 'web3';
 import { ethers } from 'ethers';
-import axios from 'axios';
+import { getMap } from '@/api/favorLabsApi';
 
 let ipcRenderer: any = null;
 if (isElectron) {
@@ -172,7 +173,7 @@ const Layouts: React.FC = (props) => {
   if (electron) {
     MenuItem.push({
       key: '/log',
-      icon: <FieldTimeOutlined />,
+      icon: <SvgIcon svg={systemLogSvg}></SvgIcon>,
       label: (
         <div className={`${styles['menu-item-title']} bold-font`}>Log</div>
       ),
@@ -289,12 +290,7 @@ const Layouts: React.FC = (props) => {
 
   const getHomeBackground = async (params: any) => {
     if (!isPC()) return;
-    const { data } = await axios.get(
-      'https://service.favorlabs.io/api/v1/map',
-      {
-        params,
-      },
-    );
+    const { data } = await getMap(params);
     sessionStorage.setItem(`homeBG_${params.theme}`, data);
     setBackgrounSvg(data);
   };
@@ -483,7 +479,7 @@ const Layouts: React.FC = (props) => {
       dispatch({
         type: 'global/getApplication',
         payload: {
-          url: `https://service.favorlabs.io/api/v1/application?networkId=${addresses?.network_id}`,
+          networkId: addresses?.network_id,
         },
       });
 
@@ -674,7 +670,7 @@ const Layouts: React.FC = (props) => {
               closable={false}
               destroyOnClose={true}
               onCancel={closeSettingModal}
-              width={'31.4286rem'}
+              width={electron ? '70vw' : '31.4286rem'}
               footer={null}
             >
               {electron ? (

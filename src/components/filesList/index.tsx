@@ -695,8 +695,7 @@ const FilesList: React.FC = () => {
                     <img
                       alt={'pinStatus'}
                       src={currentRecord?.pinState ? pinSvg : unpinSvg}
-                      width={20}
-                      style={{ cursor: 'pointer' }}
+                      style={{ width: '1.4286rem', cursor: 'pointer' }}
                       // onClick={() => {
                       //   pinOrUnPin(
                       //     currentRecord?.rootCid as string,
@@ -733,8 +732,8 @@ const FilesList: React.FC = () => {
                       <img
                         alt={'register'}
                         src={currentRecord?.register ? regSvg : unRegSvg}
-                        width={32}
                         style={{
+                          width: '2.2857rem',
                           cursor: 'pointer',
                           background: '#555',
                           borderRadius: '32px',
@@ -798,7 +797,7 @@ const FilesList: React.FC = () => {
           //   setOperateDrawer(false);
           // }}
           >
-            <img src={folderOpenSvg} alt="" />
+            <img src={folderOpenSvg} alt="" style={{ width: '1.4286rem' }} />
           </div>
         </div>
         <div
@@ -855,6 +854,7 @@ const FilesList: React.FC = () => {
             <img
               src={deleteSvg}
               alt="delete"
+              style={{ width: '1.4286rem' }}
               // onClick={() => {
               //   confirm({
               //     content: (

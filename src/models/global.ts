@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { Topology, ApiPort, Application } from '@/declare/api';
 import Api from '@/api/api';
 import DebugApi from '@/api/debugApi';
+import favorLabsApi from '@/api/favorLabsApi';
 import { getConfirmation } from '@/utils/request';
 import semver from 'semver';
 import { favorVersion } from '@/config/version';
@@ -372,9 +373,9 @@ export default {
       });
     },
     *getApplication({ payload }, { call, put }) {
-      const { url } = payload;
+      const { networkId } = payload;
       try {
-        const { data } = yield call(Api.getApplication, url);
+        const { data } = yield call(favorLabsApi.getApplication, networkId);
         yield put({
           type: 'setApplication',
           payload: {

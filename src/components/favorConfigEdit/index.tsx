@@ -68,7 +68,7 @@ const FavorConfigEdit: React.FC = () => {
             The config file is read once when the Favor is started. Save your
             changes, then restart the Favor to apply them.
           </span>
-          <div>
+          <div className={styles.btns}>
             <Button
               className={styles.btn}
               onClick={useThrottle(resetHandle, 1000)}
@@ -91,14 +91,16 @@ const FavorConfigEdit: React.FC = () => {
           </div>
         </div>
       </div>
-      <TextArea
-        autoSize={true}
-        bordered={false}
-        className={styles.text}
-        id={'favorConfig'}
-        value={favorConfig}
-        onChange={(e) => setFavorConfig(e.target.value)}
-      />
+      <div className={styles.textArea}>
+        <TextArea
+          autoSize={true}
+          bordered={false}
+          className={styles.text}
+          id={'favorConfig'}
+          value={favorConfig}
+          onChange={(e) => setFavorConfig(e.target.value)}
+        />
+      </div>
     </div>
   );
 };
