@@ -217,23 +217,35 @@
           }
           .file-name-hash {
             min-width: 9.2857rem;
-            > div {
+            .file-name,
+            .file-hash {
+              display: block;
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
               max-width: 130px;
             }
             .file-name {
-              font-size: 12px;
+              font-size: 0.8571rem;
             }
             .file-hash {
-              font-size: 8px;
+              font-size: 0.5714rem;
             }
           }
         }
         .sub-folder-right {
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-end;
+          flex-direction: column;
           .file-size {
+            order: 2;
             font-size: 0.7143rem;
+            margin-right: 0;
+          }
+          .file-operation {
+            order: 1;
+            margin-bottom: 0.3571rem;
           }
         }
       }

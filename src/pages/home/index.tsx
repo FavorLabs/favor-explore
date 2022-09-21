@@ -68,7 +68,7 @@ const Main: React.FC = () => {
       >
         {application.map((item, index) => (
           <a
-            href={api + '/file/' + item.hash + applicationUrlParams(item)}
+            href={api + '/file/' + item.hash + '/' + applicationUrlParams(item)}
             target={item.hash}
             key={item.name + index}
             className={styles.shortcut_box_item}

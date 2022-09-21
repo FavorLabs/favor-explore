@@ -23,7 +23,7 @@ const PeersList: React.FC<Props> = (props) => {
 
   const columns: ColumnsType<Peer & block> = [
     {
-      title: <div className={styles.head}>Index</div>,
+      title: isPC() ? <div className={styles.head}>Index</div> : '',
       key: 'Index',
       width: isPC() ? 60 : 55,
       ellipsis: {
