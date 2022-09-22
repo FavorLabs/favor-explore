@@ -157,4 +157,5 @@ export declare type Application = {
   hash: string;
   oracles: string[];
   chain?: boolean;
+  open?: string;
 };
