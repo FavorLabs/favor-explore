@@ -14,6 +14,7 @@ import searchSvg from '@/assets/icon/explore/search.svg';
 import applicationSvg from '@/assets/icon/application.svg';
 import logo_dt from '@/assets/img/logo_dt.png';
 import logo_lt from '@/assets/img/logo_lt.png';
+import urlJoin from 'url-join';
 
 const Main: React.FC = () => {
   const dispatch = useDispatch();
@@ -68,7 +69,13 @@ const Main: React.FC = () => {
       >
         {application.map((item, index) => (
           <a
-            href={api + '/file/' + item.hash + '/' + applicationUrlParams(item)}
+            href={urlJoin(
+              api,
+              'file',
+              item.hash,
+              item?.open ? item.open : '',
+              applicationUrlParams(item),
+            )}
             target={item.hash}
             key={item.name + index}
             className={styles.shortcut_box_item}

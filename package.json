@@ -1,6 +1,6 @@
 {
   "name": "favor_explore",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": {
     "name": "favor",
     "email": "**"
@@ -102,6 +102,7 @@
     "react-tiny-slider": "^1.0.6",
     "semver": "^7.3.5",
     "umi": "^3.5.26",
+    "url-join": "^5.0.0",
     "web3": "^1.7.1"
   },
   "devDependencies": {
