@@ -169,7 +169,6 @@ export const formatStr = (str: string, len: number) => {
 
 export const flexible = (window: Window, document: Document) => {
   var docEl = document.documentElement;
-  console.log('width', docEl.clientWidth, 'height', docEl.clientHeight);
   // var dpr = window.devicePixelRatio || 1;
   // const pcDefaultFontSize = 16;
   // const mobileDefaultFontSize = 16;
@@ -184,13 +183,11 @@ export const flexible = (window: Window, document: Document) => {
 
   function getTargetWidth() {
     if (isPC() || docEl.clientWidth > 1024) {
-      console.log('pc device');
       targetWidth =
         docEl.clientWidth > docEl.clientHeight
           ? docEl.clientWidth
           : docEl.clientHeight;
     } else {
-      console.log('mobile device');
       targetWidth =
         docEl.clientWidth <= docEl.clientHeight
           ? docEl.clientWidth
@@ -212,7 +209,6 @@ export const flexible = (window: Window, document: Document) => {
   // set 1rem = viewWidth / 10
   function setRemUnit() {
     getTargetWidth();
-    console.log('setRemUnit');
     if (docEl.clientWidth > 1024) {
       docEl.style.fontSize = `14px`;
       // docEl.style.fontSize = `${(pcDefaultFontSize / pcDesignSize) * targetWidth}px`;
@@ -283,7 +279,6 @@ export const checkTheme = () => {
 };
 
 export const isRunUrl = (api: string, fileHash: string) => {
-  console.log('isRunUrl');
   const url = api + '/file/' + fileHash;
   const checkinfo = new Promise<boolean | string>((resolve, reject) => {
     axios

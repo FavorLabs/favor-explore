@@ -185,14 +185,14 @@ const PeersList: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setTop(
-      document
-        .getElementsByClassName('ant-table-tbody')[0]
-        .getBoundingClientRect().top,
+      document.getElementsByClassName('ant-table')[0].getBoundingClientRect()
+        .top,
     );
   }, []);
   const scrollY = useMemo(() => {
-    let h = document.body.clientHeight - top - 100;
+    let h = document.body.clientHeight - top - 150;
     if (h < 200) return 200;
     return h;
   }, [document.body.clientHeight, top]);

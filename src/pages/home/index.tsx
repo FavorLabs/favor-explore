@@ -68,15 +68,20 @@ const Main: React.FC = () => {
         }}
       >
         {application.map((item, index) => (
-          <a
-            href={urlJoin(
-              api,
-              'file',
-              item.hash,
-              item?.open ? item.open : '',
-              applicationUrlParams(item),
-            )}
-            target={item.hash}
+          <span
+            onClick={() => {
+              window.open(
+                item?.url
+                  ? urlJoin(item.url, `?endpoint=${api}`)
+                  : urlJoin(
+                      api,
+                      'file',
+                      item.hash,
+                      item?.open ? item.open : '',
+                      applicationUrlParams(item),
+                    ),
+              );
+            }}
             key={item.name + index}
             className={styles.shortcut_box_item}
           >
@@ -84,7 +89,7 @@ const Main: React.FC = () => {
               <img src={item.icon || applicationSvg} width={24} alt={''}></img>
             </div>
             <div className={styles.shortcut_box_item_name}>{item.name}</div>
-          </a>
+          </span>
         ))}
       </div>
     </div>

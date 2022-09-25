@@ -1,6 +1,7 @@
 import axios, { Canceler } from 'axios';
 import NProgress from 'nprogress';
 import { eventEmitter } from '@/utils/util';
+import { baseURL } from '@/api/favorLabsApi';
 
 const request = axios.create({
   baseURL: '',
@@ -83,7 +84,7 @@ request.interceptors.response.use(
     if (axios.isCancel(error)) {
       return new Promise(() => {});
     }
-    if (error.message === 'Network Error') {
+    if (error.message === 'Network Error' && error.config.baseURL !== baseURL) {
       eventEmitter.emit('404');
       return Promise.reject(new Error('Connection Failed'));
     }
