@@ -93,7 +93,7 @@ const FilesList: React.FC = () => {
   let [fileHashValue, setFileHashValue] = useState('');
 
   const tableChange: OnChange = (pagination, filters, sorter, extra) => {
-    console.log('onchange', extra);
+    // console.log('onchange', extra);
     if (extra.action === 'paginate') {
       paginationChange(pagination);
     } else if (extra.action === 'sort') {
@@ -189,6 +189,9 @@ const FilesList: React.FC = () => {
         },
       },
     });
+    if (searchModalVisible) {
+      setSearchModalVisible(false);
+    }
   };
 
   const pinOrUnPin = (hash: string, pinState: boolean): void => {
@@ -500,15 +503,15 @@ const FilesList: React.FC = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     setTop(
-      document
-        .getElementsByClassName('ant-table-tbody')[0]
-        .getBoundingClientRect().top,
+      document.getElementsByClassName('ant-table')[0].getBoundingClientRect()
+        .top,
     );
   }, []);
 
   const scrollY = useMemo(() => {
-    let h = document.body.clientHeight - top - 130;
+    let h = document.body.clientHeight - top - 190;
     if (h < 200) return 200;
     return h;
   }, [document.body.clientHeight, top]);
@@ -556,7 +559,9 @@ const FilesList: React.FC = () => {
       </div>
       <div
         className={`${styles['searchBox-m']} mainBackground`}
-        onClick={() => setSearchModalVisible(true)}
+        onClick={() => {
+          setSearchModalVisible(true);
+        }}
       >
         Search
       </div>
@@ -627,7 +632,7 @@ const FilesList: React.FC = () => {
         visible={searchModalVisible}
         centered
         closable={false}
-        destroyOnClose={true}
+        destroyOnClose={false}
         footer={null}
         className={styles['search-modal']}
       >

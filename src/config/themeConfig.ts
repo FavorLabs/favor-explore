@@ -28,6 +28,8 @@ export const THEME = {
     '--popup-bg': '#000000',
     '--folder-item-hover': 'rgba(0,0,0,.5)',
     '--loading-layer-bg': 'rgba(50, 50, 50, 0.85)',
+    '--antd-wave-shadow-color': 'transparent',
+    '--antd-arrow-background-color': 'transparent',
     // home
     '--home-shortcut-bg': '#FFFFFF',
     //info
@@ -63,6 +65,8 @@ export const THEME = {
     '--popup-bg': 'rgba(250,250,250)',
     '--folder-item-hover': 'rgba(225,225,225,.5)',
     '--loading-layer-bg': 'rgba(238, 238, 238, 0.85)',
+    '--antd-wave-shadow-color': 'transparent',
+    '--antd-arrow-background-color': 'transparent',
     // home
     '--home-shortcut-bg': '#E5E5E5',
     //info

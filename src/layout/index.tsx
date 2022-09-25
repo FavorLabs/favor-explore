@@ -62,6 +62,8 @@ import { default as packageInfo } from '../../package.json';
 import Web3 from 'web3';
 import { ethers } from 'ethers';
 import { getMap } from '@/api/favorLabsApi';
+import urlJoin from 'url-join';
+import _ from 'lodash';
 
 let ipcRenderer: any = null;
 if (isElectron) {
@@ -81,6 +83,10 @@ const Layouts: React.FC = (props) => {
   const [accountDisplay, setAccountDisplay] = useState(false);
   const [backgrounSvg, setBackgrounSvg] = useState('');
   const [isShowBackground, setIsShowBackground] = useState(false);
+  const [bgSvgMin, setBgSvgMin] = useState<number>(
+    -(300 / 143) * (document.body.clientHeight - 145) +
+      document.body.clientWidth,
+  );
   const {
     status,
     metrics,
@@ -114,7 +120,19 @@ const Layouts: React.FC = (props) => {
       result: '',
     },
   }).current;
+  // const bgSvgMin = -(300 / 143) * (document.body.clientHeight - 145) + document.body.clientWidth;
+  const bgSvgData = useRef({
+    bgSvgPosition: {
+      x: 0,
+      y: 0,
+    },
+    X_min: bgSvgMin - (bgSvgMin % 10),
+    X_max: 0,
+    isMoveToLeft: false,
+    speed: Math.abs(Math.ceil(bgSvgMin / 30)),
+  }).current;
   let timer = useRef<null | NodeJS.Timer>(null);
+  let bgTimer = useRef<null | NodeJS.Timer>(null);
 
   const MenuItem = [
     {
@@ -231,11 +249,16 @@ const Layouts: React.FC = (props) => {
       },
     });
     const backgroundSvg = sessionStorage.getItem(`homeBG_${theme}`);
-    if (isPC() && backgroundSvg) {
-      setBackgrounSvg(backgroundSvg);
-    } else {
-      getHomeBackground({ networkId: addresses?.network_id, theme });
-    }
+    const timer = setTimeout(() => {
+      clearTimeout(timer);
+      // if (isPC() && backgroundSvg) {
+      if (backgroundSvg) {
+        setBackgrounSvg(backgroundSvg);
+        // setBgTimer();
+      } else {
+        getHomeBackground({ networkId: addresses?.network_id, theme });
+      }
+    }, 300);
   };
 
   const switchTheme = () => {
@@ -289,10 +312,59 @@ const Layouts: React.FC = (props) => {
   };
 
   const getHomeBackground = async (params: any) => {
-    if (!isPC()) return;
+    // if (!isPC()) return;
+    updateBgSvgPosition();
+    setBgTimer();
     const { data } = await getMap(params);
     sessionStorage.setItem(`homeBG_${params.theme}`, data);
     setBackgrounSvg(data);
+  };
+
+  const getBackgrounSvg = () => {
+    return isShowBackground
+      ? `url(data:image/svg+xml;utf8,${encodeURIComponent(backgrounSvg)})`
+      : '';
+  };
+
+  const getBgSvgMin = () => {
+    return (
+      -(300 / 143) * (document.body.clientHeight - 145) +
+      document.body.clientWidth
+    );
+  };
+
+  const resetBgSvgPosition = () => {
+    bgSvgData.bgSvgPosition.x = 0;
+    bgSvgData.bgSvgPosition.y = 0;
+  };
+
+  const setBgTimer = () => {
+    if (isPC()) return;
+    if (bgTimer.current) {
+      clearInterval(bgTimer.current);
+      resetBgSvgPosition();
+    }
+    bgTimer.current = setInterval(() => {
+      updateBgSvgPosition();
+    }, bgSvgData.speed * 1000);
+  };
+
+  const updateBgSvgPosition = () => {
+    if (bgSvgData.bgSvgPosition.x === bgSvgData.X_max) {
+      bgSvgData.bgSvgPosition.x = bgSvgData.X_min;
+    } else if (bgSvgData.bgSvgPosition.x === bgSvgData.X_min) {
+      bgSvgData.bgSvgPosition.x = bgSvgData.X_max;
+    }
+  };
+
+  const watchScreenRotate = (e: Event) => {
+    setBgSvgMin(getBgSvgMin());
+    const timer = setTimeout(() => {
+      clearTimeout(timer);
+      bgSvgData.speed = Math.abs(Math.ceil(getBgSvgMin() / 30));
+      updateBgSvgPosition();
+      setBgTimer();
+    }, 1000);
   };
 
   useEffect(() => {
@@ -355,6 +427,7 @@ const Layouts: React.FC = (props) => {
     eventEmitter.on('changeSettingModal', (val, str) => {
       setSettingVisible(val);
     });
+    window.onorientationchange = watchScreenRotate;
   }, []);
 
   useEffect(() => {
@@ -466,6 +539,10 @@ const Layouts: React.FC = (props) => {
       if (historyLocation.pathname === '/') {
         setHeaderSearch(false);
         setIsShowBackground(true);
+        if (bgTimer.current) {
+          updateBgSvgPosition();
+          setBgTimer();
+        }
       } else {
         setHeaderSearch(true);
         setIsShowBackground(false);
@@ -496,15 +573,23 @@ const Layouts: React.FC = (props) => {
       <Layout className={styles.main_layout}>
         <Layout
           className={styles.site_layout}
-          style={{
-            backgroundImage: isShowBackground
-              ? `url(data:image/svg+xml;utf8,${encodeURIComponent(
-                  backgrounSvg,
-                )})`
-              : '',
-            backgroundPosition: '0px 70px',
-            backgroundRepeat: 'no-repeat',
-          }}
+          style={
+            isPC()
+              ? {
+                  backgroundImage: getBackgrounSvg(),
+                  backgroundPosition: '0px 70px',
+                  backgroundRepeat: 'no-repeat',
+                }
+              : {
+                  backgroundImage: getBackgrounSvg(),
+                  backgroundPosition: `${
+                    bgSvgData.bgSvgPosition.x + 'px'
+                  } 70px`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: 'auto calc(100vh - 145px)',
+                  transition: `background-position ${bgSvgData.speed}s linear`,
+                }
+          }
         >
           <Header
             className={`site_layout_background ${styles.layout_header}`}
@@ -642,11 +727,15 @@ const Layouts: React.FC = (props) => {
                         src={item.icon || applicationSvg}
                         onClick={() => {
                           window.open(
-                            api +
-                              '/file/' +
-                              item.hash +
-                              applicationUrlParams(item),
-                            '_blank',
+                            item?.url
+                              ? urlJoin(item.url, `?endpoint=${api}`)
+                              : urlJoin(
+                                  api,
+                                  'file',
+                                  item.hash,
+                                  item?.open ? item.open : '',
+                                  applicationUrlParams(item),
+                                ),
                           );
                         }}
                       />

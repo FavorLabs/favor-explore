@@ -158,4 +158,5 @@ export declare type Application = {
   oracles: string[];
   chain?: boolean;
   open?: string;
+  url?: string;
 };
