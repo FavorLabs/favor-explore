@@ -39,6 +39,10 @@ export default defineConfig({
       .rule('fonts')
       .test(/\.(eot|woff|woff2|ttf)(\?.*)?$/)
       .use('file-loader')
+      .options({
+        name: '[name].[contenthash].[ext]',
+        outputPath: 'static/fonts',
+      })
       .loader(require.resolve('@umijs/deps/compiled/file-loader'));
     if (env === 'production') {
       config.plugin('TerserPlugin').use(TerserPlugin, [
