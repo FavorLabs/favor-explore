@@ -12,12 +12,15 @@ const Loading: React.FC<Props> = (props) => {
   return (
     <div className={styles.layer}>
       <Spin
-        style={{ color: 'inherit' }}
+        style={{
+          color: 'inherit',
+          transform: `translateY(${props.text ? '0px' : '-50px'})`,
+        }}
         spinning={props.status}
         delay={500}
         size="large"
         indicator={<LoadingOutlined className={'mainColor'} />}
-        tip={props.text}
+        tip={props.text || 'loading page'}
       />
     </div>
   );

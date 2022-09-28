@@ -81,7 +81,7 @@
     > div:last-child {
       position: absolute;
       left: 33.6333%;
-      bottom: 12px;
+      bottom: -5px;
       .account-info,
       .balance-info {
         display: flex;
@@ -100,6 +100,7 @@
         color: var(--text-color);
       }
       .account-export {
+        display: flex;
         .title {
           opacity: 0.6;
         }
@@ -107,6 +108,7 @@
           display: flex;
           justify-content: flex-start;
           align-items: center;
+          margin-left: 15px;
         }
       }
     }
@@ -198,6 +200,12 @@
               width: 1.1429rem;
               height: 1.1429rem;
             }
+          }
+        }
+        .account-export {
+          display: block;
+          .account {
+            margin-left: 0;
           }
         }
       }

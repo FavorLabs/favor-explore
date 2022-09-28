@@ -87,6 +87,7 @@ const Layouts: React.FC = (props) => {
     -(300 / 143) * (document.body.clientHeight - 145) +
       document.body.clientWidth,
   );
+  const [isVerticalScreen, setIsVerticalScreen] = useState(true);
   const {
     status,
     metrics,
@@ -120,7 +121,7 @@ const Layouts: React.FC = (props) => {
       result: '',
     },
   }).current;
-  // const bgSvgMin = -(300 / 143) * (document.body.clientHeight - 145) + document.body.clientWidth;
+  const stepsPerSecond = 10;
   const bgSvgData = useRef({
     bgSvgPosition: {
       x: 0,
@@ -129,7 +130,7 @@ const Layouts: React.FC = (props) => {
     X_min: bgSvgMin - (bgSvgMin % 10),
     X_max: 0,
     isMoveToLeft: false,
-    speed: Math.abs(Math.ceil(bgSvgMin / 30)),
+    speed: Math.abs(Math.ceil(bgSvgMin / stepsPerSecond)),
   }).current;
   let timer = useRef<null | NodeJS.Timer>(null);
   let bgTimer = useRef<null | NodeJS.Timer>(null);
@@ -346,6 +347,7 @@ const Layouts: React.FC = (props) => {
     }
     bgTimer.current = setInterval(() => {
       updateBgSvgPosition();
+      console.log('move bg');
     }, bgSvgData.speed * 1000);
   };
 
@@ -358,13 +360,26 @@ const Layouts: React.FC = (props) => {
   };
 
   const watchScreenRotate = (e: Event) => {
-    setBgSvgMin(getBgSvgMin());
-    const timer = setTimeout(() => {
-      clearTimeout(timer);
-      bgSvgData.speed = Math.abs(Math.ceil(getBgSvgMin() / 30));
-      updateBgSvgPosition();
-      setBgTimer();
-    }, 1000);
+    if (isPC()) return;
+    console.log('watchScreenRotate', window.orientation);
+    // if (window.orientation === 90 || window.orientation === -90) {
+    //   // ios col android row
+    // } else if (window.orientation === 0 || window.orientation === 180) {
+    //   // ios row android col
+    // }
+    if (window.orientation === 0 || window.orientation === 180) {
+      console.log('col---');
+      setIsVerticalScreen(true);
+      setBgSvgMin(getBgSvgMin());
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        bgSvgData.speed = Math.abs(Math.ceil(getBgSvgMin() / stepsPerSecond));
+        updateBgSvgPosition();
+        setBgTimer();
+      }, 1000);
+    } else {
+      setIsVerticalScreen(false);
+    }
   };
 
   useEffect(() => {
@@ -580,7 +595,8 @@ const Layouts: React.FC = (props) => {
                   backgroundPosition: '0px 70px',
                   backgroundRepeat: 'no-repeat',
                 }
-              : {
+              : isVerticalScreen
+              ? {
                   backgroundImage: getBackgrounSvg(),
                   backgroundPosition: `${
                     bgSvgData.bgSvgPosition.x + 'px'
@@ -588,6 +604,11 @@ const Layouts: React.FC = (props) => {
                   backgroundRepeat: 'no-repeat',
                   backgroundSize: 'auto calc(100vh - 145px)',
                   transition: `background-position ${bgSvgData.speed}s linear`,
+                }
+              : {
+                  backgroundImage: getBackgrounSvg(),
+                  backgroundPosition: '0px 70px',
+                  backgroundRepeat: 'no-repeat',
                 }
           }
         >
