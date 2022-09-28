@@ -8,7 +8,10 @@ export default defineConfig({
   nodeModulesTransform: {
     type: 'none',
   },
-  dynamicImport: {},
+  dynamicImport: {
+    loading: '@/components/loading',
+  },
+  plugins: ['./src/plugins/modifyHtml.ts'],
   routes,
   history: {
     type: 'hash',

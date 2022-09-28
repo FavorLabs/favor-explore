@@ -23,7 +23,8 @@
     "electron:win32": "electron-builder --win  --ia32",
     "electron:win64": "electron-builder --win  --x64",
     "electron:mac": "electron-builder --mac",
-    "electron:linux": "electron-builder --linux"
+    "electron:linux": "electron-builder --linux",
+    "cache": "cd ./dist && appcache-manifest './**/**/**/**/**.**' --network-star -o ./appcache.manifest && cd ../"
   },
   "build": {
     "nsis": {
@@ -118,6 +119,7 @@
     "@types/semver": "^7.3.9",
     "@umijs/preset-react": "1.x",
     "@umijs/test": "^3.5.26",
+    "appcache-manifest": "^2.1.0",
     "electron": "^16.0.2",
     "electron-builder": "^22.14.5",
     "lint-staged": "^10.0.7",
