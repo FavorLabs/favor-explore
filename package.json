@@ -13,6 +13,7 @@
     "start": "umi dev",
     "start:app": "cross-env BUILD_ENV=app umi dev",
     "build": "umi build",
+    "build:cache": "umi build && cd ./dist && appcache-manifest './**/**/**/**/**.**' --network-star -o ./appcache.manifest && cd ../",
     "build:app": "cross-env BUILD_ENV=app umi build",
     "postinstall": "umi generate tmp",
     "prettier": "prettier --write '**/*.{js,jsx,tsx,ts,less,md,json}'",
