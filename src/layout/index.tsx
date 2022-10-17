@@ -3,16 +3,6 @@ import { useHistory, useSelector, useDispatch, useLocation } from 'umi';
 import { Layout, Menu, Button, message, Modal, Input } from 'antd';
 import '../assets/font/iconfont.css';
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  HomeOutlined,
-  FileTextOutlined,
-  PartitionOutlined,
-  SettingOutlined,
-  FieldTimeOutlined,
-  InfoCircleOutlined,
-} from '@ant-design/icons';
-import {
   getScreenWidth,
   checkSession,
   eventEmitter,
@@ -130,6 +120,7 @@ const Layouts: React.FC = (props) => {
     X_min: bgSvgMin - (bgSvgMin % 10),
     X_max: 0,
     isMoveToLeft: false,
+    isMove: true,
     speed: Math.abs(Math.ceil(bgSvgMin / stepsPerSecond)),
   }).current;
   let timer = useRef<null | NodeJS.Timer>(null);
@@ -339,11 +330,13 @@ const Layouts: React.FC = (props) => {
     bgSvgData.bgSvgPosition.y = 0;
   };
 
-  const setBgTimer = () => {
+  const setBgTimer = (noReset?: boolean) => {
     if (isPC()) return;
     if (bgTimer.current) {
       clearInterval(bgTimer.current);
-      resetBgSvgPosition();
+      if (!noReset) {
+        resetBgSvgPosition();
+      }
     }
     bgTimer.current = setInterval(() => {
       updateBgSvgPosition();
@@ -359,16 +352,17 @@ const Layouts: React.FC = (props) => {
     }
   };
 
+  const getBgStaticStyle = () => {
+    return {
+      backgroundImage: getBackgrounSvg(),
+      backgroundPosition: '0px 70px',
+      backgroundRepeat: 'no-repeat',
+    };
+  };
+
   const watchScreenRotate = (e: Event) => {
     if (isPC()) return;
-    console.log('watchScreenRotate', window.orientation);
-    // if (window.orientation === 90 || window.orientation === -90) {
-    //   // ios col android row
-    // } else if (window.orientation === 0 || window.orientation === 180) {
-    //   // ios row android col
-    // }
     if (window.orientation === 0 || window.orientation === 180) {
-      console.log('col---');
       setIsVerticalScreen(true);
       setBgSvgMin(getBgSvgMin());
       const timer = setTimeout(() => {
@@ -380,6 +374,19 @@ const Layouts: React.FC = (props) => {
     } else {
       setIsVerticalScreen(false);
     }
+  };
+
+  const webviewChange = () => {
+    window.addEventListener('focus', () => {
+      bgSvgData.isMove = true;
+      setTimeout(() => {
+        bgSvgData.bgSvgPosition.x = bgSvgData.X_min;
+        setBgTimer(true);
+      }, 1000 * 5);
+    });
+    window.addEventListener('blur', () => {
+      bgSvgData.isMove = false;
+    });
   };
 
   useEffect(() => {
@@ -443,6 +450,7 @@ const Layouts: React.FC = (props) => {
       setSettingVisible(val);
     });
     window.onorientationchange = watchScreenRotate;
+    webviewChange();
   }, []);
 
   useEffect(() => {
@@ -550,7 +558,6 @@ const Layouts: React.FC = (props) => {
 
   useEffect(() => {
     history.listen((historyLocation) => {
-      // console.log('router change', historyLocation);
       if (historyLocation.pathname === '/') {
         setHeaderSearch(false);
         setIsShowBackground(true);
@@ -590,26 +597,26 @@ const Layouts: React.FC = (props) => {
           className={styles.site_layout}
           style={
             isPC()
-              ? {
-                  backgroundImage: getBackgrounSvg(),
-                  backgroundPosition: '0px 70px',
-                  backgroundRepeat: 'no-repeat',
-                }
+              ? getBgStaticStyle()
               : isVerticalScreen
-              ? {
-                  backgroundImage: getBackgrounSvg(),
-                  backgroundPosition: `${
-                    bgSvgData.bgSvgPosition.x + 'px'
-                  } 70px`,
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: 'auto calc(100vh - 145px)',
-                  transition: `background-position ${bgSvgData.speed}s linear`,
-                }
-              : {
-                  backgroundImage: getBackgrounSvg(),
-                  backgroundPosition: '0px 70px',
-                  backgroundRepeat: 'no-repeat',
-                }
+              ? bgSvgData.isMove
+                ? {
+                    backgroundImage: getBackgrounSvg(),
+                    backgroundPosition: `${
+                      bgSvgData.bgSvgPosition.x + 'px'
+                    } 70px`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'auto calc(100vh - 145px)',
+                    transition: `background-position ${bgSvgData.speed}s linear`,
+                  }
+                : {
+                    backgroundImage: getBackgrounSvg(),
+                    backgroundPosition: `0px 70px`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'auto calc(100vh - 145px)',
+                    transition: `none`,
+                  }
+              : getBgStaticStyle()
           }
         >
           <Header
@@ -667,7 +674,6 @@ const Layouts: React.FC = (props) => {
                         '.expand-content',
                       ) as HTMLElement;
                       const list = expandEl.classList;
-                      // console.log('list', list);
                       if (list.length === 2) {
                         expandEl.className =
                           expandEl.className.trim() + ' expand-show';
