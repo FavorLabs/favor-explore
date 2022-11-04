@@ -384,7 +384,7 @@ const FilesList: React.FC = () => {
                 record.manifest.type === 'directory'
               ) {
                 // directory
-                window.open(`${api}/file/${record.rootCid}`);
+                window.open(`${api}/file/${record.rootCid}/`);
                 // console.log('record.manifest.type', record.manifest.type);
                 // setCurrentRecord(record);
                 // setFileMenuVisible(true);
@@ -768,7 +768,7 @@ const FilesList: React.FC = () => {
               currentRecord?.manifest.type === 'directory'
             ) {
               // directory
-              window.open(`${api}/file/${currentRecord?.rootCid}`);
+              window.open(`${api}/file/${currentRecord?.rootCid}/`);
             } else {
               // file
               if (getSuffix(currentRecord?.manifest.default ?? '') === 'm3u8') {
