@@ -3,6 +3,7 @@ import { queryType } from '@/models/files';
 import moment from 'moment';
 import EventEmitter from 'eventemitter3';
 import { debounce } from 'lodash';
+import urlJoin from 'url-join';
 import { setTheme } from './theme';
 import axios from 'axios';
 import { message } from 'antd';
@@ -300,7 +301,8 @@ export const isRunUrl = (api: string, fileHash: string) => {
         // reject(JSON.stringify(info));
       });
     const timer = setTimeout(() => {
-      window.open(api + '/file/' + fileHash, '_blank');
+      // window.open(api + '/file/' + fileHash, '_blank');
+      window.open(urlJoin(api, 'file', fileHash, '/'), '_blank');
     }, 1800);
   });
 };

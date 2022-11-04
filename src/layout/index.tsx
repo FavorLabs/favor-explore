@@ -269,8 +269,8 @@ const Layouts: React.FC = (props) => {
 
   const searchHandle = () => {
     if (fileHash.trim()) {
-      isRunUrl(api, fileHash);
-      // window.open(api + '/file/' + fileHash, '_blank');
+      // isRunUrl(api, fileHash);
+      window.open(urlJoin(api, 'file', fileHash, '/'), '_blank');
     }
   };
 
@@ -760,7 +760,7 @@ const Layouts: React.FC = (props) => {
                                   api,
                                   'file',
                                   item.hash,
-                                  item?.open ? item.open : '',
+                                  item?.open ? item.open : '/',
                                   applicationUrlParams(item),
                                 ),
                           );
