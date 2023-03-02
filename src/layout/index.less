@@ -106,6 +106,7 @@
   .layout_header_right {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     margin-right: 2rem;
     .account_info {
       display: flex;
@@ -136,6 +137,27 @@
       svg {
         width: 21px;
         height: 28px;
+      }
+    }
+    .uniPass_info {
+      margin-right: 0.5rem;
+      cursor: pointer;
+      .uniPass_svg {
+        width: 38px;
+        border-radius: 50%;
+      }
+      .email_address {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-left: 10px;
+        .email {
+          font-weight: bold;
+        }
+        p {
+          line-height: 1.5rem;
+        }
       }
     }
   }
@@ -319,6 +341,30 @@
 
 .menu_icon {
   filter: drop-shadow(0 0 0 0 #fff);
+}
+
+.menu_bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .btnS {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .set_theme_btn {
+      margin-right: 16px;
+      svg {
+        width: 28px;
+        height: 28px;
+      }
+    }
+    .setting_btn {
+      svg {
+        width: 21px;
+        height: 28px;
+      }
+    }
+  }
 }
 
 // @media screen and (max-width: 992px) {
