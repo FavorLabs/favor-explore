@@ -48,17 +48,14 @@ const Main: React.FC = () => {
           className={styles.input}
           suffix={
             // <SearchOutlined style={{ fontSize: '1.3125rem', color: '#fff' }} onClick={searchHandle} />
-            <SvgIcon svg={searchSvg} clickFn={searchHandle}></SvgIcon>
+            <SvgIcon svg={searchSvg} clickFn={searchHandle} />
           }
           value={fileHash}
           onChange={(e) => setFileHash(e.currentTarget.value)}
           onPressEnter={searchHandle}
-        ></Input>
+        />
         <div className={styles['to-files']}>
-          <SvgIcon
-            svg={filesSvg}
-            clickFn={() => history.push('/files')}
-          ></SvgIcon>
+          <SvgIcon svg={filesSvg} clickFn={() => history.push('/files')} />
         </div>
       </div>
       <div
@@ -72,13 +69,20 @@ const Main: React.FC = () => {
             onClick={() => {
               window.open(
                 item?.url
-                  ? urlJoin(item.url, `?endpoint=${api}`)
+                  ? urlJoin(
+                      item.url,
+                      applicationUrlParams({ endpoint: api, name: item.name }),
+                    )
                   : urlJoin(
                       api,
                       'file',
                       item.hash,
-                      item?.open ? item.open : '/',
-                      applicationUrlParams(item),
+                      item?.open ?? '/',
+                      applicationUrlParams({
+                        oracles: item.oracles,
+                        chain: item.chain,
+                        name: item.name,
+                      }),
                     ),
               );
             }}
@@ -86,7 +90,7 @@ const Main: React.FC = () => {
             className={styles.shortcut_box_item}
           >
             <div className={styles.shortcut_box_item_icon}>
-              <img src={item.icon || applicationSvg} width={24} alt={''}></img>
+              <img src={item.icon || applicationSvg} width={24} alt={''} />
             </div>
             <div className={styles.shortcut_box_item_name}>{item.name}</div>
           </span>

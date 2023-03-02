@@ -143,9 +143,12 @@ export const query = (params: queryType) => {
     sort: JSON.stringify(params.sort || {}),
     filter: JSON.stringify(params.filter || []),
   };
-  return Object.keys(newParams)
-    .map((key) => [key, newParams[key]].map(encodeURIComponent).join('='))
-    .join('&');
+  return (
+    Object.keys(newParams)
+      // @ts-ignore
+      .map((key) => [key, newParams[key]].map(encodeURIComponent).join('='))
+      .join('&')
+  );
 };
 
 export const attributeCount = function (obj: any) {
@@ -164,8 +167,8 @@ export const formatAddress = (str: string) => {
 
 export const eventEmitter = new EventEmitter();
 
-export const formatStr = (str: string, len: number) => {
-  return str.substring(0, len) + '...';
+export const formatStr = (str: string, start: number = 6, end: number = 4) => {
+  return str.substring(0, start) + '...' + str.substring(str.length - end);
 };
 
 export const flexible = (window: Window, document: Document) => {
@@ -250,15 +253,15 @@ export const isPC = () => {
   let mCE = sUserAgent.match(/windows ce/i);
   let mWM = sUserAgent.match(/windows mobile/i);
 
-  let bIsIpad = mIpad ? true : false;
-  let bIsIphoneOs = mIphoneOs ? true : false;
-  let bIsMidp = mMidp ? true : false;
-  let bIsUc7 = mUc7 ? true : false;
-  let bIsUc = mUc ? true : false;
-  let bIsAndroid = mAndroid ? true : false;
-  let bIsCE = mCE ? true : false;
-  let bIsWM = mWM ? true : false;
-  if (
+  let bIsIpad = !!mIpad;
+  let bIsIphoneOs = !!mIphoneOs;
+  let bIsMidp = !!mMidp;
+  let bIsUc7 = !!mUc7;
+  let bIsUc = !!mUc;
+  let bIsAndroid = !!mAndroid;
+  let bIsCE = !!mCE;
+  let bIsWM = !!mWM;
+  return !(
     bIsIpad ||
     bIsIphoneOs ||
     bIsMidp ||
@@ -267,11 +270,7 @@ export const isPC = () => {
     bIsAndroid ||
     bIsCE ||
     bIsWM
-  ) {
-    return false;
-  } else {
-    return true;
-  }
+  );
 };
 
 export const checkTheme = () => {
@@ -334,16 +333,20 @@ export const getEndPoint = () => {
   }
 };
 
-export const applicationUrlParams = (item: Application) => {
-  let oracles = item.oracles.join(',');
-  let chain = item.chain;
-  if (oracles && chain) {
-    return `?oracles=${oracles}&chain=true`;
-  } else if (oracles) {
-    return `?oracles=${oracles}`;
-  } else if (chain) {
-    return `?chain=true`;
-  } else {
-    return '';
+export const applicationUrlParams = (options: any) => {
+  let arr = [];
+  for (let key in options) {
+    if (key === 'oracles') {
+      if (options[key].length) arr.push(`${key}=${options[key].join(',')}`);
+    } else if (key === 'chain') {
+      if (options[key]) arr.push(`${key}=true`);
+    } else {
+      arr.push(`${key}=${options[key]}`);
+    }
   }
+  return '?' + arr.join('&');
+};
+
+export const isFavorApp = () => {
+  return navigator.userAgent.match(/favor/i);
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useHistory, useSelector, useDispatch, useLocation } from 'umi';
-import { Layout, Menu, Button, message, Modal, Input } from 'antd';
+import { Layout, Menu, Button, message, Modal, Input, Popover } from 'antd';
 import '../assets/font/iconfont.css';
 import {
   getScreenWidth,
@@ -14,6 +14,7 @@ import {
   isRunUrl,
   attributeCount,
   applicationUrlParams,
+  isFavorApp,
 } from '@/utils/util';
 import { screenBreakpoint } from '@/config';
 import AccountAddress from '@/components/accountAddress';
@@ -44,6 +45,7 @@ import filesSvg from '@/assets/icon/explore/files.svg';
 import homeSvg from '@/assets/icon/explore/home.svg';
 import systemLogSvg from '@/assets/icon/explore/systemLog.svg';
 import menuSvg from '@/assets/icon/explore/menu.svg';
+import uniPassSvg from '@/assets/icon/explore/unipass.svg';
 import '@/utils/theme.ts';
 import { setTheme } from '@/utils/theme';
 import { themeType } from '@/models/global';
@@ -54,11 +56,17 @@ import { ethers } from 'ethers';
 import { getMap } from '@/api/favorLabsApi';
 import urlJoin from 'url-join';
 import _ from 'lodash';
+import CopyText from '@/components/copyText';
 
 let ipcRenderer: any = null;
 if (isElectron) {
   ipcRenderer = window.require('electron').ipcRenderer;
 }
+
+type walletRes = {
+  address: string;
+  email: string;
+};
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -68,6 +76,10 @@ const Layouts: React.FC = (props) => {
   const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(true);
   const [settingVisible, setSettingVisible] = useState(false);
+  const [uniPassInfoData, setUniPassInfoData] = useState<walletRes | null>(
+    null,
+  );
+  const [uniPassInfoVisible, setUniPassInfoVisible] = useState(false);
   const [fileHash, setFileHash] = useState('');
   const [headerSearch, setHeaderSearch] = useState(false);
   const [accountDisplay, setAccountDisplay] = useState(false);
@@ -131,7 +143,7 @@ const Layouts: React.FC = (props) => {
       key: '/',
       icon: (
         <div style={{ marginLeft: -3 }}>
-          <SvgIcon svg={homeSvg}></SvgIcon>
+          <SvgIcon svg={homeSvg} />
         </div>
       ),
       label: (
@@ -148,7 +160,7 @@ const Layouts: React.FC = (props) => {
     },
     {
       key: '/info',
-      icon: <SvgIcon svg={infoSvg}></SvgIcon>,
+      icon: <SvgIcon svg={infoSvg} />,
       label: (
         <div className={`${styles['menu-item-title']} bold-font`}>Info</div>
       ),
@@ -158,7 +170,7 @@ const Layouts: React.FC = (props) => {
     },
     {
       key: '/peers',
-      icon: <SvgIcon svg={peersSvg}></SvgIcon>,
+      icon: <SvgIcon svg={peersSvg} />,
       label: (
         <div className={`${styles['menu-item-title']} bold-font`}>Peers</div>
       ),
@@ -168,7 +180,7 @@ const Layouts: React.FC = (props) => {
     },
     {
       key: '/files',
-      icon: <SvgIcon svg={filesSvg}></SvgIcon>,
+      icon: <SvgIcon svg={filesSvg} />,
       label: (
         <div className={`${styles['menu-item-title']} bold-font`}>Files</div>
       ),
@@ -183,7 +195,7 @@ const Layouts: React.FC = (props) => {
   if (electron) {
     MenuItem.push({
       key: '/log',
-      icon: <SvgIcon svg={systemLogSvg}></SvgIcon>,
+      icon: <SvgIcon svg={systemLogSvg} />,
       label: (
         <div className={`${styles['menu-item-title']} bold-font`}>Log</div>
       ),
@@ -202,7 +214,7 @@ const Layouts: React.FC = (props) => {
   };
 
   const getMetrics = async (url: string, init: boolean = false) => {
-    await dispatch({
+    dispatch({
       type: 'global/getMetrics',
       payload: { url, init },
     });
@@ -387,6 +399,15 @@ const Layouts: React.FC = (props) => {
     window.addEventListener('blur', () => {
       bgSvgData.isMove = false;
     });
+  };
+
+  const getWalletInfo = () => {
+    window?.flutter_inappwebview
+      ?.callHandler?.('address')
+      .then((res?: walletRes) => {
+        if (res) setUniPassInfoData(res);
+        else setUniPassInfoData(null);
+      });
   };
 
   useEffect(() => {
@@ -658,14 +679,11 @@ const Layouts: React.FC = (props) => {
                       className={styles.input}
                       value={fileHash}
                       prefix={
-                        <SvgIcon
-                          svg={serachSvg}
-                          clickFn={searchHandle}
-                        ></SvgIcon>
+                        <SvgIcon svg={serachSvg} clickFn={searchHandle} />
                       }
                       onChange={(e) => setFileHash(e.currentTarget.value)}
                       onPressEnter={searchHandle}
-                    ></Input>
+                    />
                   </div>
                   <div
                     className={styles.expand}
@@ -689,57 +707,102 @@ const Layouts: React.FC = (props) => {
                       }
                     }}
                   >
-                    <SvgIcon svg={expandSvg}></SvgIcon>
+                    <SvgIcon svg={expandSvg} />
                   </div>
                 </>
               )}
             </div>
             <div className={styles.layout_header_right}>
-              {accountDisplay ? (
-                <div
-                  className={styles.account_info}
-                  onClick={() => history.push('/account')}
-                >
-                  <span className={styles.blanceSvg}>
-                    <SvgIcon svg={balanceSvg}></SvgIcon>
-                  </span>
-                  <span className={styles['account-info-mobile']}>
-                    {trafficInfo.balance}&nbsp;FTC
-                  </span>
-                  <span className={styles['account-info-mobile']}>
-                    {formatStr(account ? account : '', 8)}
-                  </span>
+              {/*{accountDisplay ? (*/}
+              {/*  <div*/}
+              {/*    className={styles.account_info}*/}
+              {/*    onClick={() => history.push('/account')}*/}
+              {/*  >*/}
+              {/*    <span className={styles.blanceSvg}>*/}
+              {/*      <SvgIcon svg={balanceSvg}/>*/}
+              {/*    </span>*/}
+              {/*    <span className={styles['account-info-mobile']}>*/}
+              {/*      {trafficInfo.balance}&nbsp;FTC*/}
+              {/*    </span>*/}
+              {/*    <span className={styles['account-info-mobile']}>*/}
+              {/*      {formatStr(account ? account : '', 8)}*/}
+              {/*    </span>*/}
+              {/*  </div>*/}
+              {/*) : (*/}
+              {/*  <></>*/}
+              {/*)}*/}
+              &nbsp;
+              {isFavorApp() ? (
+                <div className={styles.uniPass_info}>
+                  <Popover
+                    content={
+                      <>
+                        <div className={styles.email_address}>
+                          {uniPassInfoData ? (
+                            <>
+                              <p className={styles.email}>
+                                {uniPassInfoData.email}
+                              </p>
+                              <p className={styles.address}>
+                                {formatStr(uniPassInfoData.address)}&nbsp;
+                                <CopyText
+                                  text={uniPassInfoData.address}
+                                  callback={() => {
+                                    setUniPassInfoVisible(false);
+                                  }}
+                                />
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <p>Not connected to wallet</p>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    }
+                    title={null}
+                    placement="bottomLeft"
+                    trigger={'click'}
+                    visible={uniPassInfoVisible}
+                    onVisibleChange={(visible) => {
+                      setUniPassInfoVisible(visible);
+                    }}
+                  >
+                    <img
+                      className={styles.uniPass_svg}
+                      src={uniPassSvg}
+                      alt=""
+                      draggable={false}
+                      onClick={getWalletInfo}
+                    />
+                  </Popover>
                 </div>
               ) : (
-                <></>
-              )}
-              <div className={styles.set_theme_btn}>
-                {logoTheme === 'dark' ? (
-                  <SvgIcon svg={sunSvg} clickFn={() => switchTheme()}></SvgIcon>
-                ) : (
-                  <></>
-                )}
-                {logoTheme === 'light' ? (
-                  <SvgIcon
-                    svg={moonSvg}
-                    clickFn={() => switchTheme()}
-                  ></SvgIcon>
-                ) : (
-                  <></>
-                )}
-              </div>
-              {isPC() ? (
-                <div className={styles.setting_btn}>
-                  <SvgIcon
-                    svg={settingSvg}
-                    clickFn={() => setSettingVisible(true)}
-                  ></SvgIcon>
-                </div>
-              ) : (
-                // <div className={styles.menu_btn}>
-                //   <SvgIcon svg={menuSvg} clickFn={() => { setCollapsed(!collapsed); }}></SvgIcon>
-                // </div>
-                <></>
+                <>
+                  <div className={styles.set_theme_btn}>
+                    {logoTheme === 'dark' ? (
+                      <SvgIcon svg={sunSvg} clickFn={() => switchTheme()} />
+                    ) : (
+                      <></>
+                    )}
+                    {logoTheme === 'light' ? (
+                      <SvgIcon svg={moonSvg} clickFn={() => switchTheme()} />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  {isPC() ? (
+                    <div className={styles.setting_btn}>
+                      <SvgIcon
+                        svg={settingSvg}
+                        clickFn={() => setSettingVisible(true)}
+                      />
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </div>
             <div className={`${styles['expand-content']} expand-content`}>
@@ -755,13 +818,23 @@ const Layouts: React.FC = (props) => {
                         onClick={() => {
                           window.open(
                             item?.url
-                              ? urlJoin(item.url, `?endpoint=${api}`)
+                              ? urlJoin(
+                                  item.url,
+                                  applicationUrlParams({
+                                    endpoint: api,
+                                    name: item.name,
+                                  }),
+                                )
                               : urlJoin(
                                   api,
                                   'file',
                                   item.hash,
-                                  item?.open ? item.open : '/',
-                                  applicationUrlParams(item),
+                                  item?.open ?? '/',
+                                  applicationUrlParams({
+                                    oracles: item.oracles,
+                                    chain: item.chain,
+                                    name: item.name,
+                                  }),
                                 ),
                           );
                         }}
@@ -902,9 +975,31 @@ const Layouts: React.FC = (props) => {
           {collapsed ? (
             <></>
           ) : (
-            <p className="explore-version bold-font">
-              Version: {packageInfo.version}
-            </p>
+            <div className="explore-version bold-font">
+              <div className={styles.menu_bottom}>
+                <span>Version: {packageInfo.version}</span>
+                <div className={styles.btnS}>
+                  <span className={styles.set_theme_btn}>
+                    {logoTheme === 'dark' ? (
+                      <SvgIcon svg={sunSvg} clickFn={() => switchTheme()} />
+                    ) : (
+                      <></>
+                    )}
+                    {logoTheme === 'light' ? (
+                      <SvgIcon svg={moonSvg} clickFn={() => switchTheme()} />
+                    ) : (
+                      <></>
+                    )}
+                  </span>
+                  <span className={styles.setting_btn}>
+                    <SvgIcon
+                      svg={settingSvg}
+                      clickFn={() => setSettingVisible(true)}
+                    />
+                  </span>
+                </div>
+              </div>
+            </div>
           )}
         </Sider>
         <div

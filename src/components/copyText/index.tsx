@@ -7,10 +7,12 @@ import copySvg from '@/assets/icon/explore/copy.svg';
 
 export type Props = {
   text: string;
+  callback?: () => void;
 };
 const CopyText: React.FC<Props> = (props) => {
   const copyHandle = (): void => {
     message.success('Copy Success');
+    props.callback ? props.callback() : '';
   };
   return (
     <>
